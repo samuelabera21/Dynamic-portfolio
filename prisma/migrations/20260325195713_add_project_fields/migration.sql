@@ -1,0 +1,7 @@
+-- AlterTable
+ALTER TABLE "Project" ADD COLUMN     "featured" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "published" BOOLEAN NOT NULL DEFAULT true,
+ADD COLUMN     "techStack" TEXT[],
+ALTER COLUMN "imageUrl" DROP NOT NULL,
+ALTER COLUMN "githubUrl" DROP NOT NULL,
+ALTER COLUMN "liveUrl" DROP NOT NULL;
