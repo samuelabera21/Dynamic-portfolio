@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+
+  imageUrl    String?
+  githubUrl   String?
+  liveUrl     String?
+
+  techStack   String[]   // ✅ NEW
+  featured    Boolean    @default(false) // ✅ NEW
+  published   Boolean    @default(true)  // ✅ NEW
+
+  createdAt   DateTime  @default(now())
+}
