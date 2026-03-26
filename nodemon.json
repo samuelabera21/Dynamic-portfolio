@@ -1,0 +1,7 @@
+{
+  "watch": ["server.ts", "src", "prisma", ".env"],
+  "ext": "ts,json,env",
+  "execMap": {
+    "ts": "ts-node"
+  }
+}
