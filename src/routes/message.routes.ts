@@ -85,6 +85,12 @@
 import { Router } from "express";
 import prisma from "../lib/prisma";
 import { authMiddleware } from "../middleware/auth.middleware";
+import { sendAdminNotification, sendAutoReply } from "../utils/email";
+
+function isValidEmail(value: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
 
 const router = Router();
 
@@ -92,17 +98,37 @@ console.log("🔥 MESSAGE ROUTES ACTIVE");
 
 
 // ✅ 1. CREATE MESSAGE (PUBLIC)
+
+
+// ✅ 1. CREATE MESSAGE (PUBLIC + EMAIL)
 router.post("/", async (req, res) => {
   try {
     const { name, email, message } = req.body;
+    const senderEmail = String(email ?? "").trim().toLowerCase();
 
     const newMessage = await prisma.message.create({
       data: {
         name,
-        email,
+        email: senderEmail,
         message,
       },
     });
+
+    // 🔥 SEND EMAILS (DO NOT BLOCK RESPONSE)
+    try {
+      await sendAdminNotification(name, senderEmail, message);
+
+      if (isValidEmail(senderEmail)) {
+        await sendAutoReply(senderEmail, name);
+        console.log("Auto-reply sent to:", senderEmail);
+      } else {
+        console.warn("Auto-reply skipped. Invalid sender email:", senderEmail);
+      }
+
+      console.log("Admin notification sent to:", process.env.EMAIL_USER);
+    } catch (emailError) {
+      console.error("Email error:", emailError);
+    }
 
     res.json(newMessage);
   } catch (error) {
@@ -110,7 +136,6 @@ router.post("/", async (req, res) => {
     res.status(500).json({ message: "Error sending message" });
   }
 });
-
 
 // 🔒 2. GET ALL MESSAGES (ADMIN)
 router.get("/", authMiddleware, async (req, res) => {
