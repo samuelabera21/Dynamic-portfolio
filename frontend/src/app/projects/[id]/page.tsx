@@ -40,10 +40,10 @@ export default function ProjectDetailsPage() {
       </Link>
 
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <div className="h-72 w-full bg-gradient-to-r from-blue-100 to-cyan-50">
+        <div className="flex h-72 w-full items-center justify-center bg-gradient-to-r from-blue-100 to-cyan-50 p-3">
           {project.imageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={project.imageUrl} alt={project.title} className="h-full w-full object-cover" />
+            <img src={project.imageUrl} alt={project.title} className="h-full w-full rounded-lg object-contain" />
           ) : (
             <div className="flex h-full items-center justify-center text-sm font-medium text-slate-500">
               No image available
