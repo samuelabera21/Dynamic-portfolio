@@ -72,7 +72,7 @@ router.get("/", async (req, res) => {
 
     res.json({
       profile,
-      featuredProjects,
+      featuredProjects: flags.showProjects ? featuredProjects : [],
       skills: groupedSkills,
       showProjects: flags.showProjects,
       showSkills: flags.showSkills,

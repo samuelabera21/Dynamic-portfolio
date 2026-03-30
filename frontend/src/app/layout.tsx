@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, IBM_Plex_Mono } from "next/font/google";
+import { Space_Grotesk, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 
@@ -9,16 +9,16 @@ const headingFont = Space_Grotesk({
   display: "swap",
 });
 
-const bodyFont = IBM_Plex_Mono({
+const bodyFont = Plus_Jakarta_Sans({
   variable: "--font-body",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Personal Portfolio",
-  description: "Modern personal portfolio for showcasing projects and technical work",
+  title: "Portfolio CMS",
+  description: "Fullstack portfolio platform with modern product-grade interface",
 };
 
 export default function RootLayout({
@@ -33,7 +33,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-slate-50 text-slate-900">
         <Navbar />
-        <main className="mx-auto w-full max-w-7xl flex-1 px-4 pb-10 pt-24 sm:px-6 lg:px-8">
+        <main className="w-full flex-1 px-0 pb-0 pt-16">
           {children}
         </main>
       </body>

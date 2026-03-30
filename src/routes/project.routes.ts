@@ -7,6 +7,15 @@ import { adminMiddleware } from "../middleware/admin.middleware";
 const router = Router();
 console.log("🔥 PROJECT ROUTES ACTIVE");
 
+async function isPublicProjectsEnabled(): Promise<boolean> {
+  const setting = await prisma.setting.findUnique({
+    where: { key: "showProjects" },
+  });
+
+  if (!setting) return true;
+  return setting.value === "true";
+}
+
 // ✅ CREATE PROJECT (ADMIN ONLY)
 router.post("/", authMiddleware, adminMiddleware, async (req, res) => {
   try {
@@ -44,6 +53,11 @@ router.post("/", authMiddleware, adminMiddleware, async (req, res) => {
 // ✅ GET ALL PROJECTS (PUBLIC)
 router.get("/", async (req, res) => {
   try {
+    const showProjects = await isPublicProjectsEnabled();
+    if (!showProjects) {
+      return res.json([]);
+    }
+
     const { tech, featured, search } = req.query;
 
     const projects = await prisma.project.findMany({
@@ -98,6 +112,11 @@ router.get("/", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   try {
+    const showProjects = await isPublicProjectsEnabled();
+    if (!showProjects) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
     const id = req.params.id as string;
 
     const project = await prisma.project.findUnique({

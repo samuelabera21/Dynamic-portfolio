@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getGroupedSkills, getProfile } from "@/lib/api";
+import { getHome } from "@/lib/api";
 import { Profile } from "@/types/profile";
 import { GroupedSkills, SkillCategory } from "@/types/skill";
 
@@ -40,6 +40,7 @@ function dataUrlToBlob(dataUrl: string): Blob {
 export default function AboutPage() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [groupedSkills, setGroupedSkills] = useState<GroupedSkills>({});
+  const [showSkills, setShowSkills] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [resumeError, setResumeError] = useState<string | null>(null);
@@ -49,9 +50,10 @@ export default function AboutPage() {
       setLoading(true);
       setError(null);
       try {
-        const [profileData, skillsData] = await Promise.all([getProfile(), getGroupedSkills()]);
-        setProfile(profileData);
-        setGroupedSkills(skillsData);
+        const home = await getHome();
+        setProfile(home.profile);
+        setGroupedSkills(home.skills ?? {});
+        setShowSkills(home.showSkills ?? true);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unable to load profile");
       } finally {
@@ -70,7 +72,7 @@ export default function AboutPage() {
     hasResume &&
     (isPdfDataUrl(profile.resumeUrl) || isHttpUrl(profile.resumeUrl));
   const orderedCategories: SkillCategory[] = ["frontend", "backend", "tools"];
-  const hasSkills = orderedCategories.some((category) => (groupedSkills[category] ?? []).length > 0);
+  const hasSkills = showSkills && orderedCategories.some((category) => (groupedSkills[category] ?? []).length > 0);
 
   const handleResumeDownload = () => {
     if (!profile.resumeUrl) return;
