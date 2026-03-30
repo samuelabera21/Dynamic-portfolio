@@ -20,6 +20,15 @@ const defaultValue: ProjectPayload = {
   published: true,
 };
 
+function fileToDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(new Error("Failed to read selected image."));
+    reader.readAsDataURL(file);
+  });
+}
+
 function parseTechStack(input: string): string[] {
   return input
     .split(",")
@@ -32,6 +41,20 @@ export default function ProjectForm({ initialValue, submitLabel, onSubmit }: Pro
   const [techInput, setTechInput] = useState((initialValue?.techStack ?? []).join(", "));
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [imageFileName, setImageFileName] = useState<string | null>(null);
+
+  const handleImageUpload = async (file: File | null) => {
+    if (!file) return;
+
+    try {
+      setError(null);
+      const value = await fileToDataUrl(file);
+      setForm((prev) => ({ ...prev, imageUrl: value }));
+      setImageFileName(file.name);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to process selected image");
+    }
+  };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -90,6 +113,29 @@ export default function ProjectForm({ initialValue, submitLabel, onSubmit }: Pro
             onChange={(e) => setForm((prev) => ({ ...prev, imageUrl: e.target.value }))}
             className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
           />
+
+          <label htmlFor="imageFile" className="mt-3 block text-xs font-semibold text-slate-600">
+            Or upload image from local machine
+          </label>
+          <input
+            id="imageFile"
+            type="file"
+            accept="image/*"
+            onChange={(e) => handleImageUpload(e.target.files?.[0] ?? null)}
+            className="mt-1 block w-full text-xs text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-blue-50 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-blue-700 hover:file:bg-blue-100"
+          />
+          {imageFileName ? (
+            <p className="mt-1 text-xs text-slate-500">Selected file: {imageFileName}</p>
+          ) : null}
+
+          {form.imageUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={form.imageUrl}
+              alt="Project preview"
+              className="mt-3 h-24 w-24 rounded-lg border border-slate-200 object-cover"
+            />
+          ) : null}
         </div>
 
         <div>
