@@ -6,7 +6,12 @@ import { clearToken } from "@/lib/auth";
 
 const links = [
   { href: "/admin", label: "Dashboard" },
+  { href: "/admin/settings", label: "Feature Flags", icon: "settings" as const },
+  { href: "/admin/profile", label: "Profile" },
+  { href: "/admin/skills", label: "Skills" },
   { href: "/admin/projects", label: "Projects" },
+  { href: "/admin/blog", label: "Blog" },
+  { href: "/admin/messages", label: "Messages" },
 ];
 
 export default function Sidebar() {
@@ -28,6 +33,31 @@ export default function Sidebar() {
                 active ? "bg-blue-600 text-white" : "text-slate-600 hover:bg-slate-100"
               }`}
             >
+              {link.icon === "settings" ? (
+                <span className="mr-2 inline-flex align-middle">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M12 3v3" />
+                    <path d="M12 18v3" />
+                    <path d="m4.9 4.9 2.1 2.1" />
+                    <path d="m17 17 2.1 2.1" />
+                    <path d="M3 12h3" />
+                    <path d="M18 12h3" />
+                    <path d="m4.9 19.1 2.1-2.1" />
+                    <path d="m17 7 2.1-2.1" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                </span>
+              ) : null}
               {link.label}
             </Link>
           );
