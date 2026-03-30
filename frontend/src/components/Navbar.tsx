@@ -39,20 +39,24 @@ export default function Navbar() {
   if (hideOnAdmin) return null;
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-slate-200/70 bg-white/90 backdrop-blur">
-      <nav className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="font-[family-name:var(--font-heading)] text-lg font-bold tracking-tight text-blue-700">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#111827]/96 backdrop-blur">
+      <nav className="mx-auto flex h-20 w-full max-w-[1400px] items-center justify-between px-6 lg:px-10">
+        <Link href="/" className="font-[family-name:var(--font-heading)] text-3xl font-bold tracking-tight text-white sm:text-4xl">
           Portfolio CMS
         </Link>
 
-        <div className="flex items-center gap-5 text-sm font-medium text-slate-600">
+        <div className="flex items-center gap-6 text-base font-semibold text-slate-300">
           {visibleLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                className={isActive ? "text-blue-600" : "transition-colors hover:text-blue-600"}
+                className={
+                  isActive
+                    ? "rounded-md bg-blue-500/10 px-2 py-1 text-blue-300"
+                    : "transition-colors hover:text-white"
+                }
               >
                 {link.label}
               </Link>
