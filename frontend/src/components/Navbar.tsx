@@ -1,16 +1,40 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
+import { getSettings } from "@/lib/api";
 
 const links = [
   { href: "/", label: "Home" },
+  { href: "/about", label: "About" },
   { href: "/projects", label: "Projects" },
+  { href: "/blog", label: "Blog" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export default function Navbar() {
   const pathname = usePathname();
   const hideOnAdmin = pathname.startsWith("/admin");
+  const [showBlog, setShowBlog] = useState(true);
+
+  useEffect(() => {
+    const run = async () => {
+      try {
+        const settings = await getSettings();
+        setShowBlog(settings.showBlog);
+      } catch {
+        setShowBlog(true);
+      }
+    };
+
+    run();
+  }, []);
+
+  const visibleLinks = useMemo(
+    () => links.filter((link) => (link.href === "/blog" ? showBlog : true)),
+    [showBlog]
+  );
 
   if (hideOnAdmin) return null;
 
@@ -22,7 +46,7 @@ export default function Navbar() {
         </Link>
 
         <div className="flex items-center gap-5 text-sm font-medium text-slate-600">
-          {links.map((link) => {
+          {visibleLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
               <Link
