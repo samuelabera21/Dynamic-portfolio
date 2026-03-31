@@ -164,14 +164,17 @@ export default function AdminProfilePage() {
 
   if (loading) return <p className="text-sm text-slate-500">Loading profile settings...</p>;
 
+  const fieldClassName =
+    "w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
+
   return (
-    <section className="space-y-4">
+    <section className="space-y-5">
       <div>
         <h1 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-slate-900">Profile Management</h1>
-        <p className="mt-2 text-sm text-slate-600">Manage personal branding content used across Home and About pages.</p>
+        <p className="mt-2 text-base text-slate-600">Manage personal branding content used across Home and About pages.</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="mx-auto w-full max-w-[640px] space-y-5">
+      <form onSubmit={handleSubmit} className="mx-auto w-full max-w-[760px] space-y-5">
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <h2 className="font-[family-name:var(--font-heading)] text-xl font-semibold text-slate-900">Basic Info</h2>
 
@@ -182,7 +185,7 @@ export default function AdminProfilePage() {
                 id="name"
                 value={form.name}
                 onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+                className={fieldClassName}
                 required
               />
             </div>
@@ -193,7 +196,7 @@ export default function AdminProfilePage() {
                 id="role"
                 value={form.role}
                 onChange={(e) => setForm((prev) => ({ ...prev, role: e.target.value }))}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+                className={fieldClassName}
                 required
               />
             </div>
@@ -204,7 +207,7 @@ export default function AdminProfilePage() {
                 id="bio"
                 value={form.bio}
                 onChange={(e) => setForm((prev) => ({ ...prev, bio: e.target.value }))}
-                className="min-h-40 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm leading-7 outline-none focus:border-blue-500"
+                className={`${fieldClassName} min-h-40 leading-7`}
                 required
               />
             </div>
@@ -215,7 +218,7 @@ export default function AdminProfilePage() {
                 id="location"
                 value={form.location ?? ""}
                 onChange={(e) => setForm((prev) => ({ ...prev, location: e.target.value }))}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+                className={fieldClassName}
               />
             </div>
 
@@ -240,7 +243,7 @@ export default function AdminProfilePage() {
                 id="avatarUrl"
                 value={form.avatarUrl}
                 onChange={(e) => setForm((prev) => ({ ...prev, avatarUrl: e.target.value }))}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+                className={fieldClassName}
               />
               <label htmlFor="avatarFile" className="mt-3 block text-xs font-semibold text-slate-600">
                 Or upload avatar from local machine
@@ -270,7 +273,7 @@ export default function AdminProfilePage() {
                 id="resumeUrl"
                 value={form.resumeUrl}
                 onChange={(e) => setForm((prev) => ({ ...prev, resumeUrl: e.target.value }))}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+                className={fieldClassName}
               />
               <label htmlFor="resumeFile" className="mt-3 block text-xs font-semibold text-slate-600">
                 Or upload resume from local machine
@@ -314,13 +317,13 @@ export default function AdminProfilePage() {
                   value={link.platform}
                   onChange={(e) => updateSocialLink(index, { platform: e.target.value })}
                   placeholder="Platform (github, linkedin)"
-                  className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-blue-500"
+                  className={fieldClassName}
                 />
                 <input
                   value={link.url}
                   onChange={(e) => updateSocialLink(index, { url: e.target.value })}
                   placeholder="https://..."
-                  className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-blue-500"
+                  className={fieldClassName}
                 />
                 <button
                   type="button"
