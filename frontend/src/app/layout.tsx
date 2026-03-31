@@ -19,6 +19,11 @@ const bodyFont = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: "Samuel abera",
   description: "Fullstack portfolio platform with modern product-grade interface",
+  icons: {
+    icon: "/favicon.png",
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
+  },
 };
 
 export default function RootLayout({
