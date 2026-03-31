@@ -4,34 +4,34 @@ import { motion } from "framer-motion";
 
 const featureItems = [
   {
-    title: "Secure Messaging System",
-    description: "Production-ready contact flow with protected admin message handling.",
-    icon: "SH",
+    title: "Clean Code",
+    description: "Write readable, maintainable code with clear structure and naming.",
+    icon: "CC",
   },
   {
-    title: "Admin Dashboard",
-    description: "Centralized content operations across profile, projects, blog, and skills.",
-    icon: "AD",
+    title: "Problem Solving",
+    description: "Break down complex tasks into simple, practical steps.",
+    icon: "PS",
   },
   {
-    title: "Email Notification Ready",
-    description: "Extensible notification architecture for alerting and workflow updates.",
-    icon: "EM",
+    title: "Data Structures & Algorithms",
+    description: "Use efficient patterns to improve performance and scalability.",
+    icon: "DSA",
   },
   {
-    title: "Real-time Data Handling",
-    description: "Unified home endpoint and optimized payload delivery for fast rendering.",
-    icon: "RT",
+    title: "Version Control",
+    description: "Track changes, collaborate safely, and manage project history.",
+    icon: "VC",
   },
   {
-    title: "Authentication & Security",
-    description: "Token-based admin authorization layered across protected endpoints.",
-    icon: "AU",
+    title: "System Design",
+    description: "Plan reliable architectures and scalable service interactions.",
+    icon: "SD",
   },
   {
-    title: "API Architecture",
-    description: "Modular backend routes with scalable service separation and Prisma models.",
-    icon: "API",
+    title: "Debugging & Testing",
+    description: "Find issues early and ensure features work as expected.",
+    icon: "DT",
   },
 ];
 
@@ -39,8 +39,8 @@ export default function FeatureGridSection() {
   return (
     <section>
       <div className="mb-5">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-300">Core Modules</p>
-        <h2 className="font-[family-name:var(--font-heading)] text-2xl font-bold text-white sm:text-3xl">Platform Feature Grid</h2>
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-300">Software Engineering</p>
+        <h2 className="font-[family-name:var(--font-heading)] text-2xl font-bold text-white sm:text-3xl">Basic Principles</h2>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -64,6 +64,10 @@ export default function FeatureGridSection() {
           );
         })}
       </div>
+
+      <p className="mt-6 text-base text-slate-300">
+        Principles I focus on while learning and building projects.
+      </p>
     </section>
   );
 }
