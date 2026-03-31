@@ -41,7 +41,7 @@ export default function HeroSection({ profile, showAvailableForHire }: Props) {
           className="space-y-5"
         >
           <span className="inline-flex rounded-full border border-blue-300/50 bg-blue-500/20 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-blue-100">
-            AI + Fullstack Product Platform
+            Software Engineer (in progress)|AI Enthusiast
           </span>
 
           <h1 className="font-[family-name:var(--font-heading)] text-5xl font-extrabold leading-tight text-white sm:text-6xl lg:text-7xl">
@@ -49,8 +49,7 @@ export default function HeroSection({ profile, showAvailableForHire }: Props) {
           </h1>
 
           <p className="max-w-3xl text-base leading-8 text-slate-100 sm:text-xl sm:leading-10">
-            {profile.name} leads architecture and implementation for robust applications across web platforms,
-            backend systems, and data-driven product experiences.
+            I build web applications and explore machine learning solutions.
           </p>
 
           <div className="grid gap-2 text-sm text-slate-200 sm:grid-cols-2">
@@ -66,16 +65,16 @@ export default function HeroSection({ profile, showAvailableForHire }: Props) {
 
           <div className="flex flex-wrap gap-3 pt-2">
             <Link
-              href="/admin/login"
+              href="/about"
               className="rounded-xl bg-gradient-to-r from-blue-500 to-violet-500 px-5 py-2.5 text-sm font-semibold text-white shadow-[0_0_30px_rgba(59,130,246,0.5)] transition-transform duration-300 hover:scale-[1.03]"
             >
-              Launch App
+              Who is Samuel?
             </Link>
             <Link
               href="#featured-projects"
               className="rounded-xl border border-white/25 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/20"
             >
-              Explore Platform
+              explore more
             </Link>
           </div>
         </motion.div>
