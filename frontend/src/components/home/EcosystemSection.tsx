@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
 
 const workflowSteps = [
@@ -43,8 +42,6 @@ const workflowSteps = [
 ];
 
 export default function EcosystemSection() {
-  const [activeStep, setActiveStep] = useState(workflowSteps[0]?.title ?? "");
-
   const pipelineText =
     "Client (UI) \u2192 API Gateway \u2192 Backend Services \u2192 Database \u2192 External Services \u2192 Deployment & Monitoring";
 
@@ -65,41 +62,34 @@ export default function EcosystemSection() {
 
       <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {workflowSteps.map((step, index) => {
-          const isActive = activeStep === step.title;
-
           return (
-            <motion.button
+            <motion.div
               key={step.title}
-              type="button"
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.3, delay: index * 0.06 }}
-              onClick={() => setActiveStep((prev) => (prev === step.title ? "" : step.title))}
-              className={
-                isActive
-                  ? "rounded-xl border border-blue-300/70 bg-blue-500/10 p-5 text-left shadow-[0_0_28px_rgba(59,130,246,0.35)]"
-                  : "rounded-xl border border-white/15 bg-white/[0.03] p-5 text-left transition-colors hover:border-blue-300/40"
-              }
+              className="group [perspective:1200px]"
             >
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <h3 className="font-[family-name:var(--font-heading)] text-xl font-bold text-white">{step.title}</h3>
-                  <p className="mt-1 text-sm font-semibold text-blue-200">{step.label}</p>
+              <div className="relative h-56 rounded-2xl transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+                <div className="absolute inset-0 rounded-2xl border border-blue-400/30 bg-gradient-to-br from-blue-500/20 to-violet-500/15 p-5 [backface-visibility:hidden]">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <h3 className="font-[family-name:var(--font-heading)] text-xl font-bold text-white">{step.title}</h3>
+                      <p className="mt-1 text-sm font-semibold text-blue-200">{step.label}</p>
+                    </div>
+                    <span className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-blue-300/50 bg-blue-500/20 text-base font-bold text-blue-100">
+                      +
+                    </span>
+                  </div>
                 </div>
-                <span
-                  className={
-                    isActive
-                      ? "inline-flex h-7 w-7 items-center justify-center rounded-md border border-blue-300/70 bg-blue-500/30 text-base font-bold text-white"
-                      : "inline-flex h-7 w-7 items-center justify-center rounded-md border border-blue-300/40 bg-blue-500/15 text-base font-bold text-blue-200"
-                  }
-                >
-                  +
-                </span>
-              </div>
 
-              {isActive ? <p className="mt-4 text-sm leading-7 text-slate-200">{step.description}</p> : null}
-            </motion.button>
+                <div className="absolute inset-0 rounded-2xl border border-violet-400/40 bg-slate-950/90 p-5 [backface-visibility:hidden] [transform:rotateY(180deg)]">
+                  <h4 className="font-[family-name:var(--font-heading)] text-lg font-bold text-violet-200">{step.label}</h4>
+                  <p className="mt-3 text-sm leading-7 text-slate-200">{step.description}</p>
+                </div>
+              </div>
+            </motion.div>
           );
         })}
       </div>
