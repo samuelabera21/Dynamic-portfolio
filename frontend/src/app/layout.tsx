@@ -17,7 +17,7 @@ const bodyFont = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Portfolio CMS",
+  title: "Samuel abera",
   description: "Fullstack portfolio platform with modern product-grade interface",
 };
 
