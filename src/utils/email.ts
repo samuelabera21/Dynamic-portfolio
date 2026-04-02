@@ -69,6 +69,7 @@ export const sendNewsletterBroadcast = async ({
   message,
   linkLabel,
   linkUrl,
+  unsubscribeLinkForRecipient,
 }: {
   recipients: string[];
   subject: string;
@@ -76,6 +77,7 @@ export const sendNewsletterBroadcast = async ({
   message: string;
   linkLabel?: string;
   linkUrl?: string;
+  unsubscribeLinkForRecipient?: (recipient: string) => string;
 }) => {
   if (!emailUser || !emailPass || recipients.length === 0) return;
 
@@ -94,6 +96,7 @@ export const sendNewsletterBroadcast = async ({
           <h2>${safeTitle}</h2>
           <p>${safeMessage}</p>
           ${safeLinkUrl ? `<p><a href="${safeLinkUrl}">${safeLinkLabel || safeLinkUrl}</a></p>` : ""}
+          ${unsubscribeLinkForRecipient ? `<p><a href="${escapeHtml(unsubscribeLinkForRecipient(recipient))}">Unsubscribe</a></p>` : ""}
           <p>Best regards,<br/>Samuel</p>
         `,
       })
