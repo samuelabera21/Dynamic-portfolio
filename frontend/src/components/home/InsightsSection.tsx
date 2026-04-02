@@ -103,7 +103,7 @@ export default function InsightsSection() {
             <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/70 to-transparent" />
           </motion.div>
         </motion.div>
-      </div>
+        </motion.div>
     </section>
   );
 }
