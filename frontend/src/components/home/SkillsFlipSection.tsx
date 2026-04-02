@@ -38,7 +38,7 @@ export default function SkillsFlipSection({ skills }: Props) {
             viewport={{ once: true, amount: 0.2 }}
             className="group [perspective:1200px]"
           >
-            <div className="relative h-56 rounded-2xl transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+            <div className="relative h-56 rounded-2xl transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateX(180deg)]">
               <div className="absolute inset-0 rounded-2xl border border-blue-400/30 bg-gradient-to-br from-blue-500/20 to-violet-500/15 p-5 [backface-visibility:hidden]">
                 <h3 className="font-[family-name:var(--font-heading)] text-xl font-bold text-white">{labels[category]}</h3>
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -50,7 +50,7 @@ export default function SkillsFlipSection({ skills }: Props) {
                 </div>
               </div>
 
-              <div className="absolute inset-0 rounded-2xl border border-violet-400/40 bg-slate-950/90 p-5 [backface-visibility:hidden] [transform:rotateY(180deg)]">
+              <div className="absolute inset-0 rounded-2xl border border-violet-400/40 bg-slate-950/90 p-5 [backface-visibility:hidden] [transform:rotateX(180deg)]">
                 <h4 className="font-[family-name:var(--font-heading)] text-lg font-bold text-violet-200">{labels[category]} Capability</h4>
                 <p className="mt-3 text-sm leading-7 text-slate-200">{descriptions[category]}</p>
               </div>
