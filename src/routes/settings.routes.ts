@@ -1,7 +1,12 @@
 import { Router } from "express";
 import prisma from "../lib/prisma";
 import { authMiddleware } from "../middleware/auth.middleware";
-import { addNewsletterSubscriber } from "../utils/newsletter";
+import {
+  addNewsletterSubscriber,
+  getNewsletterSubscribers,
+  removeNewsletterSubscriber,
+  verifyUnsubscribeToken,
+} from "../utils/newsletter";
 
 const router = Router();
 
@@ -27,6 +32,64 @@ router.post("/newsletter/subscribe", async (req, res) => {
     res.status(400).json({
       message: error instanceof Error ? error.message : "Unable to subscribe",
     });
+  }
+});
+
+router.post("/newsletter/unsubscribe", async (req, res) => {
+  try {
+    const email = String(req.body?.email ?? "").trim().toLowerCase();
+    const token = String(req.body?.token ?? "").trim();
+
+    if (!email || !token) {
+      return res.status(400).json({ message: "Invalid unsubscribe request" });
+    }
+
+    if (!verifyUnsubscribeToken(email, token)) {
+      return res.status(400).json({ message: "Invalid or expired unsubscribe token" });
+    }
+
+    const result = await removeNewsletterSubscriber(email);
+
+    return res.json({
+      message: result.removed ? "You have been unsubscribed" : "You were not subscribed",
+      unsubscribed: result.removed,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({
+      message: error instanceof Error ? error.message : "Unable to unsubscribe",
+    });
+  }
+});
+
+router.get("/newsletter/subscribers", authMiddleware, async (_req, res) => {
+  try {
+    const subscribers = await getNewsletterSubscribers();
+    res.json({ subscribers, total: subscribers.length });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error fetching subscribers" });
+  }
+});
+
+router.delete("/newsletter/subscribers", authMiddleware, async (req, res) => {
+  try {
+    const email = String(req.body?.email ?? "").trim().toLowerCase();
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    const result = await removeNewsletterSubscriber(email);
+
+    res.json({
+      message: result.removed ? "Subscriber removed" : "Subscriber not found",
+      removed: result.removed,
+      total: result.total,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error removing subscriber" });
   }
 });
 
