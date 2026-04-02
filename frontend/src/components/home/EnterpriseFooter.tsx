@@ -1,4 +1,8 @@
+"use client";
+
+import { FormEvent, useState } from "react";
 import Link from "next/link";
+import { subscribeNewsletter } from "@/lib/api";
 import { Profile } from "@/types/profile";
 
 type Props = {
@@ -89,6 +93,10 @@ function SocialIcon({ platform }: { platform: PlatformKey }) {
 }
 
 export default function EnterpriseFooter({ profile }: Props) {
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [feedback, setFeedback] = useState<string | null>(null);
+
   const socialItems = profile.socialLinks.map((item) => {
     const platform = detectPlatform(item.platform, item.url);
     return {
@@ -126,7 +134,29 @@ export default function EnterpriseFooter({ profile }: Props) {
           <p className="text-3xl font-semibold uppercase tracking-wide text-white">Subscribe</p>
           <p className="mt-4 text-base leading-7 text-slate-300">Get occasional updates about new projects, blog posts, and backend architecture experiments.</p>
 
-          <form className="mt-6 space-y-4" onSubmit={(event) => event.preventDefault()}>
+          <form
+            className="mt-6 space-y-4"
+            onSubmit={async (event: FormEvent<HTMLFormElement>) => {
+              event.preventDefault();
+              setFeedback(null);
+
+              if (!email.trim()) {
+                setFeedback("Please enter your email address.");
+                return;
+              }
+
+              setLoading(true);
+              try {
+                const response = await subscribeNewsletter(email);
+                setFeedback(response.message);
+                setEmail("");
+              } catch (error) {
+                setFeedback(error instanceof Error ? error.message : "Unable to subscribe right now.");
+              } finally {
+                setLoading(false);
+              }
+            }}
+          >
             <div>
               <label htmlFor="footer-email" className="mb-2 block text-sm font-medium text-slate-200">
                 Email
@@ -135,6 +165,8 @@ export default function EnterpriseFooter({ profile }: Props) {
                 id="footer-email"
                 type="email"
                 placeholder="name@example.com"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
                 className="w-full rounded-xl border border-blue-200/30 bg-[#0b1730]/80 px-4 py-3 text-sm text-white outline-none transition focus:border-blue-200/70"
               />
             </div>
@@ -146,10 +178,13 @@ export default function EnterpriseFooter({ profile }: Props) {
 
             <button
               type="submit"
-              className="rounded-xl border border-blue-200/30 bg-blue-600/80 px-8 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500"
+              disabled={loading}
+              className="rounded-xl border border-blue-200/30 bg-blue-600/80 px-8 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-70"
             >
-              Subscribe
+              {loading ? "Subscribing..." : "Subscribe"}
             </button>
+
+            {feedback ? <p className="text-sm text-slate-300">{feedback}</p> : null}
           </form>
         </div>
       </div>
