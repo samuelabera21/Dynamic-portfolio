@@ -139,6 +139,13 @@ export async function sendMessage(payload: MessagePayload): Promise<Message> {
   });
 }
 
+export async function subscribeNewsletter(email: string): Promise<{ message: string; subscribed: boolean; added: boolean }> {
+  return request<{ message: string; subscribed: boolean; added: boolean }>("/settings/newsletter/subscribe", {
+    method: "POST",
+    body: { email },
+  });
+}
+
 export async function getMessages(token: string): Promise<Message[]> {
   return request<Message[]>("/messages", {
     token,
