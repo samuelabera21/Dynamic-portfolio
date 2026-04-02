@@ -189,7 +189,7 @@ export default function EnterpriseFooter({ profile }: Props) {
         </div>
       </div>
 
-      <div className="mt-6 flex flex-col gap-5 text-xs text-slate-400 sm:flex-row sm:items-end sm:justify-between">
+      <div className="mt-6 flex flex-col gap-5 text-xs text-slate-400">
         <div className="space-y-3">
           <div className="flex flex-wrap gap-6 text-sm text-slate-300">
             <Link href="/contact" className="transition-colors hover:text-white">Privacy Policy</Link>
@@ -199,7 +199,7 @@ export default function EnterpriseFooter({ profile }: Props) {
         </div>
 
         {socialItems.length > 0 ? (
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex w-full flex-wrap items-center justify-center gap-3">
             {socialItems.map((item) => (
               <a
                 key={`${item.platform}-${item.url}`}
