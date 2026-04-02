@@ -111,8 +111,7 @@ export default function EnterpriseFooter({ profile }: Props) {
       <div className="grid gap-10 border-b border-white/10 pb-10 lg:grid-cols-[1fr_1fr_1.2fr]">
         <div className="grid gap-8 sm:grid-cols-2 lg:col-span-2">
           <div>
-            <h3 className="font-[family-name:var(--font-heading)] text-2xl font-bold tracking-[0.18em] text-white">PORTFOLIO PLATFORM</h3>
-            <p className="mt-5 text-sm leading-7 text-slate-300">System-focused fullstack portfolio with production workflow architecture.</p>
+            <h3 className="font-[family-name:var(--font-heading)] text-2xl font-bold tracking-[0.18em] text-white">Samuel Abera</h3>
             <div className="mt-8 flex flex-col gap-3 text-base text-slate-300">
               <Link href="/about" className="transition-colors hover:text-white">About</Link>
               <Link href="/projects" className="transition-colors hover:text-white">Projects</Link>
@@ -123,7 +122,8 @@ export default function EnterpriseFooter({ profile }: Props) {
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-300">Contact</p>
             <div className="mt-4 space-y-3 text-base text-slate-300">
-              <p>Email: contact@portfolio.local</p>
+              <p>Tel: +251923010537</p>
+              <p>Email: samuelabera.dev@gmail.com</p>
               {profile.location ? <p>{profile.location}</p> : null}
               <Link href="/contact" className="inline-block transition-colors hover:text-white">Send a message</Link>
             </div>
