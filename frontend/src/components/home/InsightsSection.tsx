@@ -20,8 +20,8 @@ export default function InsightsSection() {
   const textY = useTransform(scrollYProgress, [0, 1], [18, -20]);
 
   return (
-    <section ref={sectionRef} className="relative h-[180vh]">
-      <motion.div style={{ y: textY }} className="sticky top-20 h-[76vh] min-h-[560px]">
+    <section ref={sectionRef} className="relative h-[120vh] min-h-[760px]">
+      <motion.div style={{ y: textY }} className="sticky top-16 h-[72vh] min-h-[520px]">
         <motion.div style={{ y: panelY, scale: panelScale }} className="grid h-full gap-8 rounded-3xl border border-white/15 bg-black/55 p-6 backdrop-blur-sm lg:grid-cols-[0.95fr_1.05fr] lg:p-10">
           <div className="flex h-full gap-5 lg:gap-7">
             <div className="relative hidden w-4 shrink-0 sm:block">
