@@ -7,6 +7,7 @@ import { clearToken } from "@/lib/auth";
 const links = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/settings", label: "Feature Flags", icon: "settings" as const },
+  { href: "/admin/newsletter", label: "Newsletter" },
   { href: "/admin/profile", label: "Profile" },
   { href: "/admin/skills", label: "Skills" },
   { href: "/admin/projects", label: "Projects" },
