@@ -1,8 +1,34 @@
 import { Router } from "express";
 import prisma from "../lib/prisma";
 import { authMiddleware } from "../middleware/auth.middleware";
+import { addNewsletterSubscriber } from "../utils/newsletter";
 
 const router = Router();
+
+router.post("/newsletter/subscribe", async (req, res) => {
+  try {
+    const email = String(req.body?.email ?? "").trim().toLowerCase();
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    const result = await addNewsletterSubscriber(email);
+
+    return res.json({
+      message: result.added
+        ? "You are subscribed to portfolio updates"
+        : "You are already subscribed",
+      subscribed: true,
+      added: result.added,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({
+      message: error instanceof Error ? error.message : "Unable to subscribe",
+    });
+  }
+});
 
 
 // ✅ 1. GET SETTINGS (PUBLIC)
