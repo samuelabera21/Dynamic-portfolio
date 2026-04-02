@@ -143,7 +143,7 @@ export default function Home() {
         </div>
 
         <div className="mx-6 pb-8 sm:mx-10 lg:mx-12">
-          <EnterpriseFooter />
+          <EnterpriseFooter profile={profile} />
         </div>
       </div>
     </section>
