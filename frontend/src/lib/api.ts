@@ -146,6 +146,27 @@ export async function subscribeNewsletter(email: string): Promise<{ message: str
   });
 }
 
+export async function unsubscribeNewsletter(email: string, token: string): Promise<{ message: string; unsubscribed: boolean }> {
+  return request<{ message: string; unsubscribed: boolean }>("/settings/newsletter/unsubscribe", {
+    method: "POST",
+    body: { email, token },
+  });
+}
+
+export async function getNewsletterSubscribers(token: string): Promise<{ subscribers: string[]; total: number }> {
+  return request<{ subscribers: string[]; total: number }>("/settings/newsletter/subscribers", {
+    token,
+  });
+}
+
+export async function removeNewsletterSubscriber(email: string, token: string): Promise<{ message: string; removed: boolean; total: number }> {
+  return request<{ message: string; removed: boolean; total: number }>("/settings/newsletter/subscribers", {
+    method: "DELETE",
+    token,
+    body: { email },
+  });
+}
+
 export async function getMessages(token: string): Promise<Message[]> {
   return request<Message[]>("/messages", {
     token,
