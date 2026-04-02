@@ -34,7 +34,7 @@ export default function SkillsFlipSection({ skills }: Props) {
           >
             <div
               tabIndex={0}
-              className="relative h-56 rounded-2xl outline-none transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] group-focus-within:[transform:rotateY(180deg)]"
+              className="relative h-56 rounded-2xl outline-none transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateX(180deg)] group-focus-within:[transform:rotateX(180deg)]"
             >
               <div className="absolute inset-0 flex items-center justify-center rounded-2xl border border-blue-400/30 bg-gradient-to-br from-blue-500/20 to-violet-500/15 p-5 shadow-[0_14px_30px_rgba(37,99,235,0.16)] [backface-visibility:hidden]">
                 <h3 className="text-center font-[family-name:var(--font-heading)] text-3xl font-bold text-white">
@@ -42,7 +42,7 @@ export default function SkillsFlipSection({ skills }: Props) {
                 </h3>
               </div>
 
-              <div className="absolute inset-0 rounded-2xl border border-violet-400/40 bg-slate-950/92 p-5 [backface-visibility:hidden] [transform:rotateY(180deg)]">
+              <div className="absolute inset-0 rounded-2xl border border-violet-400/40 bg-slate-950/92 p-5 [backface-visibility:hidden] [transform:rotateX(180deg)]">
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-violet-200">Development Workflow</p>
                 <h4 className="mt-2 font-[family-name:var(--font-heading)] text-lg font-bold text-white">{labels[category]} Skills</h4>
 
