@@ -89,51 +89,98 @@ function SocialIcon({ platform }: { platform: PlatformKey }) {
 }
 
 export default function EnterpriseFooter({ profile }: Props) {
+  const socialItems = profile.socialLinks.map((item) => {
+    const platform = detectPlatform(item.platform, item.url);
+    return {
+      ...item,
+      platform,
+      label: platformLabel(platform, item.platform),
+    };
+  });
+
   return (
-    <footer className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl sm:p-8">
-      <div className="grid gap-6 md:grid-cols-3">
-        <div>
-          <h3 className="font-[family-name:var(--font-heading)] text-xl font-bold text-white">Portfolio Platform</h3>
-          <p className="mt-2 text-sm text-slate-300">System-focused fullstack portfolio with production workflow architecture.</p>
-        </div>
+    <footer className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl sm:p-8 lg:p-10">
+      <div className="grid gap-10 border-b border-white/10 pb-10 lg:grid-cols-[1fr_1fr_1.2fr]">
+        <div className="grid gap-8 sm:grid-cols-2 lg:col-span-2">
+          <div>
+            <h3 className="font-[family-name:var(--font-heading)] text-2xl font-bold tracking-[0.18em] text-white">PORTFOLIO PLATFORM</h3>
+            <p className="mt-5 text-sm leading-7 text-slate-300">System-focused fullstack portfolio with production workflow architecture.</p>
+            <div className="mt-8 flex flex-col gap-3 text-base text-slate-300">
+              <Link href="/about" className="transition-colors hover:text-white">About</Link>
+              <Link href="/projects" className="transition-colors hover:text-white">Projects</Link>
+              <Link href="/blog" className="transition-colors hover:text-white">Blog</Link>
+            </div>
+          </div>
 
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-300">Navigation</p>
-          <div className="mt-3 flex flex-col gap-2 text-sm text-slate-300">
-            <Link href="/about" className="hover:text-white">About</Link>
-            <Link href="/projects" className="hover:text-white">Projects</Link>
-            <Link href="/blog" className="hover:text-white">Blog</Link>
-            <Link href="/contact" className="hover:text-white">Contact</Link>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-300">Contact</p>
+            <div className="mt-4 space-y-3 text-base text-slate-300">
+              <p>Email: contact@portfolio.local</p>
+              {profile.location ? <p>{profile.location}</p> : null}
+              <Link href="/contact" className="inline-block transition-colors hover:text-white">Send a message</Link>
+            </div>
           </div>
         </div>
 
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-300">Reach Out</p>
-          <div className="mt-3 space-y-2 text-sm text-slate-300">
-            <p>Email: contact@portfolio.local</p>
-            {profile.socialLinks.length > 0 ? (
-              profile.socialLinks.map((item) => (
-                <a
-                  key={`${item.platform}-${item.url}`}
-                  href={item.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-slate-300 transition-colors hover:text-blue-200"
-                >
-                  <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-blue-300/30 bg-blue-500/10 text-blue-300">
-                    <SocialIcon platform={detectPlatform(item.platform, item.url)} />
-                  </span>
-                  <span>{platformLabel(detectPlatform(item.platform, item.url), item.platform)}</span>
-                </a>
-              ))
-            ) : (
-              <p>No social links added yet.</p>
-            )}
-          </div>
+          <p className="text-3xl font-semibold uppercase tracking-wide text-white">Subscribe</p>
+          <p className="mt-4 text-base leading-7 text-slate-300">Get occasional updates about new projects, blog posts, and backend architecture experiments.</p>
+
+          <form className="mt-6 space-y-4" onSubmit={(event) => event.preventDefault()}>
+            <div>
+              <label htmlFor="footer-email" className="mb-2 block text-sm font-medium text-slate-200">
+                Email
+              </label>
+              <input
+                id="footer-email"
+                type="email"
+                placeholder="name@example.com"
+                className="w-full rounded-xl border border-blue-200/30 bg-[#0b1730]/80 px-4 py-3 text-sm text-white outline-none transition focus:border-blue-200/70"
+              />
+            </div>
+
+            <label className="flex items-start gap-2 text-sm text-slate-300">
+              <input type="checkbox" className="mt-1 h-4 w-4 rounded border border-blue-200/40 bg-transparent" />
+              <span>Yes, send me portfolio and blog updates.</span>
+            </label>
+
+            <button
+              type="submit"
+              className="rounded-xl border border-blue-200/30 bg-blue-600/80 px-8 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500"
+            >
+              Subscribe
+            </button>
+          </form>
         </div>
       </div>
 
-      <p className="mt-8 border-t border-white/10 pt-4 text-xs text-slate-400">© {new Date().getFullYear()} Portfolio Platform. All rights reserved.</p>
+      <div className="mt-6 flex flex-col gap-5 text-xs text-slate-400 sm:flex-row sm:items-end sm:justify-between">
+        <div className="space-y-3">
+          <div className="flex flex-wrap gap-6 text-sm text-slate-300">
+            <Link href="/contact" className="transition-colors hover:text-white">Privacy Policy</Link>
+            <Link href="/about" className="transition-colors hover:text-white">Accessibility Statement</Link>
+          </div>
+          <p>© {new Date().getFullYear()} Portfolio Platform. Powered by modern web stack.</p>
+        </div>
+
+        {socialItems.length > 0 ? (
+          <div className="flex flex-wrap items-center gap-3">
+            {socialItems.map((item) => (
+              <a
+                key={`${item.platform}-${item.url}`}
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-blue-300/40 bg-blue-500/10 text-blue-200 transition-colors hover:border-blue-200 hover:text-white"
+                aria-label={item.label}
+                title={item.label}
+              >
+                <SocialIcon platform={item.platform} />
+              </a>
+            ))}
+          </div>
+        ) : null}
+      </div>
     </footer>
   );
 }
