@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Space_Grotesk, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import ScrollToTopButton from "@/components/ScrollToTopButton";
 
 const headingFont = Space_Grotesk({
   variable: "--font-heading",
@@ -41,6 +42,7 @@ export default function RootLayout({
         <main className="w-full flex-1 px-0 pb-0 pt-16">
           {children}
         </main>
+        <ScrollToTopButton />
       </body>
     </html>
   );
