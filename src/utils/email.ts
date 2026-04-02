@@ -15,6 +15,15 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 // ✅ Send notification to YOU (admin)
 export const sendAdminNotification = async (
   name: string,
@@ -51,4 +60,43 @@ export const sendAutoReply = async (email: string, name: string) => {
       <p>Best regards,<br/>Samuel</p>
     `,
   });
+};
+
+export const sendNewsletterBroadcast = async ({
+  recipients,
+  subject,
+  title,
+  message,
+  linkLabel,
+  linkUrl,
+}: {
+  recipients: string[];
+  subject: string;
+  title: string;
+  message: string;
+  linkLabel?: string;
+  linkUrl?: string;
+}) => {
+  if (!emailUser || !emailPass || recipients.length === 0) return;
+
+  const safeTitle = escapeHtml(title);
+  const safeMessage = escapeHtml(message);
+  const safeLinkLabel = linkLabel ? escapeHtml(linkLabel) : "";
+  const safeLinkUrl = linkUrl ? escapeHtml(linkUrl) : "";
+
+  await Promise.all(
+    recipients.map((recipient) =>
+      transporter.sendMail({
+        from: emailUser,
+        to: recipient,
+        subject,
+        html: `
+          <h2>${safeTitle}</h2>
+          <p>${safeMessage}</p>
+          ${safeLinkUrl ? `<p><a href="${safeLinkUrl}">${safeLinkLabel || safeLinkUrl}</a></p>` : ""}
+          <p>Best regards,<br/>Samuel</p>
+        `,
+      })
+    )
+  );
 };
