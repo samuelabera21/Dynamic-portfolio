@@ -3,6 +3,7 @@ import { Router } from "express";
 import prisma from "../lib/prisma";
 import { authMiddleware } from "../middleware/auth.middleware";
 import { adminMiddleware } from "../middleware/admin.middleware";
+import { notifyNewsletterSubscribers } from "../utils/newsletter";
 
 const router = Router();
 console.log("🔥 PROJECT ROUTES ACTIVE");
@@ -42,6 +43,17 @@ router.post("/", authMiddleware, adminMiddleware, async (req, res) => {
         published,
       },
     });
+
+    if (project.published) {
+      const projectUrl = `${process.env.FRONTEND_URL ?? "http://localhost:3001"}/projects/${project.id}`;
+      notifyNewsletterSubscribers({
+        subject: `New project added: ${project.title}`,
+        title: project.title,
+        message: "A new project has been added to the portfolio.",
+        linkLabel: "View the project",
+        linkUrl: projectUrl,
+      }).catch((error) => console.error("Newsletter error:", error));
+    }
 
     res.json(project);
   } catch (error) {
@@ -155,6 +167,8 @@ router.put("/:id", authMiddleware, adminMiddleware, async (req, res) => {
       published,
     } = req.body;
 
+    const existingProject = await prisma.project.findUnique({ where: { id } });
+
     if (title !== undefined) data.title = title;
     if (description !== undefined) data.description = description;
     if (imageUrl !== undefined) data.imageUrl = imageUrl;
@@ -168,6 +182,17 @@ router.put("/:id", authMiddleware, adminMiddleware, async (req, res) => {
       where: { id },
       data,
     });
+
+    if (!existingProject?.published && updatedProject.published) {
+      const projectUrl = `${process.env.FRONTEND_URL ?? "http://localhost:3001"}/projects/${updatedProject.id}`;
+      notifyNewsletterSubscribers({
+        subject: `New project added: ${updatedProject.title}`,
+        title: updatedProject.title,
+        message: "A new project has been added to the portfolio.",
+        linkLabel: "View the project",
+        linkUrl: projectUrl,
+      }).catch((error) => console.error("Newsletter error:", error));
+    }
 
     res.json(updatedProject);
   } catch (error) {
