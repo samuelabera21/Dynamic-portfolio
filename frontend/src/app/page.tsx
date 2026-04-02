@@ -91,7 +91,7 @@ export default function Home() {
   ];
 
   return (
-    <section className="relative space-y-10 overflow-hidden bg-[#060c18] pb-14">
+    <section className="relative space-y-10 overflow-hidden bg-[#060c18] pb-0">
       <div className="pointer-events-none absolute -left-40 top-16 h-80 w-80 rounded-full bg-blue-600/20 blur-[120px]" />
       <div className="pointer-events-none absolute -right-40 top-80 h-80 w-80 rounded-full bg-violet-600/20 blur-[120px]" />
 
@@ -142,7 +142,7 @@ export default function Home() {
           <CtaSection />
         </div>
 
-        <div className="mx-6 pb-8 sm:mx-10 lg:mx-12">
+        <div className="pb-0">
           <EnterpriseFooter profile={profile} />
         </div>
       </div>

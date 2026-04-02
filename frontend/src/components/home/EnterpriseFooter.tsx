@@ -99,7 +99,7 @@ export default function EnterpriseFooter({ profile }: Props) {
   });
 
   return (
-    <footer className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl sm:p-8 lg:p-10">
+    <footer className="w-full border-y border-white/10 bg-white/5 px-6 py-8 backdrop-blur-xl sm:px-10 lg:px-12">
       <div className="grid gap-10 border-b border-white/10 pb-10 lg:grid-cols-[1fr_1fr_1.2fr]">
         <div className="grid gap-8 sm:grid-cols-2 lg:col-span-2">
           <div>
