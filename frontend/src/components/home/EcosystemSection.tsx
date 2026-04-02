@@ -47,12 +47,12 @@ export default function EcosystemSection() {
 
   return (
     <section>
-      <div className="mb-5 space-y-2">
+      <div className="mb-5 space-y-2 text-center">
         <h2 className="font-[family-name:var(--font-heading)] text-2xl font-bold text-white sm:text-3xl">Development Workflow</h2>
-        <p className="max-w-3xl text-sm text-slate-300 sm:text-base">How I build and ship full-stack applications.</p>
+        <p className="mx-auto max-w-3xl text-sm text-slate-300 sm:text-base">How I build and ship full-stack applications.</p>
       </div>
 
-      <div className="rounded-2xl border border-white/15 bg-white/5 p-5 backdrop-blur-xl">
+      <div className="rounded-2xl border border-white/15 bg-white/5 p-5 text-center backdrop-blur-xl">
         <p className="text-sm font-semibold text-slate-200 sm:text-base">{pipelineText}</p>
       </div>
 
@@ -90,7 +90,7 @@ export default function EcosystemSection() {
         })}
       </div>
 
-      <p className="mt-6 text-base text-slate-300">Principles I focus on while learning and building projects.</p>
+      <p className="mt-6 text-center text-base text-slate-300">Principles I focus on while learning and building projects.</p>
     </section>
   );
 }
