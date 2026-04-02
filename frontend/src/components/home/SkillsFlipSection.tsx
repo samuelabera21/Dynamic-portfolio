@@ -30,28 +30,33 @@ export default function SkillsFlipSection({ skills }: Props) {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
-            className="group"
+            className="group [perspective:1200px]"
           >
             <div
               tabIndex={0}
-              className="relative flex h-56 items-center justify-center rounded-2xl border border-blue-400/30 bg-gradient-to-br from-blue-500/20 to-violet-500/15 p-5 outline-none transition-all duration-300 hover:border-blue-300/70 hover:shadow-[0_14px_30px_rgba(37,99,235,0.28)] focus-visible:border-blue-300/70 focus-visible:shadow-[0_14px_30px_rgba(37,99,235,0.28)]"
+              className="relative h-56 rounded-2xl outline-none transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] group-focus-within:[transform:rotateY(180deg)]"
             >
-              <h3 className="text-center font-[family-name:var(--font-heading)] text-3xl font-bold text-white transition-all duration-300 group-hover:-translate-y-14 group-focus-within:-translate-y-14">
-                {labels[category]}
-              </h3>
-
-              <div className="pointer-events-none absolute inset-x-4 bottom-5 flex translate-y-4 flex-wrap justify-center gap-2 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100">
-                {(skills[category] ?? []).map((item) => (
-                  <span key={`${category}-${item}`} className="rounded-full border border-white/25 bg-white/10 px-2.5 py-1 text-xs text-slate-100">
-                    {item}
-                  </span>
-                ))}
-                {(skills[category] ?? []).length === 0 ? (
-                  <span className="rounded-full border border-white/25 bg-white/10 px-2.5 py-1 text-xs text-slate-100">No skills yet</span>
-                ) : null}
+              <div className="absolute inset-0 flex items-center justify-center rounded-2xl border border-blue-400/30 bg-gradient-to-br from-blue-500/20 to-violet-500/15 p-5 shadow-[0_14px_30px_rgba(37,99,235,0.16)] [backface-visibility:hidden]">
+                <h3 className="text-center font-[family-name:var(--font-heading)] text-3xl font-bold text-white">
+                  {labels[category]}
+                </h3>
               </div>
 
-              <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-t from-slate-900/45 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-within:opacity-100" />
+              <div className="absolute inset-0 rounded-2xl border border-violet-400/40 bg-slate-950/92 p-5 [backface-visibility:hidden] [transform:rotateY(180deg)]">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-violet-200">Development Workflow</p>
+                <h4 className="mt-2 font-[family-name:var(--font-heading)] text-lg font-bold text-white">{labels[category]} Skills</h4>
+
+                <div className="mt-4 flex max-h-32 flex-wrap gap-2 overflow-y-auto pr-1">
+                  {(skills[category] ?? []).map((item) => (
+                    <span key={`${category}-${item}`} className="rounded-full border border-white/25 bg-white/10 px-2.5 py-1 text-xs text-slate-100">
+                      {item}
+                    </span>
+                  ))}
+                  {(skills[category] ?? []).length === 0 ? (
+                    <span className="rounded-full border border-white/25 bg-white/10 px-2.5 py-1 text-xs text-slate-100">No skills yet</span>
+                  ) : null}
+                </div>
+              </div>
             </div>
           </motion.div>
         ))}
