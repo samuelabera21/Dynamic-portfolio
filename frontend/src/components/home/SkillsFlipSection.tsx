@@ -13,12 +13,6 @@ const labels: Record<SkillCategory, string> = {
   tools: "Tools",
 };
 
-const descriptions: Record<SkillCategory, string> = {
-  frontend: "Build responsive, accessible interfaces with scalable component architecture.",
-  backend: "Design robust APIs, authentication flows, and database-driven services.",
-  tools: "Use modern engineering tooling for CI, deployment, testing, and productivity.",
-};
-
 export default function SkillsFlipSection({ skills }: Props) {
   const categories: SkillCategory[] = ["frontend", "backend", "tools"];
 
@@ -36,24 +30,28 @@ export default function SkillsFlipSection({ skills }: Props) {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
-            className="group [perspective:1200px]"
+            className="group"
           >
-            <div className="relative h-56 rounded-2xl transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateX(180deg)]">
-              <div className="absolute inset-0 rounded-2xl border border-blue-400/30 bg-gradient-to-br from-blue-500/20 to-violet-500/15 p-5 [backface-visibility:hidden]">
-                <h3 className="font-[family-name:var(--font-heading)] text-xl font-bold text-white">{labels[category]}</h3>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {(skills[category] ?? []).slice(0, 6).map((item) => (
-                    <span key={`${category}-${item}`} className="rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-xs text-slate-100">
-                      {item}
-                    </span>
-                  ))}
-                </div>
+            <div
+              tabIndex={0}
+              className="relative flex h-56 items-center justify-center rounded-2xl border border-blue-400/30 bg-gradient-to-br from-blue-500/20 to-violet-500/15 p-5 outline-none transition-all duration-300 hover:border-blue-300/70 hover:shadow-[0_14px_30px_rgba(37,99,235,0.28)] focus-visible:border-blue-300/70 focus-visible:shadow-[0_14px_30px_rgba(37,99,235,0.28)]"
+            >
+              <h3 className="text-center font-[family-name:var(--font-heading)] text-3xl font-bold text-white transition-all duration-300 group-hover:-translate-y-14 group-focus-within:-translate-y-14">
+                {labels[category]}
+              </h3>
+
+              <div className="pointer-events-none absolute inset-x-4 bottom-5 flex translate-y-4 flex-wrap justify-center gap-2 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100">
+                {(skills[category] ?? []).map((item) => (
+                  <span key={`${category}-${item}`} className="rounded-full border border-white/25 bg-white/10 px-2.5 py-1 text-xs text-slate-100">
+                    {item}
+                  </span>
+                ))}
+                {(skills[category] ?? []).length === 0 ? (
+                  <span className="rounded-full border border-white/25 bg-white/10 px-2.5 py-1 text-xs text-slate-100">No skills yet</span>
+                ) : null}
               </div>
 
-              <div className="absolute inset-0 rounded-2xl border border-violet-400/40 bg-slate-950/90 p-5 [backface-visibility:hidden] [transform:rotateX(180deg)]">
-                <h4 className="font-[family-name:var(--font-heading)] text-lg font-bold text-violet-200">{labels[category]} Capability</h4>
-                <p className="mt-3 text-sm leading-7 text-slate-200">{descriptions[category]}</p>
-              </div>
+              <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-t from-slate-900/45 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-within:opacity-100" />
             </div>
           </motion.div>
         ))}
