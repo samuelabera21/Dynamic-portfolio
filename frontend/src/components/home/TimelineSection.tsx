@@ -25,7 +25,7 @@ const principles = [
 export default function TimelineSection() {
   return (
     <section>
-      <div className="mb-5">
+      <div className="mb-5 text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-300">My Approach</p>
         <h2 className="font-[family-name:var(--font-heading)] text-2xl font-bold text-white sm:text-3xl">How I Build</h2>
       </div>
