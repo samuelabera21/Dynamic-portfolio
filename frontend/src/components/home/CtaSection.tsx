@@ -9,31 +9,80 @@ export default function CtaSection() {
       initial={{ opacity: 0, y: 18 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.4 }}
-      className="relative overflow-hidden rounded-3xl border border-blue-400/30 bg-gradient-to-r from-blue-700/40 via-violet-700/45 to-blue-700/40 p-7 shadow-[0_0_36px_rgba(59,130,246,0.24)] sm:p-10"
+      transition={{ duration: 0.45 }}
+      className="relative overflow-hidden rounded-3xl border border-white/15 bg-[#02060f] p-7 shadow-[0_26px_80px_rgba(2,6,15,0.7)] sm:p-10"
     >
-      <div className="absolute -left-10 top-0 h-44 w-44 rounded-full bg-blue-400/30 blur-3xl" />
-      <div className="absolute -right-10 bottom-0 h-44 w-44 rounded-full bg-violet-400/30 blur-3xl" />
+      <div className="pointer-events-none absolute -left-24 bottom-8 h-60 w-60 rounded-full bg-blue-600/15 blur-[90px]" />
+      <div className="pointer-events-none absolute right-0 top-0 h-56 w-56 rounded-full bg-indigo-500/10 blur-[100px]" />
 
-      <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-200">Call To Action</p>
-          <h2 className="mt-2 font-[family-name:var(--font-heading)] text-3xl font-bold text-white sm:text-4xl">
-            Let&apos;s Build Something Powerful Together
-          </h2>
-          <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-200">
-            Ready to create a robust digital product with strong architecture, clean UI, and scalable backend systems.
+      <div className="relative grid gap-10 lg:grid-cols-[1.25fr_0.85fr] lg:items-stretch">
+        <div className="flex gap-6 sm:gap-8">
+          <div className="relative hidden w-4 shrink-0 sm:block">
+            <span className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-white/35" />
+            <motion.span
+              className="absolute left-1/2 top-8 h-24 w-[3px] -translate-x-1/2 rounded-full bg-gradient-to-b from-white/95 to-blue-300/60"
+              animate={{ y: [0, 14, 0] }}
+              transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
+            />
+          </div>
+
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-200">Career Path</p>
+            <h2 className="mt-4 max-w-2xl font-[family-name:var(--font-heading)] text-3xl font-semibold leading-tight text-white sm:text-4xl">
+              I build scalable products with clean architecture and business-first engineering.
+            </h2>
+            <p className="mt-5 max-w-2xl text-base leading-9 text-slate-300">
+              Open to deep-learning and fullstack opportunities where strong backend systems, modern interfaces, and long-term maintainability matter.
+            </p>
+
+            <motion.div whileHover={{ x: 6 }} transition={{ type: "spring", stiffness: 220, damping: 18 }} className="mt-8 inline-flex">
+              <Link
+                href="/contact"
+                className="group inline-flex items-center gap-3 rounded-xl border border-white/35 px-5 py-3 text-base font-semibold text-white transition hover:bg-white/10"
+              >
+                Work With Me
+                <span className="text-xl leading-none transition-transform group-hover:translate-x-1">→</span>
+              </Link>
+            </motion.div>
+          </div>
+        </div>
+
+        <motion.article
+          initial={{ opacity: 0, x: 20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.5, delay: 0.08 }}
+          whileHover={{ y: -4 }}
+          className="flex h-full flex-col rounded-3xl border border-white/35 bg-black/55 p-7 backdrop-blur-sm"
+        >
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-blue-200">Featured Role</p>
+          <h3 className="mt-4 font-[family-name:var(--font-heading)] text-3xl font-semibold text-white">Deep Learning Engineer</h3>
+          <p className="mt-8 text-lg text-slate-200">Remote / Addis Ababa</p>
+          <p className="mt-5 text-base leading-8 text-slate-300">
+            Looking for product teams solving real problems with AI, API-first systems, and thoughtful UX delivery.
           </p>
-        </div>
 
-        <div className="flex flex-wrap gap-3">
-          <Link href="/contact" className="rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-blue-700 hover:bg-blue-50">
-            Contact Me
-          </Link>
-          <Link href="/projects" className="rounded-xl border border-white/40 px-4 py-2.5 text-sm font-semibold text-white hover:bg-white/15">
-            Start Project
-          </Link>
-        </div>
+          <div className="mt-8">
+            <Link
+              href="/projects"
+              className="group inline-flex items-center gap-3 rounded-xl border border-white/35 px-5 py-3 text-base font-semibold text-white transition hover:bg-white/10"
+            >
+              View Projects
+              <span className="text-xl leading-none transition-transform group-hover:translate-x-1">→</span>
+            </Link>
+          </div>
+
+          <div className="mt-auto flex items-center justify-center gap-3 pt-8">
+            {[0, 1, 2].map((dot) => (
+              <motion.span
+                key={dot}
+                className={`h-2.5 w-2.5 rounded-full ${dot === 1 ? "bg-white" : "bg-white/35"}`}
+                animate={{ opacity: dot === 1 ? [0.5, 1, 0.5] : [0.3, 0.6, 0.3] }}
+                transition={{ duration: 2.3, repeat: Infinity, delay: dot * 0.2 }}
+              />
+            ))}
+          </div>
+        </motion.article>
       </div>
     </motion.section>
   );
