@@ -44,7 +44,7 @@ export default function HeroSection({ profile, showAvailableForHire }: Props) {
             Software Engineer (in progress)|AI Enthusiast
           </span>
 
-          <h1 className="font-[family-name:var(--font-heading)] text-5xl font-extrabold leading-tight text-white sm:text-6xl lg:text-7xl">
+          <h1 className="max-w-3xl font-[family-name:var(--font-heading)] text-4xl font-bold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl">
             Build Secure, Intelligent, and Scalable Digital Systems
           </h1>
 
