@@ -1,6 +1,7 @@
 import { Router } from "express";
 import prisma from "../lib/prisma";
 import { authMiddleware } from "../middleware/auth.middleware";
+import { notifyNewsletterSubscribers } from "../utils/newsletter";
 
 const router = Router();
 
@@ -19,6 +20,17 @@ router.post("/", authMiddleware, async (req, res) => {
         published,
       },
     });
+
+    if (post.published) {
+      const postUrl = `${process.env.FRONTEND_URL ?? "http://localhost:3001"}/blog/${post.id}`;
+      notifyNewsletterSubscribers({
+        subject: `New blog post: ${post.title}`,
+        title: post.title,
+        message: "A new blog post has been published on the portfolio.",
+        linkLabel: "Read the post",
+        linkUrl: postUrl,
+      }).catch((error) => console.error("Newsletter error:", error));
+    }
 
     res.json(post);
   } catch (error) {
@@ -89,6 +101,8 @@ router.put("/:id", authMiddleware, async (req, res) => {
     const id = req.params.id as string;
     const { title, content, published } = req.body;
 
+    const existingPost = await prisma.post.findUnique({ where: { id } });
+
     const updated = await prisma.post.update({
       where: { id },
       data: {
@@ -97,6 +111,17 @@ router.put("/:id", authMiddleware, async (req, res) => {
         published,
       },
     });
+
+    if (!existingPost?.published && updated.published) {
+      const postUrl = `${process.env.FRONTEND_URL ?? "http://localhost:3001"}/blog/${updated.id}`;
+      notifyNewsletterSubscribers({
+        subject: `New blog post: ${updated.title}`,
+        title: updated.title,
+        message: "A new blog post has been published on the portfolio.",
+        linkLabel: "Read the post",
+        linkUrl: postUrl,
+      }).catch((error) => console.error("Newsletter error:", error));
+    }
 
     res.json(updated);
   } catch (error) {
