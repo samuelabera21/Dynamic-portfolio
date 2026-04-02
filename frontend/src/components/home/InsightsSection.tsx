@@ -5,21 +5,6 @@ import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 
-const insights = [
-  {
-    title: "Backend Architecture",
-    description: "Patterns for reliable APIs, auth boundaries, and maintainable service structure.",
-  },
-  {
-    title: "Building APIs",
-    description: "How to design data contracts and endpoints that stay clean as products grow.",
-  },
-  {
-    title: "System Design",
-    description: "Connecting frontend, backend, and data flows into cohesive user experiences.",
-  },
-];
-
 export default function InsightsSection() {
   const sectionRef = useRef<HTMLElement | null>(null);
   const { scrollYProgress } = useScroll({
@@ -58,21 +43,17 @@ export default function InsightsSection() {
                 I share practical lessons from backend architecture, API strategy, and product system design. Each note focuses on implementation choices that keep projects stable as they scale.
               </p>
 
-              <div className="mt-7 grid gap-3">
-                {insights.map((item, index) => (
-                  <motion.div
-                    key={item.title}
-                    initial={{ opacity: 0, x: -16 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true, amount: 0.15 }}
-                    transition={{ duration: 0.35, delay: index * 0.06 }}
-                    className="rounded-xl border border-white/10 bg-white/5 px-4 py-3"
-                  >
-                    <p className="font-[family-name:var(--font-heading)] text-lg font-semibold text-white">{item.title}</p>
-                    <p className="mt-1 text-sm text-slate-300">{item.description}</p>
-                  </motion.div>
-                ))}
-              </div>
+              <motion.div
+                initial={{ opacity: 0, x: -16 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, amount: 0.15 }}
+                transition={{ duration: 0.4 }}
+                className="mt-7 rounded-xl border border-white/10 bg-white/5 px-5 py-4"
+              >
+                <p className="text-base leading-8 text-slate-200">
+                  I regularly publish professional reflections on real project experience, emerging technologies, and practical engineering insights that contribute to long-term product excellence.
+                </p>
+              </motion.div>
 
               <motion.div whileHover={{ x: 6 }} transition={{ type: "spring", stiffness: 260, damping: 20 }} className="mt-auto pt-7">
                 <Link href="/blog" className="group inline-flex items-center gap-3 rounded-xl border border-white/35 px-5 py-3 text-base font-semibold text-white transition hover:bg-white/10">
