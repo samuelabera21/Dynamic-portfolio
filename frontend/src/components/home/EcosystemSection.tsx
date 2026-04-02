@@ -43,21 +43,17 @@ const workflowSteps = [
 
 export default function EcosystemSection() {
   const pipelineText =
-    "Client (UI) \u2192 API Gateway \u2192 Backend Services \u2192 Database \u2192 External Services \u2192 Deployment & Monitoring";
+    "UI \u2192 API \u2192 Backend \u2192 Database \u2192 Integrations \u2192 DevOps";
 
   return (
     <section>
-      <div className="mb-5 space-y-3">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-300">My Development Workflow</p>
-        <h2 className="font-[family-name:var(--font-heading)] text-2xl font-bold text-white sm:text-3xl">My development Workflow</h2>
-        <p className="max-w-4xl text-base leading-8 text-slate-300 sm:text-lg">
-          How I design, build, and deliver full-stack applications in real-world environments.
-        </p>
+      <div className="mb-5 space-y-2">
+        <h2 className="font-[family-name:var(--font-heading)] text-2xl font-bold text-white sm:text-3xl">Development Workflow</h2>
+        <p className="max-w-3xl text-sm text-slate-300 sm:text-base">How I build and ship full-stack applications.</p>
       </div>
 
       <div className="rounded-2xl border border-white/15 bg-white/5 p-5 backdrop-blur-xl">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-300">Pipeline</p>
-        <p className="mt-2 text-sm font-medium leading-7 text-slate-200 sm:text-base">{pipelineText}</p>
+        <p className="text-sm font-semibold text-slate-200 sm:text-base">{pipelineText}</p>
       </div>
 
       <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
