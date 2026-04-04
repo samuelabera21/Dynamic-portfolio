@@ -77,7 +77,7 @@ export default function HeroSection({ profile, showAvailableForHire }: Props) {
     }));
 
   return (
-    <section className="relative overflow-hidden border-b border-white/10 bg-black px-8 pb-14 pt-16 sm:px-12 sm:pb-20 sm:pt-20">
+    <section className="relative overflow-hidden bg-black px-8 pb-14 pt-16 sm:px-12 sm:pb-20 sm:pt-20">
       <div className="absolute inset-y-0 right-0 hidden w-[42%] md:block">
         <Image
           src="/samuel.jpg"
