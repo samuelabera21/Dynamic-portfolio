@@ -130,9 +130,9 @@ export default function EnterpriseFooter({ profile }: Props) {
           <div>
             <h3 className="font-[family-name:var(--font-heading)] text-2xl font-bold tracking-[0.18em] text-white">Samuel Abera</h3>
             <div className="mt-8 flex flex-col gap-3 text-base text-slate-300">
-              <Link href="/about" className="transition-colors hover:text-white">About</Link>
-              <Link href="/projects" className="transition-colors hover:text-white">Projects</Link>
-              <Link href="/blog" className="transition-colors hover:text-white">Blog</Link>
+              <Link href="/about" className="site-link-hover hover:text-blue-400">About</Link>
+              <Link href="/projects" className="site-link-hover hover:text-blue-400">Projects</Link>
+              <Link href="/blog" className="site-link-hover hover:text-blue-400">Blog</Link>
             </div>
           </div>
 
@@ -142,7 +142,7 @@ export default function EnterpriseFooter({ profile }: Props) {
               <p>Tel: +251923010537</p>
               <p>Email: samuelabera.dev@gmail.com</p>
               {profile.location ? <p>{profile.location}</p> : null}
-              <Link href="/contact" className="inline-block transition-colors hover:text-white">Send a message</Link>
+              <Link href="/contact" className="site-link-hover inline-block hover:text-blue-400">Send a message</Link>
             </div>
           </div>
         </div>
@@ -209,8 +209,8 @@ export default function EnterpriseFooter({ profile }: Props) {
       <div className="mt-6 flex flex-col gap-5 text-xs text-slate-400">
         <div className="space-y-3">
           <div className="flex flex-wrap gap-6 text-sm text-slate-300">
-            <Link href="/contact" className="transition-colors hover:text-white">Privacy Policy</Link>
-            <Link href="/about" className="transition-colors hover:text-white">Accessibility Statement</Link>
+            <Link href="/contact" className="site-link-hover hover:text-blue-400">Privacy Policy</Link>
+            <Link href="/about" className="site-link-hover hover:text-blue-400">Accessibility Statement</Link>
           </div>
           <p>© {new Date().getFullYear()} Portfolio Platform. Powered by modern web stack.</p>
         </div>
