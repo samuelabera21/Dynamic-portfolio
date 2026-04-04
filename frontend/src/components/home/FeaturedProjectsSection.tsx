@@ -16,7 +16,7 @@ export default function FeaturedProjectsSection({ projects }: Props) {
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-300">Product Layer</p>
           <h2 className="font-[family-name:var(--font-heading)] text-2xl font-bold text-white sm:text-3xl">Featured Projects</h2>
         </div>
-        <Link href="/projects" className="text-sm font-semibold text-blue-300 hover:text-blue-200">
+        <Link href="/projects" className="site-link-hover text-sm font-semibold text-blue-300 hover:text-blue-400">
           View all projects
         </Link>
       </div>
