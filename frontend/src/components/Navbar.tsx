@@ -46,7 +46,7 @@ export default function Navbar() {
   if (hideOnAdmin) return null;
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#111827]/96 backdrop-blur">
+    <header className="fixed inset-x-0 top-0 z-50 bg-[#05070d]/95 backdrop-blur-md shadow-[0_1px_0_rgba(255,255,255,0.04)]">
       <nav className="mx-auto flex h-20 w-full max-w-[1400px] items-center justify-between px-4 sm:px-6 lg:px-10">
         <Link href="/" aria-label="Home" className="inline-flex items-center">
           <Image
