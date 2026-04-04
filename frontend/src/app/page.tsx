@@ -7,7 +7,6 @@ import SectionShell from "@/components/home/SectionShell";
 import HeroSection from "@/components/home/HeroSection";
 import FeatureGridSection from "@/components/home/FeatureGridSection";
 import EcosystemSection from "@/components/home/EcosystemSection";
-import DashboardPreviewSection from "@/components/home/DashboardPreviewSection";
 import FeaturedProjectsSection from "@/components/home/FeaturedProjectsSection";
 import SkillsFlipSection from "@/components/home/SkillsFlipSection";
 import TimelineSection from "@/components/home/TimelineSection";
@@ -75,7 +74,6 @@ export default function Home() {
     showSkills = true,
     availableForHire = true,
   } = homeData;
-  const messagesCount = 128;
 
   return (
     <section className="relative space-y-10 overflow-hidden bg-[#060c18] pb-0">
@@ -91,10 +89,6 @@ export default function Home() {
 
         <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
           <EcosystemSection />
-        </SectionShell>
-
-        <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
-          <DashboardPreviewSection messagesCount={messagesCount} />
         </SectionShell>
 
         <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
