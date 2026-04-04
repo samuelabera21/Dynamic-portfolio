@@ -5,7 +5,6 @@ import { getHome } from "@/lib/api";
 import { HomeData } from "@/types/home";
 import SectionShell from "@/components/home/SectionShell";
 import HeroSection from "@/components/home/HeroSection";
-import LiveStatsSection from "@/components/home/LiveStatsSection";
 import FeatureGridSection from "@/components/home/FeatureGridSection";
 import EcosystemSection from "@/components/home/EcosystemSection";
 import DashboardPreviewSection from "@/components/home/DashboardPreviewSection";
@@ -76,19 +75,7 @@ export default function Home() {
     showSkills = true,
     availableForHire = true,
   } = homeData;
-  const technologyCount = new Set([
-    ...featuredProjects.flatMap((item) => item.techStack),
-    ...(skills.frontend ?? []),
-    ...(skills.backend ?? []),
-    ...(skills.tools ?? []),
-  ]).size;
-
-  const stats = [
-    { label: "Total Messages", value: 128 },
-    { label: "Projects Completed", value: Math.max(featuredProjects.length, 1) },
-    { label: "Technologies Used", value: Math.max(technologyCount, 6) },
-    { label: "Experience Years", value: 4, suffix: "+" },
-  ];
+  const messagesCount = 128;
 
   return (
     <section className="relative space-y-10 overflow-hidden bg-[#060c18] pb-0">
@@ -99,10 +86,6 @@ export default function Home() {
         <HeroSection profile={profile} showAvailableForHire={availableForHire} />
 
         <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
-          <LiveStatsSection stats={stats} />
-        </SectionShell>
-
-        <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
           <FeatureGridSection />
         </SectionShell>
 
@@ -111,7 +94,7 @@ export default function Home() {
         </SectionShell>
 
         <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
-          <DashboardPreviewSection messagesCount={stats[0].value} />
+          <DashboardPreviewSection messagesCount={messagesCount} />
         </SectionShell>
 
         <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
