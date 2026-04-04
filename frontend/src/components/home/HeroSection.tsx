@@ -158,7 +158,7 @@ export default function HeroSection({ profile, showAvailableForHire }: Props) {
                   href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-black/35 text-slate-100 transition hover:bg-black/55"
+                  className="site-icon-hover inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-black/35 text-slate-100"
                   aria-label={item.platform}
                   title={item.platform}
                 >

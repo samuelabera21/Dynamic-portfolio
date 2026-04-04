@@ -223,7 +223,7 @@ export default function EnterpriseFooter({ profile }: Props) {
                 href={item.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-blue-300/40 bg-blue-500/10 text-blue-200 transition-colors hover:border-blue-200 hover:text-white"
+                className="site-icon-hover inline-flex h-9 w-9 items-center justify-center rounded-full border border-blue-300/40 bg-blue-500/10 text-blue-200"
                 aria-label={item.label}
                 title={item.label}
               >
