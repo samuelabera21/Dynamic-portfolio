@@ -43,7 +43,7 @@ export default function RootLayout({
       lang="en"
       className={`${headingFont.variable} ${bodyFont.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-slate-50 text-slate-900">
+      <body className="min-h-full flex flex-col bg-[#05070d] text-slate-900">
         <Navbar />
         <main className="w-full flex-1 px-0 pb-0 pt-16">
           {children}
