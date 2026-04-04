@@ -15,7 +15,7 @@ function formatPlatform(value: string) {
   return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
 }
 
-type PlatformKey = "github" | "facebook" | "youtube" | "linkedin" | "x" | "website";
+type PlatformKey = "github" | "facebook" | "youtube" | "linkedin" | "x" | "telegram" | "whatsapp" | "website";
 
 function detectPlatform(platform: string, url: string): PlatformKey {
   const source = `${platform} ${url}`.toLowerCase();
@@ -25,6 +25,8 @@ function detectPlatform(platform: string, url: string): PlatformKey {
   if (source.includes("youtube") || source.includes("youtu.be")) return "youtube";
   if (source.includes("linkedin") || source.includes("linkedin")) return "linkedin";
   if (source.includes("twitter") || source.includes("x.com")) return "x";
+  if (source.includes("telegram") || source.includes("t.me")) return "telegram";
+  if (source.includes("whatsapp") || source.includes("wa.me")) return "whatsapp";
 
   return "website";
 }
@@ -82,12 +84,27 @@ function SocialIcon({ platform }: { platform: PlatformKey }) {
     );
   }
 
+  if (platform === "telegram") {
+    return (
+      <svg viewBox="0 0 24 24" fill="currentColor" className={common} aria-hidden="true">
+        <path d="M9.9 15.2 9.7 19c.5 0 .7-.2 1-.4l2.3-2.2 4.8 3.5c.9.5 1.5.3 1.7-.8L23 3.9c.3-1.2-.4-1.7-1.3-1.4L1.8 10.2c-1.1.4-1.1 1 .2 1.4l5.3 1.7L19.5 6.6c.6-.4 1.2-.2.8.1" />
+      </svg>
+    );
+  }
+
+  if (platform === "whatsapp") {
+    return (
+      <svg viewBox="0 0 24 24" fill="currentColor" className={common} aria-hidden="true">
+        <path d="M12 .5A11.5 11.5 0 0 0 2.2 17.9L1 23.5l5.8-1.1A11.5 11.5 0 1 0 12 .5Zm0 20.8a9.2 9.2 0 0 1-4.7-1.3l-.3-.2-3.4.6.7-3.2-.2-.3A9.3 9.3 0 1 1 12 21.3Zm5-6.7c-.3-.2-1.8-.9-2.1-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7.1a7.6 7.6 0 0 1-2.2-1.3 8.4 8.4 0 0 1-1.6-2c-.2-.4 0-.6.1-.8l.5-.6c.2-.2.2-.4.4-.7s0-.5 0-.7-.7-1.8-1-2.5c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4s-1.1 1.1-1.1 2.7 1.2 3.1 1.4 3.4c.2.3 2.4 3.7 5.8 5.2.8.3 1.4.6 1.9.7.8.2 1.5.1 2-.1.6-.1 1.8-.8 2-1.6.2-.8.2-1.5.2-1.6 0-.1-.2-.2-.5-.4Z" />
+      </svg>
+    );
+  }
+
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={common} aria-hidden="true">
-      <path d="M3 12h18" />
-      <path d="M12 3a15 15 0 0 1 0 18" />
-      <path d="M12 3a15 15 0 0 0 0 18" />
-      <circle cx="12" cy="12" r="9" />
+      <path d="M9.5 14.5l5-5" />
+      <path d="M10.5 6.5h-3a4 4 0 0 0-4 4v0a4 4 0 0 0 4 4h3" />
+      <path d="M13.5 17.5h3a4 4 0 0 0 4-4v0a4 4 0 0 0-4-4h-3" />
     </svg>
   );
 }
