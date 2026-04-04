@@ -47,7 +47,7 @@ export default function AboutContactSection({ profile }: Props) {
               <h2 className="mt-2 font-[family-name:var(--font-heading)] text-2xl font-bold text-white sm:text-3xl">Who I Am</h2>
             </div>
             <motion.div whileHover={{ x: 6 }} transition={{ type: "spring", stiffness: 240, damping: 18 }}>
-              <Link href="/about" className="text-sm font-semibold text-blue-200 transition-colors hover:text-white">
+              <Link href="/about" className="site-link-hover text-sm font-semibold text-blue-200 hover:text-blue-400">
                 Full story
               </Link>
             </motion.div>
@@ -106,12 +106,12 @@ export default function AboutContactSection({ profile }: Props) {
 
           <div className="mt-7 grid gap-3 sm:grid-cols-2">
             <motion.div whileHover={{ y: -4 }} transition={{ type: "spring", stiffness: 220, damping: 18 }}>
-              <Link href="/contact" className="flex items-center justify-center rounded-xl bg-white px-4 py-3 text-sm font-semibold text-blue-700 shadow-[0_10px_24px_rgba(255,255,255,0.12)] transition hover:bg-blue-50">
+              <Link href="/contact" className="site-link-hover flex items-center justify-center rounded-xl bg-white px-4 py-3 text-sm font-semibold text-blue-700 shadow-[0_10px_24px_rgba(255,255,255,0.12)] hover:text-blue-800 hover:bg-blue-50">
                 Contact Me
               </Link>
             </motion.div>
             <motion.div whileHover={{ y: -4 }} transition={{ type: "spring", stiffness: 220, damping: 18 }}>
-              <Link href="/projects" className="flex items-center justify-center rounded-xl border border-white/35 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
+              <Link href="/projects" className="site-link-hover flex items-center justify-center rounded-xl border border-white/35 px-4 py-3 text-sm font-semibold text-white hover:text-blue-400 hover:bg-white/10">
                 Start Project
               </Link>
             </motion.div>
