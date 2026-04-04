@@ -13,7 +13,6 @@ import TimelineSection from "@/components/home/TimelineSection";
 import InsightsSection from "@/components/home/InsightsSection";
 import AboutContactSection from "@/components/home/AboutContactSection";
 import CtaSection from "@/components/home/CtaSection";
-import EnterpriseFooter from "@/components/home/EnterpriseFooter";
 
 export default function Home() {
   const [homeData, setHomeData] = useState<HomeData | null>(null);
@@ -117,10 +116,6 @@ export default function Home() {
 
         <div className="mx-6 sm:mx-10 lg:mx-12">
           <CtaSection />
-        </div>
-
-        <div className="pb-0">
-          <EnterpriseFooter profile={profile} />
         </div>
       </div>
     </section>
