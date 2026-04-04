@@ -68,8 +68,8 @@ export default function Navbar() {
                 href={link.href}
                 className={
                   isActive
-                    ? "rounded-md bg-blue-500/10 px-2 py-1 text-blue-300"
-                    : "transition-colors hover:text-white"
+                    ? "site-link-hover rounded-md bg-blue-500/10 px-2 py-1 text-blue-300"
+                    : "site-link-hover text-slate-300 hover:text-blue-400"
                 }
               >
                 {link.label}
@@ -104,8 +104,8 @@ export default function Navbar() {
                 onClick={() => setMobileOpen(false)}
                 className={`block rounded-lg px-3 py-3 text-base font-semibold transition ${
                   isActive
-                    ? "bg-blue-500/10 text-blue-300"
-                    : "text-slate-200 hover:bg-white/10 hover:text-white"
+                    ? "site-link-hover bg-blue-500/10 text-blue-300"
+                    : "site-link-hover text-slate-200 hover:bg-white/10 hover:text-blue-400"
                 }`}
               >
                 {link.label}
