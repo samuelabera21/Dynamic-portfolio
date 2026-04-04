@@ -94,17 +94,6 @@ export default function ResumePage() {
         </article>
       </div>
 
-      <footer className="border-t border-white/10 bg-white/[0.03]">
-        <div className="mx-auto w-full max-w-6xl px-6 py-10 text-center lg:px-10">
-          <h3 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-white">Personal</h3>
-          <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-300">
-            Et aut eum quis fuga eos sunt ipsa nihil. Labore corporis magni eligendi fuga maxime saepe commodi placeat.
-          </p>
-          <p className="mt-8 text-xs font-medium uppercase tracking-[0.14em] text-slate-400">
-            Copyright Personal All Rights Reserved
-          </p>
-        </div>
-      </footer>
     </section>
   );
 }
