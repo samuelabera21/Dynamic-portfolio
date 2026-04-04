@@ -177,7 +177,7 @@ export default function HeroSection({ profile, showAvailableForHire }: Props) {
             </Link>
             <Link
               href="#featured-projects"
-              className="rounded-xl border border-white/25 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/20"
+              className="site-link-hover rounded-xl border border-white/25 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white hover:text-blue-400 hover:bg-white/20"
             >
               explore more
             </Link>
