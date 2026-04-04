@@ -56,7 +56,7 @@ export default function InsightsSection() {
               </motion.div>
 
               <motion.div whileHover={{ x: 6 }} transition={{ type: "spring", stiffness: 260, damping: 20 }} className="mt-auto pt-7">
-                <Link href="/blog" className="group inline-flex items-center gap-3 rounded-xl border border-white/35 px-5 py-3 text-base font-semibold text-white transition hover:bg-white/10">
+                <Link href="/blog" className="site-link-hover group inline-flex items-center gap-3 rounded-xl border border-white/35 px-5 py-3 text-base font-semibold text-white hover:text-blue-400 hover:bg-white/10">
                   View blog
                   <span className="text-xl leading-none transition-transform group-hover:translate-x-1">→</span>
                 </Link>

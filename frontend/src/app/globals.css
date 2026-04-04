@@ -30,3 +30,13 @@ h6 {
   font-family: var(--font-heading), sans-serif;
 }
 
+.site-link-hover {
+  transition: transform 180ms ease, color 180ms ease, opacity 180ms ease;
+  transform-origin: left center;
+}
+
+.site-link-hover:hover {
+  color: #60a5fa;
+  transform: scale(1.05);
+}
+
