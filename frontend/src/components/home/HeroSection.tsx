@@ -77,24 +77,24 @@ export default function HeroSection({ profile, showAvailableForHire }: Props) {
     }));
 
   return (
-    <section className="relative overflow-hidden rounded-b-3xl border-b border-blue-400/30 bg-[#060c18] px-8 pb-14 pt-16 shadow-[0_0_60px_rgba(59,130,246,0.22)] sm:px-12 sm:pb-20 sm:pt-20">
-      <Image
-        src="/back.jpg"
-        alt="Futuristic background"
-        fill
-        className="object-cover opacity-35"
-      />
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,8,20,0.88),rgba(7,18,41,0.72),rgba(14,44,112,0.6))]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_right,rgba(59,130,246,0.28),transparent_42%)]" />
-      <div className="absolute -left-20 bottom-0 h-60 w-60 rounded-full bg-blue-500/20 blur-3xl" />
-      <div className="absolute -right-12 top-0 h-52 w-52 rounded-full bg-violet-500/30 blur-3xl" />
+    <section className="relative overflow-hidden border-b border-white/10 bg-black px-8 pb-14 pt-16 sm:px-12 sm:pb-20 sm:pt-20">
+      <div className="absolute inset-y-0 right-0 hidden w-[42%] md:block">
+        <Image
+          src="/samuel.jpg"
+          alt={profile.name || "Samuel Abera"}
+          fill
+          priority
+          className="object-cover object-center opacity-85"
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.85),rgba(0,0,0,0.15)_45%,rgba(0,0,0,0.35))]" />
+      </div>
 
-      <div className="relative grid min-h-[68vh] gap-10 md:grid-cols-[1.25fr_0.75fr] md:items-center">
+      <div className="relative grid min-h-[68vh] gap-10 md:grid-cols-[1.15fr_0.85fr] md:items-center">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="space-y-5"
+          className="space-y-5 md:pr-10"
         >
           <h1 className="max-w-3xl font-[family-name:var(--font-heading)] text-4xl font-bold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl">
             {profile.name || "Samuel Abera"}
@@ -153,13 +153,23 @@ export default function HeroSection({ profile, showAvailableForHire }: Props) {
           initial={{ opacity: 0, scale: 0.92 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="hidden justify-center md:flex md:justify-end"
+          className="hidden md:block"
         >
-          <div className="relative h-48 w-48 rounded-full border-4 border-blue-300/60 bg-white/10 p-2 shadow-[0_0_40px_rgba(59,130,246,0.4)] sm:h-56 sm:w-56">
-            <img
+          <div className="h-[68vh]" />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.15 }}
+          className="relative md:hidden"
+        >
+          <div className="relative h-72 w-full overflow-hidden rounded-2xl border border-white/15">
+            <Image
               src="/samuel.jpg"
               alt={profile.name || "Samuel Abera"}
-              className="h-full w-full rounded-full object-cover"
+              fill
+              className="object-cover"
             />
           </div>
         </motion.div>
