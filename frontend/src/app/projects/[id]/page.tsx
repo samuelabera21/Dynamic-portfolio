@@ -81,7 +81,7 @@ export default function ProjectDetailsPage() {
               </h1>
             </header>
 
-            <section className="mt-5 flex-1 overflow-y-auto pr-2">
+            <section className="mt-5 min-h-[150px] overflow-y-auto pr-2 lg:h-[240px] xl:h-[280px]">
               <h2 className="text-lg font-semibold text-cyan-200">Overview</h2>
               <p className="mt-3 whitespace-pre-wrap text-sm leading-8 text-slate-200">{project.description}</p>
             </section>
