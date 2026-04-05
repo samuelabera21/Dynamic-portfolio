@@ -81,10 +81,10 @@ export default function ProjectDetailsPage() {
               </h1>
             </header>
 
-            <section className="min-h-0 overflow-hidden rounded-xl border border-white/10 bg-[#09111f]/50 p-4">
+            <section className="min-h-0 rounded-xl border border-white/10 bg-[#09111f]/50 p-4">
               <h2 className="text-lg font-semibold text-cyan-200">Overview</h2>
-              <div className="mt-3 h-[180px] overflow-y-auto pr-2 lg:h-full">
-                <p className="whitespace-pre-wrap text-sm leading-8 text-slate-200">{project.description}</p>
+              <div className="mt-3 max-h-[220px] overflow-y-auto pr-2 lg:max-h-[280px]">
+                <p className="whitespace-pre-wrap break-words text-sm leading-8 text-slate-200">{project.description}</p>
               </div>
             </section>
 
