@@ -146,25 +146,7 @@ export default function AboutPage() {
     };
   }, [loading]);
 
-  if (loading) return <p className="text-sm text-slate-500">Loading profile...</p>;
-  if (error || !profile) return <p className="text-sm font-medium text-red-600">{error ?? "Profile unavailable"}</p>;
-
-  const hasResume = Boolean(profile.resumeUrl);
-  const resumeIsHealthy =
-    hasResume &&
-    (isPdfDataUrl(profile.resumeUrl) || isHttpUrl(profile.resumeUrl));
   const orderedCategories: SkillCategory[] = ["frontend", "backend", "tools"];
-  const hasSkills = showSkills && orderedCategories.some((category) => (groupedSkills[category] ?? []).length > 0);
-  const templateFacts = [
-    { label: "Birthday", value: "1 May 1995" },
-    { label: "Website", value: "www.example.com" },
-    { label: "Phone", value: "+123 456 7890" },
-    { label: "City", value: profile.location ?? "Ethiopia" },
-    { label: "Age", value: "30" },
-    { label: "Degree", value: "Master" },
-    { label: "Email", value: "email@example.com" },
-    { label: "Freelance", value: profile.available ? "Available" : "Not available" },
-  ];
 
   const flatSkills = useMemo(() => {
     return orderedCategories.flatMap((category) => {
@@ -182,6 +164,25 @@ export default function AboutPage() {
   }, [flatSkills]);
 
   const interests = interestList();
+
+  if (loading) return <p className="text-sm text-slate-500">Loading profile...</p>;
+  if (error || !profile) return <p className="text-sm font-medium text-red-600">{error ?? "Profile unavailable"}</p>;
+
+  const hasResume = Boolean(profile.resumeUrl);
+  const resumeIsHealthy =
+    hasResume &&
+    (isPdfDataUrl(profile.resumeUrl) || isHttpUrl(profile.resumeUrl));
+  const hasSkills = showSkills && orderedCategories.some((category) => (groupedSkills[category] ?? []).length > 0);
+  const templateFacts = [
+    { label: "Birthday", value: "1 May 1995" },
+    { label: "Website", value: "www.example.com" },
+    { label: "Phone", value: "+123 456 7890" },
+    { label: "City", value: profile.location ?? "Ethiopia" },
+    { label: "Age", value: "30" },
+    { label: "Degree", value: "Master" },
+    { label: "Email", value: "email@example.com" },
+    { label: "Freelance", value: profile.available ? "Available" : "Not available" },
+  ];
 
   const handleResumeDownload = () => {
     if (!profile.resumeUrl) return;
