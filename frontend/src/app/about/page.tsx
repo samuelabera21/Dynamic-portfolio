@@ -227,19 +227,14 @@ export default function AboutPage() {
 
         <article className="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-[0_18px_45px_rgba(6,12,24,0.45)] backdrop-blur-xl sm:p-8">
           <div className="grid gap-8 md:grid-cols-[260px_1fr] md:items-start">
-            <div className="flex justify-center md:justify-start">
-              {profile.avatarUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={profile.avatarUrl}
-                  alt={profile.name}
-                  className="h-56 w-56 rounded-2xl border border-white/15 object-cover shadow-[0_12px_26px_rgba(0,0,0,0.35)]"
-                />
-              ) : (
-                <div className="flex h-56 w-56 items-center justify-center rounded-2xl border border-white/15 bg-[#0b1730]/80 text-sm font-medium text-slate-300">
-                  No avatar
-                </div>
-              )}
+            <div className="relative mx-auto h-56 w-56 overflow-hidden rounded-2xl border border-white/15 bg-[#020409] shadow-[0_12px_26px_rgba(0,0,0,0.35)] md:mx-0">
+              <Image
+                src="/ab.png"
+                alt="Samuel Abera"
+                fill
+                className="object-cover object-center"
+                sizes="224px"
+              />
             </div>
 
             <div className="space-y-5">
@@ -250,102 +245,104 @@ export default function AboutPage() {
               </div>
 
               <p className="whitespace-pre-wrap text-sm leading-8 text-slate-200">{profile.bio}</p>
+            </div>
+          </div>
 
-              <div className="flex flex-wrap items-center gap-3">
-                <span className="rounded-full border border-white/20 bg-white/5 px-3 py-1 text-xs font-semibold text-slate-200">
-                  {profile.location ? `Location: ${profile.location}` : "Location not set"}
-                </span>
-
-                {profile.resumeUrl ? (
-                  <button
-                    type="button"
-                    onClick={handleResumeDownload}
-                    disabled={!resumeIsHealthy}
-                    className="rounded-xl border border-cyan-300/40 bg-cyan-500/20 px-4 py-2 text-xs font-semibold text-cyan-100 transition hover:bg-cyan-500/30 disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    Download Resume
-                  </button>
-                ) : (
-                  <span className="rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-xs font-semibold text-slate-300">
-                    Resume not available
-                  </span>
-                )}
+          <div className="mt-8 border-t border-white/10 pt-8">
+            <div className="grid gap-8 md:grid-cols-[330px_1fr] md:items-start">
+              <div className="relative h-80 overflow-hidden rounded-2xl border border-white/10 bg-[#020409] md:h-full md:min-h-[460px]">
+                <Image
+                  src="/ab.png"
+                  alt="About portrait"
+                  fill
+                  className="object-cover object-center"
+                  sizes="(max-width: 768px) 100vw, 330px"
+                />
               </div>
 
-              {resumeError ? (
-                <p className="text-xs font-medium text-red-300">{resumeError}</p>
-              ) : null}
+              <div className="space-y-6">
+                <div>
+                  <h2 className="font-[family-name:var(--font-heading)] text-4xl font-bold text-white">UI/UX Designer & Web Developer.</h2>
+                  <p className="mt-4 text-lg italic leading-8 text-slate-200">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                  </p>
+                </div>
 
-              {hasResume && !resumeIsHealthy ? (
-                <p className="text-xs font-medium text-amber-300">
-                  Resume link format looks invalid. Set a valid PDF URL or upload from admin profile.
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {templateFacts.map((fact) => (
+                    <div key={fact.label} className="flex items-center gap-2 text-sm text-slate-200">
+                      <span className="inline-flex h-5 w-5 items-center justify-center text-emerald-300">›</span>
+                      <span>
+                        <strong className="text-white">{fact.label}:</strong> {fact.value}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <p className="text-base leading-8 text-slate-300">
+                  Officiis eligendi itaque labore et dolorum mollitia officiis optio vero. Quisquam sunt adipisci omnis et ut. Nulla accusantium dolor incidunt officia tempore. Et eius omnis. Cupiditate ut dicta maxime officiis quidem quia. Sed et consectetur qui quia repellendus itaque neque.
                 </p>
-              ) : null}
-
-              <div>
-                <h3 className="text-sm font-semibold text-slate-100">Social Links</h3>
-                {profile.socialLinks.length === 0 ? (
-                  <p className="mt-2 text-sm text-slate-300">No social links configured.</p>
-                ) : (
-                  <div className="mt-3 flex flex-wrap gap-3">
-                    {profile.socialLinks.map((link, index) => {
-                      const label = platformLabel(link.platform);
-                      return (
-                        <a
-                          key={`${link.platform}-${index}`}
-                          href={normalizeSocialUrl(link.url)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-[#0b1730]/70 px-3 py-2 text-xs font-semibold text-slate-100 transition hover:border-cyan-300/50 hover:text-cyan-200"
-                        >
-                          <span className="flex h-5 w-5 items-center justify-center rounded-full border border-cyan-300/45 bg-cyan-500/15 text-[10px] font-bold uppercase text-cyan-100">
-                            {label[0] ?? "s"}
-                          </span>
-                          {label}
-                        </a>
-                      );
-                    })}
-                  </div>
-                )}
               </div>
             </div>
           </div>
-        </article>
 
-        <article className="rounded-3xl border border-white/10 bg-[#030711]/80 p-5 shadow-[0_20px_45px_rgba(3,7,17,0.45)] sm:p-8">
-          <div className="grid gap-8 md:grid-cols-[330px_1fr] md:items-start">
-            <div className="relative h-80 overflow-hidden rounded-2xl border border-white/10 bg-[#020409] md:h-full md:min-h-[460px]">
-              <Image
-                src="/ab.png"
-                alt="About portrait"
-                fill
-                className="object-cover object-center"
-                sizes="(max-width: 768px) 100vw, 330px"
-              />
+          <div className="mt-8 border-t border-white/10 pt-6">
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="rounded-full border border-white/20 bg-white/5 px-3 py-1 text-xs font-semibold text-slate-200">
+                {profile.location ? `Location: ${profile.location}` : "Location not set"}
+              </span>
+
+              {profile.resumeUrl ? (
+                <button
+                  type="button"
+                  onClick={handleResumeDownload}
+                  disabled={!resumeIsHealthy}
+                  className="rounded-xl border border-cyan-300/40 bg-cyan-500/20 px-4 py-2 text-xs font-semibold text-cyan-100 transition hover:bg-cyan-500/30 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  Download Resume
+                </button>
+              ) : (
+                <span className="rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-xs font-semibold text-slate-300">
+                  Resume not available
+                </span>
+              )}
             </div>
 
-            <div className="space-y-6">
-              <div>
-                <h2 className="font-[family-name:var(--font-heading)] text-4xl font-bold text-white">UI/UX Designer & Web Developer.</h2>
-                <p className="mt-4 text-lg italic leading-8 text-slate-200">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </p>
-              </div>
+            {resumeError ? (
+              <p className="mt-3 text-xs font-medium text-red-300">{resumeError}</p>
+            ) : null}
 
-              <div className="grid gap-4 sm:grid-cols-2">
-                {templateFacts.map((fact) => (
-                  <div key={fact.label} className="flex items-center gap-2 text-sm text-slate-200">
-                    <span className="inline-flex h-5 w-5 items-center justify-center text-emerald-300">›</span>
-                    <span>
-                      <strong className="text-white">{fact.label}:</strong> {fact.value}
-                    </span>
-                  </div>
-                ))}
-              </div>
-
-              <p className="text-base leading-8 text-slate-300">
-                Officiis eligendi itaque labore et dolorum mollitia officiis optio vero. Quisquam sunt adipisci omnis et ut. Nulla accusantium dolor incidunt officia tempore. Et eius omnis. Cupiditate ut dicta maxime officiis quidem quia. Sed et consectetur qui quia repellendus itaque neque.
+            {hasResume && !resumeIsHealthy ? (
+              <p className="mt-2 text-xs font-medium text-amber-300">
+                Resume link format looks invalid. Set a valid PDF URL or upload from admin profile.
               </p>
+            ) : null}
+
+            <div className="mt-4">
+              <h3 className="text-sm font-semibold text-slate-100">Social Links</h3>
+              {profile.socialLinks.length === 0 ? (
+                <p className="mt-2 text-sm text-slate-300">No social links configured.</p>
+              ) : (
+                <div className="mt-3 flex flex-wrap gap-3">
+                  {profile.socialLinks.map((link, index) => {
+                    const label = platformLabel(link.platform);
+                    return (
+                      <a
+                        key={`${link.platform}-${index}`}
+                        href={normalizeSocialUrl(link.url)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-[#0b1730]/70 px-3 py-2 text-xs font-semibold text-slate-100 transition hover:border-cyan-300/50 hover:text-cyan-200"
+                      >
+                        <span className="flex h-5 w-5 items-center justify-center rounded-full border border-cyan-300/45 bg-cyan-500/15 text-[10px] font-bold uppercase text-cyan-100">
+                          {label[0] ?? "s"}
+                        </span>
+                        {label}
+                      </a>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
         </article>
