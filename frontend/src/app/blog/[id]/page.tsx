@@ -25,6 +25,20 @@ function markdownUrlTransform(url: string): string {
   return "";
 }
 
+function extractPrimaryImageAndContent(content: string): { primaryImage: string | null; textContent: string } {
+  const match = content.match(/!\[[^\]]*\]\(([^)]+)\)/);
+  const src = match?.[1]?.trim();
+
+  if (!src || /^javascript:/i.test(src)) {
+    return { primaryImage: null, textContent: content };
+  }
+
+  return {
+    primaryImage: src,
+    textContent: content.replace(match?.[0] ?? "", "").trim(),
+  };
+}
+
 export default function BlogDetailsPage() {
   const params = useParams<{ id: string }>();
   const [post, setPost] = useState<Post | null>(null);
@@ -87,6 +101,8 @@ export default function BlogDetailsPage() {
     );
   }
 
+  const { primaryImage, textContent } = extractPrimaryImageAndContent(post.content);
+
   return (
     <section className="relative min-h-screen overflow-hidden bg-[#060c18] pb-12 pt-6 text-slate-100">
       <div className="pointer-events-none absolute -left-24 top-24 h-72 w-72 rounded-full bg-cyan-500/12 blur-[120px]" />
@@ -140,17 +156,22 @@ export default function BlogDetailsPage() {
                   code: ({ children }) => <code className="rounded bg-[#111c31] px-1.5 py-1 text-[14px] text-cyan-200">{children}</code>,
                   img: ({ alt, src }) => (
                     typeof src === "string" && src.trim() ? (
-                      <div className="my-6 overflow-hidden rounded-2xl border border-white/10 bg-[#09111f] p-2">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={src} alt={alt ?? "Post image"} className="max-h-[620px] w-full rounded-xl object-contain" />
-                      </div>
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={src} alt={alt ?? "Post image"} className="my-6 max-h-[620px] w-full rounded-2xl border border-white/10 bg-[#09111f] p-2 object-contain" />
                     ) : null
                   ),
                 }}
               >
-                {post.content}
+                {textContent}
               </ReactMarkdown>
             </div>
+
+            {primaryImage ? (
+              <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#09111f] p-2">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={primaryImage} alt={post.title} className="max-h-[640px] w-full rounded-xl object-contain" />
+              </div>
+            ) : null}
           </div>
         </article>
       </div>
