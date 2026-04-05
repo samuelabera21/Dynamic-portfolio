@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getPost, getSettings } from "@/lib/api";
 import { Post } from "@/types/post";
+import ReactMarkdown from "react-markdown";
 
 function formatDate(value: string): string {
   return new Date(value).toLocaleDateString(undefined, {
@@ -78,8 +79,17 @@ export default function BlogDetailsPage() {
       <article className="mx-auto w-full max-w-3xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
         <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">{formatDate(post.createdAt)}</p>
         <h1 className="mt-2 font-[family-name:var(--font-heading)] text-3xl font-bold text-slate-900">{post.title}</h1>
-        <div className="prose prose-slate mt-6 max-w-none whitespace-pre-wrap text-base leading-8 text-slate-700">
-          {post.content}
+        <div className="prose prose-slate mt-6 max-w-none text-base leading-8 text-slate-700">
+          <ReactMarkdown
+            components={{
+              img: ({ alt, src }) => (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={src ?? ""} alt={alt ?? "Post image"} className="my-6 w-full rounded-xl border border-slate-200 object-cover" />
+              ),
+            }}
+          >
+            {post.content}
+          </ReactMarkdown>
         </div>
       </article>
     </section>
