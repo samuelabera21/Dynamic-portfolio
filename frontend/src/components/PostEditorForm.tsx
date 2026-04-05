@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useRef, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 type PostEditorValue = {
   title: string;
@@ -16,11 +16,66 @@ type Props = {
   onSubmit: (value: PostEditorValue) => Promise<void>;
 };
 
+type EmbeddedImage = {
+  id: string;
+  alt: string;
+  dataUrl: string;
+};
+
 const defaultValue: PostEditorValue = {
   title: "",
   content: "",
   published: false,
 };
+
+function createImageId() {
+  return `img_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function toPlaceholder(id: string): string {
+  return `[[image:${id}]]`;
+}
+
+function normalizeInitialValue(value: PostEditorValue): {
+  form: PostEditorValue;
+  images: EmbeddedImage[];
+} {
+  const images: EmbeddedImage[] = [];
+
+  const normalizedContent = value.content.replace(
+    /!\[([^\]]*)\]\((data:image\/[a-zA-Z0-9.+-]+;base64,[^)]+)\)/g,
+    (_match, alt: string, dataUrl: string) => {
+      const id = createImageId();
+      images.push({
+        id,
+        alt: alt || "blog image",
+        dataUrl,
+      });
+      return `![${alt || "blog image"}](${toPlaceholder(id)})`;
+    }
+  );
+
+  return {
+    form: {
+      ...value,
+      content: normalizedContent,
+    },
+    images,
+  };
+}
+
+function expandContentWithImages(content: string, images: EmbeddedImage[]): string {
+  const lookup = new Map(images.map((item) => [item.id, item]));
+
+  return content.replace(
+    /!\[([^\]]*)\]\(\[\[image:([a-zA-Z0-9_-]+)\]\]\)/g,
+    (match, alt: string, id: string) => {
+      const image = lookup.get(id);
+      if (!image) return match;
+      return `![${alt || image.alt}](${image.dataUrl})`;
+    }
+  );
+}
 
 export default function PostEditorForm({
   initialValue,
@@ -29,10 +84,20 @@ export default function PostEditorForm({
   success = null,
   onSubmit,
 }: Props) {
-  const [form, setForm] = useState<PostEditorValue>(initialValue ?? defaultValue);
+  const preparedInitial = useMemo(
+    () => normalizeInitialValue(initialValue ?? defaultValue),
+    [initialValue]
+  );
+  const [form, setForm] = useState<PostEditorValue>(preparedInitial.form);
+  const [images, setImages] = useState<EmbeddedImage[]>(preparedInitial.images);
   const [mode, setMode] = useState<"draft" | "publish">("draft");
   const [uploadingImage, setUploadingImage] = useState(false);
   const contentRef = useRef<HTMLTextAreaElement | null>(null);
+
+  useEffect(() => {
+    setForm(preparedInitial.form);
+    setImages(preparedInitial.images);
+  }, [preparedInitial]);
 
   const insertAtCursor = (value: string) => {
     const textarea = contentRef.current;
@@ -96,16 +161,39 @@ export default function PostEditorForm({
       });
 
       const sanitizedName = file.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ").trim() || "blog image";
-      insertAtCursor(`\n![${sanitizedName}](${optimizedDataUrl})\n`);
+      const id = createImageId();
+
+      setImages((prev) => [
+        ...prev,
+        {
+          id,
+          alt: sanitizedName,
+          dataUrl: optimizedDataUrl,
+        },
+      ]);
+
+      insertAtCursor(`\n![${sanitizedName}](${toPlaceholder(id)})\n`);
     } finally {
       setUploadingImage(false);
     }
+  };
+
+  const removeImage = (id: string) => {
+    setImages((prev) => prev.filter((item) => item.id !== id));
+    setForm((prev) => ({
+      ...prev,
+      content: prev.content.replace(
+        new RegExp(`!?\\[[^\\]]*\\]\\(\\[\\[image:${id}\\]\\]\\)`, "g"),
+        ""
+      ),
+    }));
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     await onSubmit({
       ...form,
+      content: expandContentWithImages(form.content, images),
       published: mode === "publish",
     });
   };
@@ -144,8 +232,25 @@ export default function PostEditorForm({
               }}
             />
           </label>
-          <span>Images are optimized and embedded into content, then rendered in public blog posts.</span>
+          <span>Image URLs are hidden in editor. You will only see clean placeholders + previews.</span>
         </div>
+        {images.length > 0 ? (
+          <div className="mb-3 flex flex-wrap gap-2 rounded-lg border border-slate-200 bg-slate-50 p-2">
+            {images.map((image) => (
+              <div key={image.id} className="group relative overflow-hidden rounded-md border border-slate-200 bg-white">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={image.dataUrl} alt={image.alt} className="h-16 w-20 object-cover" />
+                <button
+                  type="button"
+                  onClick={() => removeImage(image.id)}
+                  className="absolute right-1 top-1 rounded bg-black/65 px-1.5 py-0.5 text-[10px] font-semibold text-white opacity-0 transition group-hover:opacity-100"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+        ) : null}
         <textarea
           ref={contentRef}
           id="content"
