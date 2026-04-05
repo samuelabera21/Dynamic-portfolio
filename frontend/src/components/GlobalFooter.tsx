@@ -14,6 +14,12 @@ export default function GlobalFooter() {
   useEffect(() => {
     let mounted = true;
 
+    if (hideOnAdmin) {
+      return () => {
+        mounted = false;
+      };
+    }
+
     const run = async () => {
       try {
         const home = await getHome();
@@ -32,7 +38,7 @@ export default function GlobalFooter() {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [hideOnAdmin, pathname]);
 
   if (hideOnAdmin || !profile) return null;
 
