@@ -49,12 +49,21 @@ export default function ProjectDetailsPage() {
             <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#09111f]">
               <div className="relative aspect-[16/10] w-full">
                 {project.imageUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={project.imageUrl}
-                    alt={project.title}
-                    className="h-full w-full object-cover"
-                  />
+                  <>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={project.imageUrl}
+                      alt=""
+                      aria-hidden="true"
+                      className="absolute inset-0 h-full w-full scale-110 object-cover opacity-30 blur-2xl"
+                    />
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={project.imageUrl}
+                      alt={project.title}
+                      className="relative h-full w-full object-contain"
+                    />
+                  </>
                 ) : (
                   <div className="flex h-full items-center justify-center text-sm font-medium text-slate-400">
                     No image available
@@ -65,19 +74,19 @@ export default function ProjectDetailsPage() {
             </div>
           </div>
 
-          <div className="space-y-8 p-6 sm:p-7">
-            <header>
-              <h1 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-white sm:text-4xl">
+          <div className="flex max-h-[74vh] flex-col p-6 sm:p-7">
+            <header className="shrink-0 border-b border-white/10 pb-4">
+              <h1 className="font-[family-name:var(--font-heading)] text-3xl font-bold leading-tight text-white sm:text-4xl">
                 {project.title}
               </h1>
             </header>
 
-            <section>
+            <section className="mt-5 flex-1 overflow-y-auto pr-2">
               <h2 className="text-lg font-semibold text-cyan-200">Overview</h2>
               <p className="mt-3 whitespace-pre-wrap text-sm leading-8 text-slate-200">{project.description}</p>
             </section>
 
-            <section>
+            <section className="mt-5 shrink-0 border-t border-white/10 pt-4">
               <h2 className="text-lg font-semibold text-cyan-200">Tech Stack</h2>
               <div className="mt-3 flex flex-wrap gap-2">
                 {project.techStack.map((tech) => (
@@ -89,10 +98,8 @@ export default function ProjectDetailsPage() {
                   </span>
                 ))}
               </div>
-            </section>
 
-            <section>
-              <h2 className="text-lg font-semibold text-cyan-200">Links</h2>
+              <h3 className="mt-4 text-sm font-semibold text-cyan-200">Links</h3>
               <div className="mt-3 flex flex-wrap gap-3">
                 {project.githubUrl ? (
                   <a
