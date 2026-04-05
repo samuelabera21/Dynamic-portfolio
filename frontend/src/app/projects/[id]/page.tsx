@@ -78,7 +78,7 @@ export default function ProjectDetailsPage() {
 
         <article className="overflow-hidden rounded-3xl border border-white/10 bg-[#0b1324]/90 shadow-[0_14px_38px_rgba(2,6,16,0.55)] backdrop-blur-xl">
           <div className="grid gap-0 lg:grid-cols-[1.25fr_1fr]">
-            <div className="relative min-h-[280px] border-b border-white/10 bg-[#09111f] lg:min-h-[360px] lg:border-b-0 lg:border-r">
+            <div className="group relative min-h-[280px] overflow-hidden border-b border-white/10 bg-[#09111f] lg:min-h-[360px] lg:border-b-0 lg:border-r">
               {project.imageUrl ? (
                 <>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -86,14 +86,16 @@ export default function ProjectDetailsPage() {
                     src={project.imageUrl}
                     alt=""
                     aria-hidden="true"
-                    className="absolute inset-0 h-full w-full scale-110 object-cover opacity-25 blur-2xl"
+                    className="absolute inset-0 h-full w-full scale-110 object-cover opacity-25 blur-2xl transition duration-500 group-hover:scale-[1.14] group-hover:opacity-35"
                   />
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={project.imageUrl}
                     alt={project.title}
-                    className="relative h-full w-full object-contain p-5 sm:p-7"
+                    className="relative h-full w-full object-contain p-5 transition duration-500 ease-out group-hover:scale-[1.03] group-hover:-translate-y-1 sm:p-7"
                   />
+                  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_22%_18%,rgba(34,211,238,0.18),transparent_50%)] opacity-60 transition duration-500 group-hover:opacity-90" />
+                  <div className="pointer-events-none absolute -inset-y-10 -left-1/3 w-1/3 -skew-x-12 bg-gradient-to-r from-transparent via-white/18 to-transparent opacity-0 transition-all duration-700 group-hover:left-[115%] group-hover:opacity-100" />
                 </>
               ) : (
                 <div className="flex h-full items-center justify-center text-sm font-medium text-slate-400">
