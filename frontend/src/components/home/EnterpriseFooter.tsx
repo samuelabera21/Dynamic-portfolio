@@ -15,7 +15,14 @@ function formatPlatform(value: string) {
   return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
 }
 
-type PlatformKey = "github" | "facebook" | "youtube" | "linkedin" | "x" | "telegram" | "whatsapp" | "website";
+type PlatformKey = "github" | "facebook" | "youtube" | "linkedin" | "x" | "telegram" | "whatsapp" | "tiktok" | "website";
+
+function normalizeSocialUrl(url: string): string {
+  const trimmed = url.trim();
+  if (!trimmed) return "#";
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+  return `https://${trimmed}`;
+}
 
 function detectPlatform(platform: string, url: string): PlatformKey {
   const source = `${platform} ${url}`.toLowerCase();
@@ -27,6 +34,7 @@ function detectPlatform(platform: string, url: string): PlatformKey {
   if (source.includes("twitter") || source.includes("x.com")) return "x";
   if (source.includes("telegram") || source.includes("t.me")) return "telegram";
   if (source.includes("whatsapp") || source.includes("wa.me")) return "whatsapp";
+  if (source.includes("tiktok") || source.includes("tik tok") || source.includes("tt")) return "tiktok";
 
   return "website";
 }
@@ -37,6 +45,7 @@ function platformLabel(key: PlatformKey, fallback: string) {
   if (key === "youtube") return "YouTube";
   if (key === "linkedin") return "LinkedIn";
   if (key === "x") return "X";
+  if (key === "tiktok") return "TikTok";
   if (fallback.trim()) return formatPlatform(fallback);
   return "Website";
 }
@@ -100,6 +109,14 @@ function SocialIcon({ platform }: { platform: PlatformKey }) {
     );
   }
 
+  if (platform === "tiktok") {
+    return (
+      <svg viewBox="0 0 24 24" fill="currentColor" className={common} aria-hidden="true">
+        <path d="M14 3h2.4c.3 1.7 1.5 3 3.1 3.3v2.6a8.1 8.1 0 0 1-3.1-1v6.6a5.4 5.4 0 1 1-5.5-5.4c.2 0 .4 0 .6.1V12a2.7 2.7 0 1 0 2.5 2.7V3Z" />
+      </svg>
+    );
+  }
+
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={common} aria-hidden="true">
       <path d="M9.5 14.5l5-5" />
@@ -118,6 +135,7 @@ export default function EnterpriseFooter({ profile }: Props) {
     const platform = detectPlatform(item.platform, item.url);
     return {
       ...item,
+      url: normalizeSocialUrl(item.url),
       platform,
       label: platformLabel(platform, item.platform),
     };
