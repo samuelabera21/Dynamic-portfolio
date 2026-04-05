@@ -74,14 +74,14 @@ export default function ProjectDetailsPage() {
             </div>
           </div>
 
-          <div className="flex max-h-[74vh] flex-col p-6 sm:p-7">
+          <div className="flex flex-col p-6 sm:p-7 lg:h-[74vh]">
             <header className="shrink-0 border-b border-white/10 pb-4">
               <h1 className="font-[family-name:var(--font-heading)] text-3xl font-bold leading-tight text-white sm:text-4xl">
                 {project.title}
               </h1>
             </header>
 
-            <section className="mt-5 min-h-[150px] overflow-y-auto pr-2 lg:h-[240px] xl:h-[280px]">
+            <section className="mt-5 min-h-0 flex-1 overflow-y-auto pr-2">
               <h2 className="text-lg font-semibold text-cyan-200">Overview</h2>
               <p className="mt-3 whitespace-pre-wrap text-sm leading-8 text-slate-200">{project.description}</p>
             </section>
