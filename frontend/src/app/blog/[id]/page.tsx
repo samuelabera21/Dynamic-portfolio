@@ -132,44 +132,48 @@ export default function BlogDetailsPage() {
             </div>
           </div>
 
-          <div className="space-y-6 p-5 sm:p-6">
-            <div className="max-w-none text-[16px] leading-8 text-slate-200">
-              <ReactMarkdown
-                urlTransform={markdownUrlTransform}
-                components={{
-                  p: ({ children }) => <p className="mb-5">{children}</p>,
-                  h2: ({ children }) => <h2 className="mb-3 mt-8 text-2xl font-bold text-white">{children}</h2>,
-                  h3: ({ children }) => <h3 className="mb-3 mt-7 text-xl font-semibold text-white">{children}</h3>,
-                  ul: ({ children }) => <ul className="mb-5 list-disc space-y-2 pl-6">{children}</ul>,
-                  ol: ({ children }) => <ol className="mb-5 list-decimal space-y-2 pl-6">{children}</ol>,
-                  li: ({ children }) => <li className="text-slate-200">{children}</li>,
-                  a: ({ href, children }) => (
-                    <a href={href} target="_blank" rel="noopener noreferrer" className="font-medium text-cyan-300 underline decoration-cyan-400/40 hover:text-cyan-200">
-                      {children}
-                    </a>
-                  ),
-                  blockquote: ({ children }) => (
-                    <blockquote className="my-6 border-l-2 border-cyan-300/60 bg-cyan-500/5 px-4 py-3 italic text-slate-200">
-                      {children}
-                    </blockquote>
-                  ),
-                  code: ({ children }) => <code className="rounded bg-[#111c31] px-1.5 py-1 text-[14px] text-cyan-200">{children}</code>,
-                  img: ({ alt, src }) => (
-                    typeof src === "string" && src.trim() ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={src} alt={alt ?? "Post image"} className="my-6 max-h-[620px] w-full rounded-2xl border border-white/10 bg-[#09111f] p-2 object-contain" />
-                    ) : null
-                  ),
-                }}
-              >
-                {textContent}
-              </ReactMarkdown>
+          <div className={`p-5 sm:p-6 ${primaryImage ? "lg:grid lg:grid-cols-[1.15fr_0.85fr] lg:gap-6" : ""}`}>
+            <div className="min-w-0 rounded-2xl border border-white/10 bg-[#09111f]/55 p-4 lg:max-h-[72vh] lg:overflow-y-auto lg:pr-5">
+              <div className="max-w-none text-[16px] leading-8 text-slate-200">
+                <ReactMarkdown
+                  urlTransform={markdownUrlTransform}
+                  components={{
+                    p: ({ children }) => <p className="mb-5">{children}</p>,
+                    h2: ({ children }) => <h2 className="mb-3 mt-8 text-2xl font-bold text-white">{children}</h2>,
+                    h3: ({ children }) => <h3 className="mb-3 mt-7 text-xl font-semibold text-white">{children}</h3>,
+                    ul: ({ children }) => <ul className="mb-5 list-disc space-y-2 pl-6">{children}</ul>,
+                    ol: ({ children }) => <ol className="mb-5 list-decimal space-y-2 pl-6">{children}</ol>,
+                    li: ({ children }) => <li className="text-slate-200">{children}</li>,
+                    a: ({ href, children }) => (
+                      <a href={href} target="_blank" rel="noopener noreferrer" className="font-medium text-cyan-300 underline decoration-cyan-400/40 hover:text-cyan-200">
+                        {children}
+                      </a>
+                    ),
+                    blockquote: ({ children }) => (
+                      <blockquote className="my-6 border-l-2 border-cyan-300/60 bg-cyan-500/5 px-4 py-3 italic text-slate-200">
+                        {children}
+                      </blockquote>
+                    ),
+                    code: ({ children }) => <code className="rounded bg-[#111c31] px-1.5 py-1 text-[14px] text-cyan-200">{children}</code>,
+                    img: ({ alt, src }) => (
+                      typeof src === "string" && src.trim() ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={src} alt={alt ?? "Post image"} className="my-6 max-h-[620px] w-full rounded-2xl border border-white/10 bg-[#09111f] p-2 object-contain" />
+                      ) : null
+                    ),
+                  }}
+                >
+                  {textContent}
+                </ReactMarkdown>
+              </div>
             </div>
 
             {primaryImage ? (
-              <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#09111f] p-2">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={primaryImage} alt={post.title} className="max-h-[640px] w-full rounded-xl object-contain" />
+              <div className="mt-5 lg:sticky lg:top-6 lg:mt-0 lg:self-start">
+                <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#09111f] p-2">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={primaryImage} alt={post.title} className="max-h-[72vh] w-full rounded-xl object-contain" />
+                </div>
               </div>
             ) : null}
           </div>
