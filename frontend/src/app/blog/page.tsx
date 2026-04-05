@@ -187,12 +187,21 @@ export default function BlogPage() {
 
                 {media ? (
                   <div className="mx-4 mb-3 mt-2 overflow-hidden rounded-2xl border border-white/10 bg-[#09111f]">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={media}
-                      alt={post.title}
-                      className="aspect-[4/5] w-full object-cover"
-                    />
+                    <div className="relative aspect-[4/5] w-full">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={media}
+                        alt=""
+                        aria-hidden="true"
+                        className="absolute inset-0 h-full w-full scale-110 object-cover opacity-30 blur-2xl"
+                      />
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={media}
+                        alt={post.title}
+                        className="relative z-10 h-full w-full object-contain"
+                      />
+                    </div>
                   </div>
                 ) : null}
 
