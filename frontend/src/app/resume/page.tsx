@@ -4,18 +4,6 @@ export default function ResumePage() {
       <div className="border-b border-white/10 bg-black/70">
         <div className="mx-auto w-full max-w-6xl px-6 py-16 sm:py-20 lg:px-10">
           <h1 className="text-center font-[family-name:var(--font-heading)] text-4xl font-bold sm:text-5xl">Resume</h1>
-          <p className="mx-auto mt-6 max-w-3xl text-center text-sm leading-8 text-slate-300 sm:text-base">
-            Odio et unde deleniti. Deserunt numquam exercitationem. Officiis quo odio sint voluptas consequatur ut a odio
-            voluptatem. Sit dolorum debitis veritatis natus dolores. Quasi ratione sint. Sit quaerat ipsum dolorem.
-          </p>
-        </div>
-      </div>
-
-      <div className="border-y border-white/10 bg-white/[0.03]">
-        <div className="mx-auto flex w-full max-w-6xl items-center gap-3 px-6 py-4 text-sm font-semibold lg:px-10">
-          <span className="text-emerald-400">Home</span>
-          <span className="text-slate-500">/</span>
-          <span className="text-slate-200">Resume</span>
         </div>
       </div>
 
