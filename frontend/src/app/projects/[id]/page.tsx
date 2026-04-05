@@ -187,7 +187,7 @@ export default function ProjectDetailsPage() {
               </button>
             ) : null}
           </div>
-        </div>
+        </article>
       </div>
     </section>
   );
