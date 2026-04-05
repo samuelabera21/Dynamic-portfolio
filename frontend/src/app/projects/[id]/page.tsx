@@ -74,19 +74,21 @@ export default function ProjectDetailsPage() {
             </div>
           </div>
 
-          <div className="flex flex-col p-6 sm:p-7 lg:h-[74vh]">
-            <header className="shrink-0 border-b border-white/10 pb-4">
+          <div className="grid gap-5 p-6 sm:p-7 lg:h-[74vh] lg:grid-rows-[auto_minmax(0,1fr)_auto]">
+            <header className="border-b border-white/10 pb-4">
               <h1 className="font-[family-name:var(--font-heading)] text-3xl font-bold leading-tight text-white sm:text-4xl">
                 {project.title}
               </h1>
             </header>
 
-            <section className="mt-5 min-h-0 flex-1 overflow-y-auto pr-2">
+            <section className="min-h-0 overflow-hidden rounded-xl border border-white/10 bg-[#09111f]/50 p-4">
               <h2 className="text-lg font-semibold text-cyan-200">Overview</h2>
-              <p className="mt-3 whitespace-pre-wrap text-sm leading-8 text-slate-200">{project.description}</p>
+              <div className="mt-3 h-[180px] overflow-y-auto pr-2 lg:h-full">
+                <p className="whitespace-pre-wrap text-sm leading-8 text-slate-200">{project.description}</p>
+              </div>
             </section>
 
-            <section className="mt-5 shrink-0 border-t border-white/10 pt-4">
+            <section className="border-t border-white/10 pt-4">
               <h2 className="text-lg font-semibold text-cyan-200">Tech Stack</h2>
               <div className="mt-3 flex flex-wrap gap-2">
                 {project.techStack.map((tech) => (
