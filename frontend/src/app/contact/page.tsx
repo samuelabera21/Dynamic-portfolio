@@ -255,7 +255,7 @@ export default function ContactPage() {
               <div className="mx-auto mb-3 inline-flex h-12 w-12 items-center justify-center rounded-full border border-emerald-300/40 bg-emerald-500/15 text-emerald-200">
                 <InfoIcon kind="phone" />
               </div>
-              <h2 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-white">Call Us</h2>
+              <h2 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-white">Call Me</h2>
               <a href="tel:+251923010537" className="mt-2 block text-sm text-slate-200 hover:text-cyan-200">
                 +251923010537
               </a>
@@ -265,7 +265,7 @@ export default function ContactPage() {
               <div className="mx-auto mb-3 inline-flex h-12 w-12 items-center justify-center rounded-full border border-emerald-300/40 bg-emerald-500/15 text-emerald-200">
                 <InfoIcon kind="email" />
               </div>
-              <h2 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-white">Email Us</h2>
+              <h2 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-white">Email Me</h2>
               <a href="mailto:Samuelabera.dev@gmail.com" className="mt-2 block text-sm text-slate-200 hover:text-cyan-200">
                 Samuelabera.dev@gmail.com
               </a>
