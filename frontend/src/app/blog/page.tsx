@@ -113,7 +113,7 @@ export default function BlogPage() {
       <div className="relative mx-auto w-full max-w-7xl space-y-5 px-4 sm:px-6">
         <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
           <h1 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-white">Blog Feed</h1>
-          <p className="mt-2 text-sm text-slate-300">Fresh updates, ideas, and project notes in a social post style.</p>
+          <p className="mt-2 text-sm text-slate-300">Here I share my thoughts, real happenings in technology, and hands-on experience from what I build.</p>
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
