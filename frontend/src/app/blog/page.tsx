@@ -14,8 +14,15 @@ function formatDate(value: string): string {
 }
 
 function previewText(content: string): string {
-  if (content.length <= 150) return content;
-  return `${content.slice(0, 150)}...`;
+  const normalized = content
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+    .replace(/[>#*_`~-]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (normalized.length <= 150) return normalized;
+  return `${normalized.slice(0, 150)}...`;
 }
 
 export default function BlogPage() {
