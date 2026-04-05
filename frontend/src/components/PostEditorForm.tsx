@@ -62,15 +62,41 @@ export default function PostEditorForm({
 
     setUploadingImage(true);
     try {
-      const reader = new FileReader();
-      const result = await new Promise<string>((resolve, reject) => {
+      const rawDataUrl = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
         reader.onload = () => resolve(String(reader.result));
         reader.onerror = () => reject(new Error("Unable to read image file."));
         reader.readAsDataURL(file);
       });
 
+      const optimizedDataUrl = await new Promise<string>((resolve) => {
+        const image = new Image();
+        image.onload = () => {
+          const maxWidth = 1400;
+          const scale = image.width > maxWidth ? maxWidth / image.width : 1;
+          const width = Math.round(image.width * scale);
+          const height = Math.round(image.height * scale);
+
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext("2d");
+          if (!ctx) {
+            resolve(rawDataUrl);
+            return;
+          }
+
+          ctx.drawImage(image, 0, 0, width, height);
+          resolve(canvas.toDataURL("image/jpeg", 0.82));
+        };
+
+        image.onerror = () => resolve(rawDataUrl);
+        image.src = rawDataUrl;
+      });
+
       const sanitizedName = file.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ").trim() || "blog image";
-      insertAtCursor(`\n![${sanitizedName}](${result})\n`);
+      insertAtCursor(`\n![${sanitizedName}](${optimizedDataUrl})\n`);
     } finally {
       setUploadingImage(false);
     }
@@ -118,7 +144,7 @@ export default function PostEditorForm({
               }}
             />
           </label>
-          <span>Images are embedded into content and rendered in blog posts.</span>
+          <span>Images are optimized and embedded into content, then rendered in public blog posts.</span>
         </div>
         <textarea
           ref={contentRef}

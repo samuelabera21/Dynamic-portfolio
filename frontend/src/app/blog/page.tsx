@@ -13,6 +13,14 @@ function formatDate(value: string): string {
   });
 }
 
+function extractFirstImage(content: string): string | null {
+  const match = content.match(/!\[[^\]]*\]\(([^)]+)\)/);
+  const src = match?.[1]?.trim();
+  if (!src) return null;
+  if (/^javascript:/i.test(src)) return null;
+  return src;
+}
+
 function previewText(content: string): string {
   const normalized = content
     .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
@@ -105,7 +113,16 @@ export default function BlogPage() {
 
       <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
         {visiblePosts.map((post) => (
-          <article key={post.id} className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <article key={post.id} className="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+            {extractFirstImage(post.content) ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={extractFirstImage(post.content) ?? undefined}
+                alt={post.title}
+                className="h-44 w-full border-b border-slate-200 object-cover"
+              />
+            ) : null}
+            <div className="flex h-full flex-col p-5">
             <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">{formatDate(post.createdAt)}</p>
             <h2 className="mt-2 font-[family-name:var(--font-heading)] text-xl font-bold text-slate-900">{post.title}</h2>
             <p className="mt-3 text-sm leading-7 text-slate-700">{previewText(post.content)}</p>
@@ -115,6 +132,7 @@ export default function BlogPage() {
             >
               Read More
             </Link>
+            </div>
           </article>
         ))}
       </div>

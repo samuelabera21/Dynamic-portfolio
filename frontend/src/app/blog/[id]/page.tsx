@@ -15,6 +15,16 @@ function formatDate(value: string): string {
   });
 }
 
+function markdownUrlTransform(url: string): string {
+  const trimmed = url.trim();
+  if (!trimmed) return "";
+  if (/^javascript:/i.test(trimmed)) return "";
+  if (trimmed.startsWith("data:image/")) return trimmed;
+  if (/^(https?:|mailto:|tel:)/i.test(trimmed)) return trimmed;
+  if (trimmed.startsWith("/")) return trimmed;
+  return "";
+}
+
 export default function BlogDetailsPage() {
   const params = useParams<{ id: string }>();
   const [post, setPost] = useState<Post | null>(null);
@@ -81,10 +91,13 @@ export default function BlogDetailsPage() {
         <h1 className="mt-2 font-[family-name:var(--font-heading)] text-3xl font-bold text-slate-900">{post.title}</h1>
         <div className="prose prose-slate mt-6 max-w-none text-base leading-8 text-slate-700">
           <ReactMarkdown
+            urlTransform={markdownUrlTransform}
             components={{
               img: ({ alt, src }) => (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={src ?? ""} alt={alt ?? "Post image"} className="my-6 w-full rounded-xl border border-slate-200 object-cover" />
+                typeof src === "string" && src.trim() ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={src} alt={alt ?? "Post image"} className="my-6 w-full rounded-xl border border-slate-200 object-cover" />
+                ) : null
               ),
             }}
           >
