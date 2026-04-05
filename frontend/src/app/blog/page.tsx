@@ -170,7 +170,7 @@ export default function BlogPage() {
                       <span className="text-slate-500">{formatRelativeTime(post.createdAt)}</span>
                     </div>
 
-                    <div className="mt-1 flex h-[210px] flex-col">
+                    <div className="mt-1 flex h-[155px] flex-col">
                       <h2 className="text-xl font-bold leading-8 text-white">{post.title}</h2>
                       <p className="mt-2 flex-1 overflow-hidden text-[15px] leading-7 text-slate-200">{excerpt}</p>
                       {isLong ? (
