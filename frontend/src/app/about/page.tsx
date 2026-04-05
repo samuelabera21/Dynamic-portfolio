@@ -336,11 +336,6 @@ export default function AboutPage() {
       <div className="pointer-events-none absolute right-[-80px] top-[260px] h-72 w-72 rounded-full bg-emerald-500/10 blur-[120px]" />
 
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-6 sm:px-10 lg:px-12">
-        <header>
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">About</p>
-          <h1 className="mt-2 font-[family-name:var(--font-heading)] text-3xl font-bold text-white sm:text-4xl">Personal profile and background</h1>
-        </header>
-
         <article className="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-[0_18px_45px_rgba(6,12,24,0.45)] backdrop-blur-xl sm:p-8">
           <div className="space-y-5">
             <div>
