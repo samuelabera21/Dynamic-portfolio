@@ -46,8 +46,8 @@ function normalizeText(content: string): string {
 function previewText(content: string): string {
   const normalized = normalizeText(content);
 
-  if (normalized.length <= 220) return normalized;
-  return `${normalized.slice(0, 220)}...`;
+  if (normalized.length <= 160) return normalized;
+  return `${normalized.slice(0, 160)}...`;
 }
 
 export default function BlogPage() {
@@ -110,7 +110,7 @@ export default function BlogPage() {
       <div className="pointer-events-none absolute -left-24 top-24 h-72 w-72 rounded-full bg-cyan-500/12 blur-[120px]" />
       <div className="pointer-events-none absolute -right-24 top-72 h-72 w-72 rounded-full bg-blue-600/12 blur-[120px]" />
 
-      <div className="relative mx-auto w-full max-w-3xl space-y-5 px-4 sm:px-6">
+      <div className="relative mx-auto w-full max-w-7xl space-y-5 px-4 sm:px-6">
         <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
           <h1 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-white">Blog Feed</h1>
           <p className="mt-2 text-sm text-slate-300">Fresh updates, ideas, and project notes in a social post style.</p>
@@ -139,16 +139,16 @@ export default function BlogPage() {
           <p className="rounded-xl border border-white/10 bg-white/5 p-6 text-sm text-slate-300">No posts found.</p>
         ) : null}
 
-        <div className="space-y-4">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {visiblePosts.map((post) => {
             const media = extractFirstImage(post.content);
             const excerpt = previewText(post.content);
             const fullText = normalizeText(post.content);
-            const isLong = fullText.length > 220;
+            const isLong = fullText.length > 160;
 
             return (
-              <article key={post.id} className="overflow-hidden rounded-2xl border border-white/10 bg-[#0b1324]/92 shadow-[0_16px_40px_rgba(2,6,16,0.45)]">
-                <div className="flex items-start gap-3 p-4 sm:p-5">
+              <article key={post.id} className="flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0b1324]/92 shadow-[0_16px_40px_rgba(2,6,16,0.45)]">
+                <div className="flex items-start gap-3 p-4">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={authorAvatar}
@@ -165,27 +165,34 @@ export default function BlogPage() {
 
                     <h2 className="mt-1 text-xl font-bold text-white">{post.title}</h2>
                     <p className="mt-2 whitespace-pre-wrap text-[15px] leading-7 text-slate-200">{excerpt}</p>
-                    {isLong ? <p className="mt-1 text-sm font-medium text-cyan-300">Show more</p> : null}
-
-                    {media ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={media}
-                        alt={post.title}
-                        className="mt-4 h-auto max-h-[520px] w-full rounded-2xl border border-white/10 object-cover"
-                      />
+                    {isLong ? (
+                      <Link href={`/blog/${post.id}`} className="mt-1 inline-block text-sm font-medium text-cyan-300 hover:text-cyan-200">
+                        Show more
+                      </Link>
                     ) : null}
 
-                    <div className="mt-4 flex items-center justify-between text-xs text-slate-400">
-                      <span>{formatDate(post.createdAt)}</span>
-                      <Link
-                        href={`/blog/${post.id}`}
-                        className="rounded-full border border-cyan-300/35 bg-cyan-500/10 px-3 py-1 font-semibold text-cyan-200 hover:bg-cyan-500/20"
-                      >
-                        Open Post
-                      </Link>
-                    </div>
                   </div>
+                </div>
+
+                {media ? (
+                  <div className="mx-4 mb-3 mt-1 flex h-64 items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-[#09111f] p-2">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={media}
+                      alt={post.title}
+                      className="h-full w-full object-contain"
+                    />
+                  </div>
+                ) : null}
+
+                <div className="mt-auto flex items-center justify-between px-4 pb-4 text-xs text-slate-400">
+                  <span>{formatDate(post.createdAt)}</span>
+                  <Link
+                    href={`/blog/${post.id}`}
+                    className="rounded-full border border-cyan-300/35 bg-cyan-500/10 px-3 py-1 font-semibold text-cyan-200 hover:bg-cyan-500/20"
+                  >
+                    Open Post
+                  </Link>
                 </div>
               </article>
             );
