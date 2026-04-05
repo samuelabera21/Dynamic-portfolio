@@ -7,12 +7,14 @@ import { SocialLink } from "@/types/profile";
 type FormState = {
   name: string;
   email: string;
+  subject: string;
   message: string;
 };
 
 const initialForm: FormState = {
   name: "",
   email: "",
+  subject: "",
   message: "",
 };
 
@@ -207,7 +209,15 @@ export default function ContactPage() {
     setError(null);
 
     try {
-      await sendMessage(form);
+      const messageBody = form.subject.trim()
+        ? `Subject: ${form.subject.trim()}\n\n${form.message}`
+        : form.message;
+
+      await sendMessage({
+        name: form.name,
+        email: form.email,
+        message: messageBody,
+      });
       setSuccess("Your message was sent. A confirmation reply will be sent to your email address.");
       setForm(initialForm);
     } catch (err) {
@@ -218,122 +228,111 @@ export default function ContactPage() {
   };
 
   return (
-    <section className="relative overflow-hidden bg-[#060c18] px-6 pb-12 pt-10 sm:px-10 lg:px-12">
-      <div className="pointer-events-none absolute -left-24 top-10 h-72 w-72 rounded-full bg-cyan-500/15 blur-[120px]" />
+    <section className="relative overflow-hidden bg-[#060c18] px-6 pb-12 pt-12 sm:px-10 lg:px-12">
+      <div className="pointer-events-none absolute -left-24 top-10 h-72 w-72 rounded-full bg-cyan-500/12 blur-[120px]" />
       <div className="pointer-events-none absolute -right-24 top-72 h-72 w-72 rounded-full bg-emerald-500/10 blur-[120px]" />
 
-      <div className="relative mx-auto w-full max-w-6xl space-y-8">
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-[0_18px_45px_rgba(6,12,24,0.45)] backdrop-blur-xl sm:p-8">
-          <div className="grid gap-4 md:grid-cols-2">
-            <article className="rounded-2xl border border-white/10 bg-[#0b1730]/45 p-5">
-              <div className="mb-3 inline-flex h-11 w-11 items-center justify-center rounded-full border border-emerald-300/40 bg-emerald-500/15 text-emerald-200">
+      <div className="relative mx-auto w-full max-w-6xl">
+        <header className="text-center">
+          <p className="text-sm font-semibold uppercase tracking-[0.32em] text-cyan-300">Contact</p>
+          <h1 className="mt-2 font-[family-name:var(--font-heading)] text-4xl font-bold text-white sm:text-5xl">CONTACT</h1>
+          <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-slate-300">
+            Send your project idea, collaboration request, or question. I usually respond quickly with next steps.
+          </p>
+        </header>
+
+        <div className="mt-10 rounded-3xl border border-white/10 bg-white/5 p-6 shadow-[0_18px_45px_rgba(6,12,24,0.45)] backdrop-blur-xl sm:p-8">
+          <div className="grid gap-6 md:grid-cols-3 md:divide-x md:divide-white/10">
+            <article className="text-center md:px-6">
+              <div className="mx-auto mb-3 inline-flex h-12 w-12 items-center justify-center rounded-full border border-emerald-300/40 bg-emerald-500/15 text-emerald-200">
                 <InfoIcon kind="address" />
               </div>
-              <h2 className="text-2xl font-semibold text-white">Address</h2>
-              <p className="mt-2 text-base text-slate-200">Ethiopia</p>
+              <h2 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-white">Address</h2>
+              <p className="mt-2 text-sm text-slate-200">Ethiopia</p>
             </article>
 
-            <article className="rounded-2xl border border-white/10 bg-[#0b1730]/45 p-5">
-              <div className="mb-3 inline-flex h-11 w-11 items-center justify-center rounded-full border border-emerald-300/40 bg-emerald-500/15 text-emerald-200">
+            <article className="text-center md:px-6">
+              <div className="mx-auto mb-3 inline-flex h-12 w-12 items-center justify-center rounded-full border border-emerald-300/40 bg-emerald-500/15 text-emerald-200">
                 <InfoIcon kind="phone" />
               </div>
-              <h2 className="text-2xl font-semibold text-white">Call Me</h2>
-              <a href="tel:+251923010537" className="mt-2 block text-base text-slate-200 hover:text-cyan-200">
+              <h2 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-white">Call Us</h2>
+              <a href="tel:+251923010537" className="mt-2 block text-sm text-slate-200 hover:text-cyan-200">
                 +251923010537
               </a>
             </article>
 
-            <article className="rounded-2xl border border-white/10 bg-[#0b1730]/45 p-5">
-              <div className="mb-3 inline-flex h-11 w-11 items-center justify-center rounded-full border border-emerald-300/40 bg-emerald-500/15 text-emerald-200">
+            <article className="text-center md:px-6">
+              <div className="mx-auto mb-3 inline-flex h-12 w-12 items-center justify-center rounded-full border border-emerald-300/40 bg-emerald-500/15 text-emerald-200">
                 <InfoIcon kind="email" />
               </div>
-              <h2 className="text-2xl font-semibold text-white">Email Me</h2>
-              <a href="mailto:Samuelabera.dev@gmail.com" className="mt-2 block text-base text-slate-200 hover:text-cyan-200">
+              <h2 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-white">Email Us</h2>
+              <a href="mailto:Samuelabera.dev@gmail.com" className="mt-2 block text-sm text-slate-200 hover:text-cyan-200">
                 Samuelabera.dev@gmail.com
               </a>
             </article>
+          </div>
 
-            <article className="rounded-2xl border border-white/10 bg-[#0b1730]/45 p-5">
-              <div className="mb-3 inline-flex h-11 w-11 items-center justify-center rounded-full border border-emerald-300/40 bg-emerald-500/15 text-emerald-200">
-                <InfoIcon kind="social" />
-              </div>
-              <h2 className="text-2xl font-semibold text-white">Social Profiles</h2>
-              {socialLinks.length > 0 ? (
-                <div className="mt-3 flex flex-wrap items-center gap-3">
-                  {socialLinks.map((item, index) => {
-                    const platform = detectPlatform(item.platform, item.url);
-                    const label = platformLabel(platform, item.platform);
-                    return (
-                      <a
-                        key={`${item.platform}-${item.url}-${index}`}
-                        href={normalizeSocialUrl(item.url)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="site-icon-hover inline-flex h-9 w-9 items-center justify-center rounded-full border border-blue-300/40 bg-blue-500/10 text-blue-200"
-                        aria-label={label}
-                        title={label}
-                      >
-                        <SocialIcon platform={platform} />
-                      </a>
-                    );
-                  })}
-                </div>
-              ) : (
-                <p className="mt-2 text-sm text-slate-300">Social links will appear here after you add them from admin profile.</p>
-              )}
-            </article>
+          <div className="mt-8 border-t border-white/10 pt-5">
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <span className="text-sm font-semibold text-slate-200">Social Profiles</span>
+              {socialLinks.map((item, index) => {
+                const platform = detectPlatform(item.platform, item.url);
+                const label = platformLabel(platform, item.platform);
+                return (
+                  <a
+                    key={`${item.platform}-${item.url}-${index}`}
+                    href={normalizeSocialUrl(item.url)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="site-icon-hover inline-flex h-9 w-9 items-center justify-center rounded-full border border-blue-300/40 bg-blue-500/10 text-blue-200"
+                    aria-label={label}
+                    title={label}
+                  >
+                    <SocialIcon platform={platform} />
+                  </a>
+                );
+              })}
+            </div>
           </div>
         </div>
 
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-[0_18px_45px_rgba(6,12,24,0.45)] backdrop-blur-xl sm:p-8">
-          <h1 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-white sm:text-4xl">Send a Message</h1>
-          <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300">
-            Have a project idea or collaboration in mind? Share the details and I will get back to you. Use a valid email so you can receive the auto-reply confirmation.
-          </p>
+        <div className="mt-8 rounded-3xl border border-white/10 bg-white/5 p-5 shadow-[0_18px_45px_rgba(6,12,24,0.45)] backdrop-blur-xl sm:p-7">
+          <form onSubmit={handleSubmit} className="grid gap-4 sm:grid-cols-2">
+            <input
+              id="name"
+              value={form.name}
+              onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
+              className="w-full rounded-xl border border-white/15 bg-[#0b1730]/70 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-400 focus:border-cyan-300/70"
+              placeholder="Your Name"
+              required
+            />
 
-          <form onSubmit={handleSubmit} className="mt-7 grid gap-4 sm:grid-cols-2">
-            <div>
-              <label htmlFor="name" className="mb-1 block text-sm font-semibold text-slate-200">
-                Your Name
-              </label>
-              <input
-                id="name"
-                value={form.name}
-                onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
-                className="w-full rounded-xl border border-white/15 bg-[#0b1730]/70 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-300/70"
-                placeholder="Your Name"
-                required
-              />
-            </div>
+            <input
+              id="email"
+              type="email"
+              value={form.email}
+              onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))}
+              className="w-full rounded-xl border border-white/15 bg-[#0b1730]/70 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-400 focus:border-cyan-300/70"
+              placeholder="Your Email"
+              required
+            />
 
-            <div>
-              <label htmlFor="email" className="mb-1 block text-sm font-semibold text-slate-200">
-                Your Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={form.email}
-                onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))}
-                className="w-full rounded-xl border border-white/15 bg-[#0b1730]/70 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-300/70"
-                placeholder="your@email.com"
-                required
-              />
-            </div>
+            <input
+              id="subject"
+              value={form.subject}
+              onChange={(e) => setForm((prev) => ({ ...prev, subject: e.target.value }))}
+              className="sm:col-span-2 w-full rounded-xl border border-white/15 bg-[#0b1730]/70 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-400 focus:border-cyan-300/70"
+              placeholder="Subject"
+            />
 
-            <div className="sm:col-span-2">
-              <label htmlFor="message" className="mb-1 block text-sm font-semibold text-slate-200">
-                Message
-              </label>
-              <textarea
-                id="message"
-                value={form.message}
-                onChange={(e) => setForm((prev) => ({ ...prev, message: e.target.value }))}
-                className="min-h-44 w-full rounded-xl border border-white/15 bg-[#0b1730]/70 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-300/70"
-                placeholder="Tell me about your project, timeline, and goals..."
-                required
-              />
-            </div>
+            <textarea
+              id="message"
+              value={form.message}
+              onChange={(e) => setForm((prev) => ({ ...prev, message: e.target.value }))}
+              className="sm:col-span-2 min-h-40 w-full rounded-xl border border-white/15 bg-[#0b1730]/70 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-400 focus:border-cyan-300/70"
+              placeholder="Message"
+              required
+            />
 
             {success ? (
               <p className="sm:col-span-2 rounded-xl border border-emerald-300/35 bg-emerald-500/15 px-4 py-3 text-sm font-medium text-emerald-200">
@@ -347,11 +346,11 @@ export default function ContactPage() {
               </p>
             ) : null}
 
-            <div className="sm:col-span-2">
+            <div className="sm:col-span-2 flex justify-center pt-1">
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-xl border border-cyan-300/35 bg-gradient-to-r from-cyan-500 to-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
+                className="rounded-full border border-cyan-300/40 bg-gradient-to-r from-cyan-500 to-blue-600 px-12 py-3 text-sm font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {loading ? "Sending..." : "Send Message"}
               </button>
