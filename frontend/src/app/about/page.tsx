@@ -226,26 +226,14 @@ export default function AboutPage() {
         </header>
 
         <article className="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-[0_18px_45px_rgba(6,12,24,0.45)] backdrop-blur-xl sm:p-8">
-          <div className="grid gap-8 md:grid-cols-[260px_1fr] md:items-start">
-            <div className="relative mx-auto h-56 w-56 overflow-hidden rounded-2xl border border-white/15 bg-[#020409] shadow-[0_12px_26px_rgba(0,0,0,0.35)] md:mx-0">
-              <Image
-                src="/ab.png"
-                alt="Samuel Abera"
-                fill
-                className="object-cover object-center"
-                sizes="224px"
-              />
+          <div className="space-y-5">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Samuel Abera</p>
+              <h2 className="mt-1 font-[family-name:var(--font-heading)] text-3xl font-bold text-white">{profile.name}</h2>
+              <p className="mt-2 text-sm font-semibold text-emerald-300">{profile.role}</p>
             </div>
 
-            <div className="space-y-5">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Samuel Abera</p>
-                <h2 className="mt-1 font-[family-name:var(--font-heading)] text-3xl font-bold text-white">{profile.name}</h2>
-                <p className="mt-2 text-sm font-semibold text-emerald-300">{profile.role}</p>
-              </div>
-
-              <p className="whitespace-pre-wrap text-sm leading-8 text-slate-200">{profile.bio}</p>
-            </div>
+            <p className="whitespace-pre-wrap text-sm leading-8 text-slate-200">{profile.bio}</p>
           </div>
 
           <div className="mt-8 border-t border-white/10 pt-8">
