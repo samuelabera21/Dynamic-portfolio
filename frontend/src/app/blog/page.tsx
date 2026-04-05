@@ -162,13 +162,17 @@ export default function BlogPage() {
                       <span className="text-slate-500">{formatRelativeTime(post.createdAt)}</span>
                     </div>
 
-                    <h2 className="mt-1 text-xl font-bold text-white">{post.title}</h2>
-                    <p className="mt-2 whitespace-pre-wrap text-[15px] leading-7 text-slate-200">{excerpt}</p>
-                    {isLong ? (
-                      <Link href={`/blog/${post.id}`} className="mt-1 inline-block text-sm font-medium text-cyan-300 hover:text-cyan-200">
-                        Show more
-                      </Link>
-                    ) : null}
+                    <div className="mt-1 flex h-[210px] flex-col">
+                      <h2 className="text-xl font-bold leading-8 text-white">{post.title}</h2>
+                      <p className="mt-2 flex-1 overflow-hidden text-[15px] leading-7 text-slate-200">{excerpt}</p>
+                      {isLong ? (
+                        <Link href={`/blog/${post.id}`} className="mt-1 inline-block text-sm font-medium text-cyan-300 hover:text-cyan-200">
+                          Show more
+                        </Link>
+                      ) : (
+                        <span className="mt-1 inline-block text-sm font-medium opacity-0">Show more</span>
+                      )}
+                    </div>
 
                   </div>
                 </div>
