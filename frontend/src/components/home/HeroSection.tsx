@@ -10,7 +10,14 @@ type Props = {
   showAvailableForHire: boolean;
 };
 
-type PlatformKey = "x" | "facebook" | "instagram" | "linkedin" | "github" | "youtube" | "telegram" | "whatsapp" | "website";
+type PlatformKey = "x" | "facebook" | "instagram" | "linkedin" | "github" | "youtube" | "telegram" | "whatsapp" | "tiktok" | "website";
+
+function normalizeSocialUrl(url: string): string {
+  const trimmed = url.trim();
+  if (!trimmed) return "#";
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+  return `https://${trimmed}`;
+}
 
 function detectPlatform(platform: string, url: string): PlatformKey {
   const source = `${platform} ${url}`.toLowerCase();
@@ -23,6 +30,7 @@ function detectPlatform(platform: string, url: string): PlatformKey {
   if (source.includes("youtube") || source.includes("youtu.be") || source.includes("yt")) return "youtube";
   if (source.includes("telegram") || source.includes("t.me")) return "telegram";
   if (source.includes("whatsapp") || source.includes("wa.me")) return "whatsapp";
+  if (source.includes("tiktok") || source.includes("tik tok") || source.includes("tt")) return "tiktok";
 
   return "website";
 }
@@ -58,6 +66,14 @@ function SocialIcon({ platform }: { platform: PlatformKey }) {
     return (
       <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4" aria-hidden="true">
         <path d="M12 .5A11.5 11.5 0 0 0 2.2 17.9L1 23.5l5.8-1.1A11.5 11.5 0 1 0 12 .5Zm0 20.8a9.2 9.2 0 0 1-4.7-1.3l-.3-.2-3.4.6.7-3.2-.2-.3A9.3 9.3 0 1 1 12 21.3Zm5-6.7c-.3-.2-1.8-.9-2.1-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7.1a7.6 7.6 0 0 1-2.2-1.3 8.4 8.4 0 0 1-1.6-2c-.2-.4 0-.6.1-.8l.5-.6c.2-.2.2-.4.4-.7s0-.5 0-.7-.7-1.8-1-2.5c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4s-1.1 1.1-1.1 2.7 1.2 3.1 1.4 3.4c.2.3 2.4 3.7 5.8 5.2.8.3 1.4.6 1.9.7.8.2 1.5.1 2-.1.6-.1 1.8-.8 2-1.6.2-.8.2-1.5.2-1.6 0-.1-.2-.2-.5-.4Z" />
+      </svg>
+    );
+  }
+
+  if (platform === "tiktok") {
+    return (
+      <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4" aria-hidden="true">
+        <path d="M14 3h2.4c.3 1.7 1.5 3 3.1 3.3v2.6a8.1 8.1 0 0 1-3.1-1v6.6a5.4 5.4 0 1 1-5.5-5.4c.2 0 .4 0 .6.1V12a2.7 2.7 0 1 0 2.5 2.7V3Z" />
       </svg>
     );
   }
@@ -105,9 +121,9 @@ function firstName(name: string): string {
 
 export default function HeroSection({ profile, showAvailableForHire }: Props) {
   const heroSocial = profile.socialLinks
-    .slice(0, 4)
     .map((item) => ({
       ...item,
+      url: normalizeSocialUrl(item.url),
       platform: detectPlatform(item.platform, item.url),
     }));
 
