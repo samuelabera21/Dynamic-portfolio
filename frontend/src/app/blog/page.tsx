@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { motion } from "framer-motion";
 import { getHome, getPosts, getSettings } from "@/lib/api";
 import { Post } from "@/types/post";
 
@@ -147,7 +148,14 @@ export default function BlogPage() {
             const isLong = fullText.length > 160;
 
             return (
-              <article key={post.id} className="flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0b1324]/92 shadow-[0_16px_40px_rgba(2,6,16,0.45)]">
+              <motion.article
+                key={post.id}
+                initial={{ opacity: 0, y: 22, scale: 0.98 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.45, delay: Math.min(0.28, (index % 3) * 0.06) }}
+                className="flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0b1324]/92 shadow-[0_16px_40px_rgba(2,6,16,0.45)]"
+              >
                 <div className="flex items-start gap-3 p-4">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -197,7 +205,7 @@ export default function BlogPage() {
                     Open Post
                   </Link>
                 </div>
-              </article>
+              </motion.article>
             );
           })}
         </div>
