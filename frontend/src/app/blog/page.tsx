@@ -141,7 +141,7 @@ export default function BlogPage() {
         ) : null}
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {visiblePosts.map((post) => {
+          {visiblePosts.map((post, index) => {
             const media = extractFirstImage(post.content);
             const excerpt = previewText(post.content);
             const fullText = normalizeText(post.content);
