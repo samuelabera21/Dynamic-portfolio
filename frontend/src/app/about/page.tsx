@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { getHome } from "@/lib/api";
+import SkillsFlipSection from "@/components/home/SkillsFlipSection";
 import { Profile } from "@/types/profile";
 import { GroupedSkills, SkillCategory } from "@/types/skill";
 
@@ -475,35 +476,8 @@ export default function AboutPage() {
               ))}
             </div>
 
-            <div className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-4">
-              <h3 className="text-lg font-semibold text-white">Skills</h3>
-              <p className="mt-1 text-sm text-slate-300">Grouped technical skills from your portfolio profile.</p>
-
-              <div className="mt-4 grid gap-4 md:grid-cols-3">
-                {orderedCategories.map((category) => {
-                  const items = groupedSkills[category] ?? [];
-
-                  return (
-                    <div key={category} className="rounded-xl border border-white/10 bg-[#0b1730]/55 p-4">
-                      <h4 className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-200">{category}</h4>
-                      {items.length === 0 ? (
-                        <p className="mt-2 text-xs text-slate-300">No skills listed</p>
-                      ) : (
-                        <div className="mt-3 flex flex-wrap gap-2">
-                          {items.map((item) => (
-                            <span
-                              key={`${category}-${item}`}
-                              className="rounded-full border border-cyan-300/30 bg-cyan-500/10 px-3 py-1 text-xs font-semibold text-cyan-100"
-                            >
-                              {item}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
+            <div className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
+              <SkillsFlipSection skills={groupedSkills} />
             </div>
           </article>
         ) : null}
