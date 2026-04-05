@@ -157,10 +157,9 @@ export default function BlogPage() {
                   />
 
                   <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-2 text-sm">
+                    <div className="flex items-center justify-between gap-2 text-sm">
                       <span className="font-semibold text-white">{authorName}</span>
-                      <span className="text-slate-400">@{authorName.toLowerCase().replace(/\s+/g, "_")}</span>
-                      <span className="text-slate-500">· {formatRelativeTime(post.createdAt)}</span>
+                      <span className="text-slate-500">{formatRelativeTime(post.createdAt)}</span>
                     </div>
 
                     <h2 className="mt-1 text-xl font-bold text-white">{post.title}</h2>
@@ -175,12 +174,12 @@ export default function BlogPage() {
                 </div>
 
                 {media ? (
-                  <div className="mx-4 mb-3 mt-1 flex h-64 items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-[#09111f] p-2">
+                  <div className="mx-4 mb-3 mt-2 flex items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-[#09111f] p-2">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={media}
                       alt={post.title}
-                      className="h-full w-full object-contain"
+                      className="block max-h-[300px] w-full rounded-xl object-contain"
                     />
                   </div>
                 ) : null}
