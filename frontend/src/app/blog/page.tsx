@@ -191,16 +191,10 @@ export default function BlogPage() {
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={media}
-                        alt=""
-                        aria-hidden="true"
-                        className="absolute inset-0 h-full w-full scale-110 object-cover opacity-30 blur-2xl"
-                      />
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={media}
                         alt={post.title}
-                        className="relative z-10 h-full w-full object-contain"
+                        className="absolute inset-0 h-full w-full object-cover"
                       />
+                      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/25 to-transparent" />
                     </div>
                   </div>
                 ) : null}
