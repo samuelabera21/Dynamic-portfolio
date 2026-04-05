@@ -186,12 +186,12 @@ export default function BlogPage() {
                 </div>
 
                 {media ? (
-                  <div className="mx-4 mb-3 mt-2 flex items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-[#09111f] p-2">
+                  <div className="mx-4 mb-3 mt-2 overflow-hidden rounded-2xl border border-white/10 bg-[#09111f]">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={media}
                       alt={post.title}
-                      className="block max-h-[300px] w-full rounded-xl object-contain"
+                      className="aspect-[4/5] w-full object-cover"
                     />
                   </div>
                 ) : null}
