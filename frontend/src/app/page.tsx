@@ -102,6 +102,10 @@ export default function Home() {
         </SectionShell>
 
         <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
+          <InsightsSection />
+        </SectionShell>
+
+        <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
           <EcosystemSection />
         </SectionShell>
 
@@ -109,9 +113,6 @@ export default function Home() {
           <FeatureGridSection />
         </SectionShell>
 
-        <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
-          <InsightsSection />
-        </SectionShell>
       </div>
     </section>
   );
