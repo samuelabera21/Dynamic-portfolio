@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { jsPDF } from "jspdf";
+import { motion } from "framer-motion";
 import { getHome, getProjects } from "@/lib/api";
 import SkillsFlipSection from "@/components/home/SkillsFlipSection";
 import { Profile } from "@/types/profile";
@@ -206,18 +207,12 @@ function skillScore(name: string, category: SkillCategory): number {
 
 function interestList(): string[] {
   return [
-    "Frontend Architecture",
-    "Backend API Design",
-    "System Design",
-    "Machine Learning Applications",
-    "MLOps and Model Serving",
-    "AI Product Engineering",
-    "Data Visualization",
-    "Cloud Native Workflows",
-    "DevOps Automation",
-    "Cybersecurity Basics",
-    "Open Source Collaboration",
-    "Technical Writing",
+    "Software Development",
+    "Requirement Gathering",
+    "Problem Understanding",
+    "Artificial Intelligence",
+    "Web Development",
+    "Emerging Technologies",
   ];
 }
 
@@ -593,17 +588,26 @@ export default function AboutPage() {
         ) : null}
 
         <article className="rounded-3xl border border-white/10 bg-[#020610]/85 p-5 shadow-[0_20px_40px_rgba(2,6,16,0.45)] sm:p-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Features</p>
-          <h2 className="mt-2 font-[family-name:var(--font-heading)] text-4xl font-bold text-white">I&apos;m Interested In</h2>
+          <div className="mb-6 border-b border-white/10 pb-5 text-center">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Focus Areas</p>
+            <h2 className="mt-2 font-[family-name:var(--font-heading)] text-4xl font-bold text-white">What I&apos;m Interested In</h2>
+            <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
+              A focused view of what I study, build, and keep improving as I grow in software engineering.
+            </p>
+          </div>
 
           <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {interests.map((interest) => (
-              <div
+              <motion.div
                 key={interest}
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.25 }}
+                transition={{ duration: 0.35 }}
                 className="group rounded-2xl border border-white/10 bg-white/5 px-4 py-4 transition duration-300 hover:-translate-y-0.5 hover:border-emerald-300/50 hover:bg-emerald-400/10"
               >
                 <p className="font-semibold text-slate-100 transition group-hover:text-emerald-200">{interest}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </article>
