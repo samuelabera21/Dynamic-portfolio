@@ -161,7 +161,7 @@ export default function HeroSection({ profile, showAvailableForHire }: Props) {
 
           <div className="grid gap-2 text-sm text-slate-200 sm:grid-cols-2">
             <p>
-              <span className="font-semibold text-blue-300">Role:</span> Software enginner
+              <span className="font-semibold text-blue-300">Role:</span> {profile.role || "Software Engineer"}
             </p>
             {showAvailableForHire && profile.available ? (
               <p>
