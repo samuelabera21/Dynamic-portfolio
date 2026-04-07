@@ -2,9 +2,11 @@
 
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { getHome } from "@/lib/api";
+import { jsPDF } from "jspdf";
+import { getHome, getProjects } from "@/lib/api";
 import SkillsFlipSection from "@/components/home/SkillsFlipSection";
 import { Profile } from "@/types/profile";
+import { Project } from "@/types/project";
 import { GroupedSkills, SkillCategory } from "@/types/skill";
 
 type PlatformKey = "github" | "facebook" | "youtube" | "linkedin" | "x" | "telegram" | "whatsapp" | "tiktok" | "instagram" | "website";
@@ -127,32 +129,39 @@ function SocialIcon({ platform }: { platform: PlatformKey }) {
   );
 }
 
-function isHttpUrl(value: string): boolean {
+function formatProjectDate(input: string): string {
+  const date = new Date(input);
+  if (Number.isNaN(date.getTime())) return "Recent";
+  return date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+}
+
+async function toDataUrl(url: string): Promise<string | null> {
   try {
-    const url = new URL(value);
-    return url.protocol === "http:" || url.protocol === "https:";
+    const response = await fetch(url);
+    if (!response.ok) return null;
+
+    const blob = await response.blob();
+
+    return await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result));
+      reader.onerror = () => reject(new Error("Failed to read image for PDF."));
+      reader.readAsDataURL(blob);
+    });
   } catch {
-    return false;
+    return null;
   }
 }
 
-function isPdfDataUrl(value: string): boolean {
-  return value.startsWith("data:application/pdf;base64,");
-}
+function findSocialUrl(links: { platform: string; url: string }[], keyword: string): string | null {
+  const match = links.find((item) => {
+    const source = `${item.platform} ${item.url}`.toLowerCase();
+    return source.includes(keyword);
+  });
 
-function dataUrlToBlob(dataUrl: string): Blob {
-  const [meta, base64] = dataUrl.split(",");
-  const mimeMatch = meta.match(/data:(.*?);base64/);
-  const mimeType = mimeMatch?.[1] ?? "application/octet-stream";
-
-  const binary = atob(base64);
-  const bytes = new Uint8Array(binary.length);
-
-  for (let i = 0; i < binary.length; i += 1) {
-    bytes[i] = binary.charCodeAt(i);
-  }
-
-  return new Blob([bytes], { type: mimeType });
+  if (!match?.url) return null;
+  if (match.url.startsWith("http://") || match.url.startsWith("https://")) return match.url;
+  return `https://${match.url}`;
 }
 
 function normalizeSocialUrl(url: string): string {
@@ -214,11 +223,13 @@ function interestList(): string[] {
 
 export default function AboutPage() {
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [groupedSkills, setGroupedSkills] = useState<GroupedSkills>({});
   const [showSkills, setShowSkills] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [resumeError, setResumeError] = useState<string | null>(null);
+  const [downloadingResume, setDownloadingResume] = useState(false);
   const [skillBarsVisible, setSkillBarsVisible] = useState(false);
   const skillSectionRef = useRef<HTMLElement | null>(null);
 
@@ -227,8 +238,9 @@ export default function AboutPage() {
       setLoading(true);
       setError(null);
       try {
-        const home = await getHome();
+        const [home, projectData] = await Promise.all([getHome(), getProjects()]);
         setProfile(home.profile);
+        setProjects(projectData.filter((item) => item.published));
         setGroupedSkills(home.skills ?? {});
         setShowSkills(home.showSkills ?? true);
       } catch (err) {
@@ -285,10 +297,6 @@ export default function AboutPage() {
   if (loading) return <p className="text-sm text-slate-500">Loading profile...</p>;
   if (error || !profile) return <p className="text-sm font-medium text-red-600">{error ?? "Profile unavailable"}</p>;
 
-  const hasResume = Boolean(profile.resumeUrl);
-  const resumeIsHealthy =
-    hasResume &&
-    (isPdfDataUrl(profile.resumeUrl) || isHttpUrl(profile.resumeUrl));
   const hasSkills = showSkills && orderedCategories.some((category) => (groupedSkills[category] ?? []).length > 0);
   const templateFacts = [
     { label: "Birthday", value: "09 Feb 2005" },
@@ -299,33 +307,149 @@ export default function AboutPage() {
     { label: "Freelance", value: "Available" },
   ];
 
-  const handleResumeDownload = () => {
-    if (!profile.resumeUrl) return;
+  const handleResumeDownload = async () => {
+    if (!profile) return;
 
+    setDownloadingResume(true);
     setResumeError(null);
 
     try {
-      if (isPdfDataUrl(profile.resumeUrl)) {
-        const blob = dataUrlToBlob(profile.resumeUrl);
-        const objectUrl = URL.createObjectURL(blob);
+      const doc = new jsPDF({ unit: "pt", format: "a4" });
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const marginX = 40;
+      let y = 46;
+      const headerImageSize = 72;
+      const headerImageX = 555 - headerImageSize;
+      const headerImageY = 34;
 
-        const anchor = document.createElement("a");
-        anchor.href = objectUrl;
-        anchor.download = "resume.pdf";
-        anchor.click();
-
-        URL.revokeObjectURL(objectUrl);
-        return;
+      const headerImage = await toDataUrl("/resume.jpg");
+      if (headerImage) {
+        doc.addImage(headerImage, "JPEG", headerImageX, headerImageY, headerImageSize, headerImageSize);
+        doc.setDrawColor(180, 180, 180);
+        doc.rect(headerImageX, headerImageY, headerImageSize, headerImageSize);
       }
 
-      if (isHttpUrl(profile.resumeUrl)) {
-        window.open(profile.resumeUrl, "_blank", "noopener,noreferrer");
-        return;
+      const ensureSpace = (needed = 20) => {
+        if (y + needed > pageHeight - 40) {
+          doc.addPage();
+          y = 46;
+        }
+      };
+
+      const writeTitle = (text: string) => {
+        ensureSpace(28);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(18);
+        doc.text(text, marginX, y);
+        y += 24;
+      };
+
+      const writeSection = (title: string) => {
+        ensureSpace(24);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(13);
+        doc.text(title, marginX, y);
+        y += 10;
+        doc.setDrawColor(180, 180, 180);
+        doc.line(marginX, y, 555, y);
+        y += 16;
+      };
+
+      const writeParagraph = (text: string, indent = 0) => {
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        const lines = doc.splitTextToSize(text, 515 - indent);
+        for (const line of lines) {
+          ensureSpace(15);
+          doc.text(line, marginX + indent, y);
+          y += 15;
+        }
+      };
+
+      const writeBullet = (text: string) => {
+        ensureSpace(15);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        const lines = doc.splitTextToSize(`- ${text}`, 510);
+        for (const line of lines) {
+          ensureSpace(15);
+          doc.text(line, marginX + 6, y);
+          y += 15;
+        }
+      };
+
+      const github = findSocialUrl(profile.socialLinks, "github") ?? "https://github.com/samuelabera21";
+      const linkedin = findSocialUrl(profile.socialLinks, "linkedin") ?? "https://linkedin.com/in/samuelabera21";
+
+      const uniqueSkills = Array.from(
+        new Map(
+          orderedCategories
+            .flatMap((category) => groupedSkills[category] ?? [])
+            .map((skill) => [skill.trim().toLowerCase(), skill.trim()])
+            .filter((entry) => entry[1])
+        ).values()
+      );
+
+      writeTitle(profile.name || "Samuel Abera");
+      y = Math.max(y, headerImageY + headerImageSize + 12);
+
+      writeSection("Summary");
+      writeParagraph("I am a software engineering student interested in web development and artificial intelligence.");
+      y += 6;
+      writeBullet("Email: samuelabera.dev@gmail.com");
+      writeBullet(`GitHub: ${github.replace(/^https?:\/\//, "")}`);
+      writeBullet(`LinkedIn: ${linkedin.replace(/^https?:\/\//, "")}`);
+
+      y += 6;
+      writeSection("Education");
+      writeParagraph("BSc in Software Engineering");
+      writeParagraph("Debre Berhan University");
+      writeParagraph("Expected Graduate: 2028");
+
+      y += 6;
+      writeSection("Skills");
+      writeParagraph(uniqueSkills.length > 0 ? uniqueSkills.join(", ") : "No skills added yet.");
+
+      y += 6;
+      writeSection("Projects");
+      if (projects.length === 0) {
+        writeParagraph("No projects added yet.");
+      } else {
+        projects.forEach((project) => {
+          ensureSpace(24);
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(12);
+          doc.text(project.title, marginX, y);
+          y += 15;
+
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(10);
+          doc.text(formatProjectDate(project.createdAt), marginX, y);
+          y += 14;
+
+          writeParagraph(project.description, 2);
+
+          if (project.techStack.length > 0) {
+            writeParagraph(`Tech: ${project.techStack.join(", ")}`, 2);
+          }
+
+          const links: string[] = [];
+          if (project.githubUrl) links.push(`GitHub: ${project.githubUrl}`);
+          if (project.liveUrl) links.push(`Live Demo: ${project.liveUrl}`);
+          if (links.length > 0) {
+            writeParagraph(links.join(" | "), 2);
+          }
+
+          y += 8;
+        });
       }
 
-      setResumeError("Resume link is invalid. Please update it from admin profile.");
-    } catch {
-      setResumeError("Could not open resume. Please try again.");
+      doc.save("Samuel_Abera_Resume.pdf");
+    } catch (downloadError) {
+      const message = downloadError instanceof Error ? downloadError.message : "Could not generate resume PDF. Please try again.";
+      setResumeError(message);
+    } finally {
+      setDownloadingResume(false);
     }
   };
 
@@ -390,30 +514,18 @@ export default function AboutPage() {
                 {profile.location ? `Location: ${profile.location}` : "Location not set"}
               </span>
 
-              {profile.resumeUrl ? (
-                <button
-                  type="button"
-                  onClick={handleResumeDownload}
-                  disabled={!resumeIsHealthy}
-                  className="rounded-xl border border-cyan-300/40 bg-cyan-500/20 px-4 py-2 text-xs font-semibold text-cyan-100 transition hover:bg-cyan-500/30 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  Download Resume
-                </button>
-              ) : (
-                <span className="rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-xs font-semibold text-slate-300">
-                  Resume not available
-                </span>
-              )}
+              <button
+                type="button"
+                onClick={handleResumeDownload}
+                disabled={downloadingResume}
+                className="rounded-xl border border-cyan-300/40 bg-cyan-500/20 px-4 py-2 text-xs font-semibold text-cyan-100 transition hover:bg-cyan-500/30 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {downloadingResume ? "Generating..." : "Download Resume"}
+              </button>
             </div>
 
             {resumeError ? (
               <p className="mt-3 text-xs font-medium text-red-300">{resumeError}</p>
-            ) : null}
-
-            {hasResume && !resumeIsHealthy ? (
-              <p className="mt-2 text-xs font-medium text-amber-300">
-                Resume link format looks invalid. Set a valid PDF URL or upload from admin profile.
-              </p>
             ) : null}
 
             <div className="mt-4">
