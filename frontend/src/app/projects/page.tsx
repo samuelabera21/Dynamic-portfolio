@@ -12,7 +12,7 @@ export default function ProjectsPage() {
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [tech, setTech] = useState("");
-  const introText = "Explore selected work with a clean view of real projects, filters, and previews.";
+  const introText = "Selected projects, simple filters, and quick previews.";
   const introChars = introText.split("");
 
   useEffect(() => {
@@ -53,7 +53,7 @@ export default function ProjectsPage() {
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
             viewport={{ once: true, amount: 0.35 }}
             transition={{ duration: 0.4 }}
-            className="font-[family-name:var(--font-heading)] text-3xl font-bold text-white sm:text-4xl"
+            className="font-[family-name:var(--font-heading)] text-2xl font-bold text-white sm:text-3xl"
           >
             {introChars.map((char, index) => (
               <motion.span
@@ -73,9 +73,9 @@ export default function ProjectsPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.35 }}
             transition={{ duration: 0.35, delay: 0.08 }}
-            className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-slate-300"
+            className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-300"
           >
-            Explore selected work with a clean view of real projects, filters, and previews.
+            Selected projects, simple filters, and quick previews.
           </motion.p>
         </div>
 
