@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Contact, Download, GitBranch, Mail } from "lucide-react";
+import { Download, Github, Linkedin, Mail } from "lucide-react";
 import { jsPDF } from "jspdf";
 import { getHome, getProjects } from "@/lib/api";
 import { HomeData } from "@/types/home";
@@ -109,6 +109,8 @@ export default function ResumePage() {
     [projects, visibleProjects]
   );
 
+  const summaryText = homeData?.profile.bio?.trim() || "I am a software engineering student interested in web development and artificial intelligence.";
+
   const hasMoreProjects = visibleProjects < projects.length;
 
   const handleResumeDownload = async () => {
@@ -186,7 +188,7 @@ export default function ResumePage() {
       y = Math.max(y, headerImageY + headerImageSize + 12);
 
       writeSection("Summary");
-      writeParagraph("I am a software engineering student interested in web development and artificial intelligence.");
+      writeParagraph(summaryText);
       y += 6;
       writeBullet("Email: samuelabera.dev@gmail.com");
       writeBullet(`GitHub: ${contactLinks.github.replace(/^https?:\/\//, "")}`);
@@ -290,7 +292,7 @@ export default function ResumePage() {
           <aside className="md:col-span-4 md:sticky md:top-24">
             <ResumeSection title="Summary">
               <p className="text-sm leading-7 text-gray-300">
-                I am a software engineering student interested in web development and artificial intelligence.
+                {summaryText}
               </p>
 
               <div className="mt-4 space-y-2 border-t border-gray-700 pt-4 text-sm">
@@ -299,11 +301,11 @@ export default function ResumePage() {
                   samuelabera.dev@gmail.com
                 </a>
                 <a href={contactLinks.github} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-gray-200 transition hover:text-white">
-                  <GitBranch className="h-4 w-4 text-gray-400" />
+                  <Github className="h-4 w-4 text-gray-400" />
                   github.com/samuelabera21
                 </a>
                 <a href={contactLinks.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-gray-200 transition hover:text-white">
-                  <Contact className="h-4 w-4 text-gray-400" />
+                  <Linkedin className="h-4 w-4 text-gray-400" />
                   linkedin.com/in/samuelabera21
                 </a>
               </div>
