@@ -61,7 +61,14 @@ export default function CtaSection({ bio }: Props) {
               {aboutBio}
             </p>
 
-            <motion.div whileHover={{ x: 6 }} transition={{ type: "spring", stiffness: 220, damping: 18 }} className="mt-8 inline-flex">
+            <div className="mt-8 max-w-2xl space-y-2">
+              <p className="text-lg font-semibold text-white">Let&apos;s Build Something Powerful Together</p>
+              <p className="text-sm leading-7 text-slate-300">
+                Have a project, internship, or product idea? Let&apos;s collaborate on meaningful software engineering systems.
+              </p>
+            </div>
+
+            <motion.div whileHover={{ x: 6 }} transition={{ type: "spring", stiffness: 220, damping: 18 }} className="mt-6 inline-flex">
               <Link
                 href="/contact"
                 className="group inline-flex items-center gap-3 rounded-xl border border-white/35 px-5 py-3 text-base font-semibold text-white transition hover:bg-white/10"
