@@ -161,6 +161,23 @@ export default function EnterpriseFooter({ profile }: Props) {
               <p>Email: samuelabera.dev@gmail.com</p>
               {profile.location ? <p>{profile.location}</p> : null}
               <Link href="/contact" className="site-link-hover inline-block hover:text-blue-400">Send a message</Link>
+              {socialItems.length > 0 ? (
+                <div className="flex flex-wrap items-center gap-3 pt-2">
+                  {socialItems.map((item) => (
+                    <a
+                      key={`${item.platform}-${item.url}`}
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="site-icon-hover inline-flex h-9 w-9 items-center justify-center rounded-full border border-blue-300/40 bg-blue-500/10 text-blue-200"
+                      aria-label={item.label}
+                      title={item.label}
+                    >
+                      <SocialIcon platform={item.platform} />
+                    </a>
+                  ))}
+                </div>
+              ) : null}
             </div>
           </div>
         </div>
@@ -229,23 +246,6 @@ export default function EnterpriseFooter({ profile }: Props) {
           <p>© {new Date().getFullYear()} Portfolio Platform. Powered by modern web stack.</p>
         </div>
 
-        {socialItems.length > 0 ? (
-          <div className="flex w-full flex-wrap items-center justify-center gap-3">
-            {socialItems.map((item) => (
-              <a
-                key={`${item.platform}-${item.url}`}
-                href={item.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="site-icon-hover inline-flex h-9 w-9 items-center justify-center rounded-full border border-blue-300/40 bg-blue-500/10 text-blue-200"
-                aria-label={item.label}
-                title={item.label}
-              >
-                <SocialIcon platform={item.platform} />
-              </a>
-            ))}
-          </div>
-        ) : null}
       </div>
     </footer>
   );
