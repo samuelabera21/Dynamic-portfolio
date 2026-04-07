@@ -241,63 +241,74 @@ export default function ContactPage() {
           </p>
         </header>
 
-        <div className="mt-10 rounded-3xl border border-white/10 bg-white/5 p-6 shadow-[0_18px_45px_rgba(6,12,24,0.45)] backdrop-blur-xl sm:p-8">
-          <div className="grid gap-6 md:grid-cols-3 md:divide-x md:divide-white/10">
-            <article className="text-center md:px-6">
-              <div className="mx-auto mb-3 inline-flex h-12 w-12 items-center justify-center rounded-full border border-emerald-300/40 bg-emerald-500/15 text-emerald-200">
-                <InfoIcon kind="address" />
+        <div className="mt-10 grid gap-6 lg:grid-cols-[0.95fr_1.45fr]">
+          <div className="space-y-4">
+            <article className="rounded-2xl border border-cyan-300/35 bg-white/5 p-5 shadow-[0_18px_45px_rgba(6,12,24,0.35)] backdrop-blur-xl">
+              <div className="flex items-center gap-4">
+                <div className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-emerald-300/40 bg-emerald-500/15 text-emerald-200">
+                  <InfoIcon kind="address" />
+                </div>
+                <div>
+                  <h2 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-white">Address</h2>
+                  <p className="mt-1 text-sm text-slate-200">Ethiopia</p>
+                </div>
               </div>
-              <h2 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-white">Address</h2>
-              <p className="mt-2 text-sm text-slate-200">Ethiopia</p>
             </article>
 
-            <article className="text-center md:px-6">
-              <div className="mx-auto mb-3 inline-flex h-12 w-12 items-center justify-center rounded-full border border-emerald-300/40 bg-emerald-500/15 text-emerald-200">
-                <InfoIcon kind="phone" />
-              </div>
-              <h2 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-white">Call Me</h2>
-              <a href="tel:+251923010537" className="mt-2 block text-sm text-slate-200 hover:text-cyan-200">
-                +251923010537
-              </a>
-            </article>
-
-            <article className="text-center md:px-6">
-              <div className="mx-auto mb-3 inline-flex h-12 w-12 items-center justify-center rounded-full border border-emerald-300/40 bg-emerald-500/15 text-emerald-200">
-                <InfoIcon kind="email" />
-              </div>
-              <h2 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-white">Email Me</h2>
-              <a href="mailto:Samuelabera.dev@gmail.com" className="mt-2 block text-sm text-slate-200 hover:text-cyan-200">
-                Samuelabera.dev@gmail.com
-              </a>
-            </article>
-          </div>
-
-          <div className="mt-8 border-t border-white/10 pt-5">
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <span className="text-sm font-semibold text-slate-200">Social Profiles</span>
-              {socialLinks.map((item, index) => {
-                const platform = detectPlatform(item.platform, item.url);
-                const label = platformLabel(platform, item.platform);
-                return (
-                  <a
-                    key={`${item.platform}-${item.url}-${index}`}
-                    href={normalizeSocialUrl(item.url)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="site-icon-hover inline-flex h-9 w-9 items-center justify-center rounded-full border border-blue-300/40 bg-blue-500/10 text-blue-200"
-                    aria-label={label}
-                    title={label}
-                  >
-                    <SocialIcon platform={platform} />
+            <article className="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-[0_18px_45px_rgba(6,12,24,0.35)] backdrop-blur-xl">
+              <div className="flex items-center gap-4">
+                <div className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-emerald-300/40 bg-emerald-500/15 text-emerald-200">
+                  <InfoIcon kind="phone" />
+                </div>
+                <div>
+                  <h2 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-white">Call Me</h2>
+                  <a href="tel:+251923010537" className="mt-1 block text-sm text-slate-200 hover:text-cyan-200">
+                    +251923010537
                   </a>
-                );
-              })}
-            </div>
-          </div>
-        </div>
+                </div>
+              </div>
+            </article>
 
-        <div className="mt-8 rounded-3xl border border-white/10 bg-white/5 p-5 shadow-[0_18px_45px_rgba(6,12,24,0.45)] backdrop-blur-xl sm:p-7">
-          <form onSubmit={handleSubmit} className="grid gap-4 sm:grid-cols-2">
+            <article className="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-[0_18px_45px_rgba(6,12,24,0.35)] backdrop-blur-xl">
+              <div className="flex items-center gap-4">
+                <div className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-emerald-300/40 bg-emerald-500/15 text-emerald-200">
+                  <InfoIcon kind="email" />
+                </div>
+                <div>
+                  <h2 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-white">Email Me</h2>
+                  <a href="mailto:Samuelabera.dev@gmail.com" className="mt-1 block text-sm text-slate-200 hover:text-cyan-200">
+                    Samuelabera.dev@gmail.com
+                  </a>
+                </div>
+              </div>
+            </article>
+
+            <article className="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-[0_18px_45px_rgba(6,12,24,0.35)] backdrop-blur-xl">
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <span className="text-sm font-semibold text-slate-200">Social Profiles</span>
+                {socialLinks.map((item, index) => {
+                  const platform = detectPlatform(item.platform, item.url);
+                  const label = platformLabel(platform, item.platform);
+                  return (
+                    <a
+                      key={`${item.platform}-${item.url}-${index}`}
+                      href={normalizeSocialUrl(item.url)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="site-icon-hover inline-flex h-9 w-9 items-center justify-center rounded-full border border-blue-300/40 bg-blue-500/10 text-blue-200"
+                      aria-label={label}
+                      title={label}
+                    >
+                      <SocialIcon platform={platform} />
+                    </a>
+                  );
+                })}
+              </div>
+            </article>
+          </div>
+
+          <div className="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-[0_18px_45px_rgba(6,12,24,0.45)] backdrop-blur-xl sm:p-7">
+            <form onSubmit={handleSubmit} className="grid gap-4 sm:grid-cols-2">
             <input
               id="name"
               value={form.name}
@@ -346,16 +357,17 @@ export default function ContactPage() {
               </p>
             ) : null}
 
-            <div className="sm:col-span-2 flex justify-center pt-1">
-              <button
-                type="submit"
-                disabled={loading}
-                className="rounded-full border border-cyan-300/40 bg-gradient-to-r from-cyan-500 to-blue-600 px-12 py-3 text-sm font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {loading ? "Sending..." : "Send Message"}
-              </button>
-            </div>
-          </form>
+              <div className="sm:col-span-2 flex justify-center pt-1">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="rounded-full border border-cyan-300/40 bg-gradient-to-r from-cyan-500 to-blue-600 px-12 py-3 text-sm font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {loading ? "Sending..." : "Send Message"}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </section>
