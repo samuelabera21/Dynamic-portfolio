@@ -36,6 +36,10 @@ const featureItems = [
 ];
 
 export default function FeatureGridSection() {
+  const introText =
+    "Core software engineering principles that guide how I learn, build, and improve products.";
+  const introChars = introText.split("");
+
   return (
     <section className="relative overflow-hidden rounded-3xl border border-white/12 bg-[#070f1f]/80 p-5 shadow-[0_20px_60px_rgba(2,10,26,0.45)] backdrop-blur-xl sm:p-7">
       <div className="pointer-events-none absolute -left-20 top-8 h-56 w-56 rounded-full bg-cyan-500/10 blur-[100px]" />
@@ -45,9 +49,27 @@ export default function FeatureGridSection() {
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">Software Engineering</p>
           <h2 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-white sm:text-4xl">Basic Principles</h2>
-          <p className="mt-2 max-w-2xl text-sm text-slate-300 sm:text-base">
-            A practical engineering foundation I use while building modern full-stack and AI-powered products.
-          </p>
+          <motion.p
+            initial={{ opacity: 0, y: 8 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.35 }}
+            transition={{ duration: 0.35 }}
+            whileHover={{ y: -1 }}
+            className="mt-2 max-w-2xl text-sm text-slate-300 sm:text-base"
+          >
+            {introChars.map((char, index) => (
+              <motion.span
+                key={`${char}-${index}`}
+                initial={{ opacity: 0, y: 5 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.16, delay: index * 0.01 }}
+                className="inline-block"
+              >
+                {char === " " ? "\u00A0" : char}
+              </motion.span>
+            ))}
+          </motion.p>
         </div>
 
         <span className="inline-flex rounded-full border border-cyan-300/35 bg-cyan-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-cyan-200">
@@ -86,10 +108,6 @@ export default function FeatureGridSection() {
           );
         })}
       </div>
-
-      <p className="relative mt-6 text-base text-slate-300">
-        Principles I focus on while learning and building projects.
-      </p>
     </section>
   );
 }
