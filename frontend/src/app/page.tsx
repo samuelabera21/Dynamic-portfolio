@@ -99,6 +99,10 @@ export default function Home() {
         ) : null}
 
         <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
+          <TimelineSection />
+        </SectionShell>
+
+        <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
           <FeatureGridSection />
         </SectionShell>
 
@@ -108,10 +112,6 @@ export default function Home() {
 
         <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
           <AboutContactSection profile={profile} />
-        </SectionShell>
-
-        <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
-          <TimelineSection />
         </SectionShell>
 
         <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
