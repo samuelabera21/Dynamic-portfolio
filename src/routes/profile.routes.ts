@@ -9,6 +9,7 @@ const router = Router();
 router.get("/", async (req, res) => {
   try {
     let profile = await prisma.profile.findFirst({
+      orderBy: { updatedAt: "desc" },
       include: {
         socialLinks: true,
       },
@@ -53,6 +54,7 @@ router.put("/", authMiddleware, async (req, res) => {
     } = req.body;
 
     let profile = await prisma.profile.findFirst({
+      orderBy: { updatedAt: "desc" },
       include: { socialLinks: true },
     });
 
