@@ -23,12 +23,50 @@ function findSocialUrl(links: { platform: string; url: string }[], keyword: stri
   return `https://${match.url}`;
 }
 
+function isPdfDataUrl(value: string): boolean {
+  return value.startsWith("data:application/pdf;base64,");
+}
+
+function isHttpUrl(value: string): boolean {
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+function dataUrlToBlob(dataUrl: string): Blob {
+  const [meta, base64] = dataUrl.split(",");
+  const mimeMatch = meta.match(/data:(.*?);base64/);
+  const mimeType = mimeMatch?.[1] ?? "application/pdf";
+
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+
+  for (let i = 0; i < binary.length; i += 1) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+
+  return new Blob([bytes], { type: mimeType });
+}
+
+function downloadBlob(blob: Blob, fileName: string): void {
+  const objectUrl = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = objectUrl;
+  anchor.download = fileName;
+  anchor.click();
+  URL.revokeObjectURL(objectUrl);
+}
+
 export default function ResumePage() {
   const [homeData, setHomeData] = useState<HomeData | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
   const [visibleProjects, setVisibleProjects] = useState(INITIAL_PROJECTS);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [downloadingResume, setDownloadingResume] = useState(false);
 
   useEffect(() => {
     const run = async () => {
@@ -85,6 +123,39 @@ export default function ResumePage() {
 
   const hasMoreProjects = visibleProjects < projects.length;
 
+  const handleResumeDownload = async () => {
+    const resumeUrl = homeData?.profile?.resumeUrl;
+    if (!resumeUrl) return;
+
+    setDownloadingResume(true);
+
+    try {
+      if (isPdfDataUrl(resumeUrl)) {
+        const pdfBlob = dataUrlToBlob(resumeUrl);
+        downloadBlob(pdfBlob, "Samuel_Abera_Resume.pdf");
+        return;
+      }
+
+      if (isHttpUrl(resumeUrl)) {
+        const response = await fetch(resumeUrl);
+        if (!response.ok) {
+          throw new Error(`Resume download failed (${response.status})`);
+        }
+
+        const blob = await response.blob();
+        downloadBlob(blob, "Samuel_Abera_Resume.pdf");
+        return;
+      }
+
+      throw new Error("Resume URL is invalid.");
+    } catch (downloadError) {
+      const message = downloadError instanceof Error ? downloadError.message : "Failed to download resume.";
+      setError(message);
+    } finally {
+      setDownloadingResume(false);
+    }
+  };
+
   if (loading) {
     return (
       <section className="min-h-screen bg-gray-950 px-6 py-16 text-white lg:px-10">
@@ -116,15 +187,15 @@ export default function ResumePage() {
         <header className="mb-8 flex items-center justify-between border-b border-gray-800 pb-4">
           <h1 className="text-3xl font-bold">Samuel Abera</h1>
           {homeData.profile.resumeUrl ? (
-            <a
-              href={homeData.profile.resumeUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              type="button"
+              onClick={handleResumeDownload}
+              disabled={downloadingResume}
               className="inline-flex items-center gap-2 rounded-md border border-gray-600 px-3 py-2 text-sm text-gray-200 transition hover:bg-gray-800"
             >
               <Download className="h-4 w-4" />
-              Download Resume
-            </a>
+              {downloadingResume ? "Downloading..." : "Download Resume"}
+            </button>
           ) : (
             <button
               type="button"
