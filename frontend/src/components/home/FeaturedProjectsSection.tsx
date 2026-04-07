@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 import { Project } from "@/types/project";
 
 type Props = {
@@ -9,17 +10,24 @@ type Props = {
 };
 
 export default function FeaturedProjectsSection({ projects }: Props) {
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+  const headerY = useTransform(scrollYProgress, [0, 0.5, 1], [22, 0, -20]);
+  const headerOpacity = useTransform(scrollYProgress, [0, 0.2, 0.85, 1], [0.25, 1, 1, 0.35]);
+
   const headingText = "Featured Projects";
   const headingChars = headingText.split("");
 
   return (
-    <section id="featured-projects">
-      <div className="mb-6 border-b border-white/10 pb-5 text-center">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-300">Product Layer</p>
+    <section id="featured-projects" ref={sectionRef}>
+      <motion.div style={{ y: headerY, opacity: headerOpacity }} className="mb-6 border-b border-white/10 pb-5 text-center">
         <motion.h2
           initial={{ opacity: 0, y: 10, scale: 0.98 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
-          viewport={{ once: true, amount: 0.35 }}
+          viewport={{ once: false, amount: 0.35 }}
           transition={{ duration: 0.4 }}
           whileHover={{ y: -2, scale: 1.01 }}
           className="mt-1 font-[family-name:var(--font-heading)] text-2xl font-bold text-white sm:text-3xl"
@@ -37,12 +45,19 @@ export default function FeaturedProjectsSection({ projects }: Props) {
             </motion.span>
           ))}
         </motion.h2>
-        <motion.div whileHover={{ y: -1 }} transition={{ type: "spring", stiffness: 240, damping: 18 }} className="mt-2">
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false, amount: 0.55 }}
+          transition={{ duration: 0.3, delay: 0.08 }}
+          whileHover={{ y: -1 }}
+          className="mt-2"
+        >
           <Link href="/projects" className="site-link-hover text-sm font-semibold text-blue-300 hover:text-blue-400">
             View all projects
           </Link>
         </motion.div>
-      </div>
+      </motion.div>
 
       {projects.length > 0 ? (
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
