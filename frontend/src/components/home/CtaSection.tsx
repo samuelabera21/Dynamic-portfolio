@@ -55,7 +55,7 @@ export default function CtaSection() {
           whileHover={{ y: -4 }}
           className="flex h-full flex-col rounded-3xl border border-white/35 bg-black/55 p-7 backdrop-blur-sm"
         >
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-blue-200">Featured Role</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-blue-200">Looking For Opportunities</p>
           <h3 className="mt-4 font-[family-name:var(--font-heading)] text-3xl font-semibold text-white">Full-Stack Developer</h3>
           <p className="mt-8 text-lg text-slate-200">Full-Stack &amp; AI Opportunities</p>
           <p className="mt-5 text-base leading-8 text-slate-300">
