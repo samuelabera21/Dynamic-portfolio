@@ -29,10 +29,10 @@ export default function CtaSection() {
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-200">Career Path</p>
             <h2 className="mt-4 max-w-2xl font-[family-name:var(--font-heading)] text-3xl font-semibold leading-tight text-white sm:text-4xl">
-              I build scalable products with clean architecture and business-first engineering.
+              Software Engineering Student | Full-Stack Developer | AI Enthusiast
             </h2>
             <p className="mt-5 max-w-2xl text-base leading-9 text-slate-300">
-              Open to deep-learning and fullstack opportunities where strong backend systems, modern interfaces, and long-term maintainability matter.
+              Building scalable web applications and learning applied AI systems.
             </p>
 
             <motion.div whileHover={{ x: 6 }} transition={{ type: "spring", stiffness: 220, damping: 18 }} className="mt-8 inline-flex">
@@ -56,10 +56,10 @@ export default function CtaSection() {
           className="flex h-full flex-col rounded-3xl border border-white/35 bg-black/55 p-7 backdrop-blur-sm"
         >
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-blue-200">Featured Role</p>
-          <h3 className="mt-4 font-[family-name:var(--font-heading)] text-3xl font-semibold text-white">Deep Learning Engineer</h3>
+          <h3 className="mt-4 font-[family-name:var(--font-heading)] text-3xl font-semibold text-white">Full-Stack Developer</h3>
           <p className="mt-8 text-lg text-slate-200">Remote / Addis Ababa</p>
           <p className="mt-5 text-base leading-8 text-slate-300">
-            Looking for product teams solving real problems with AI, API-first systems, and thoughtful UX delivery.
+            Open to impactful opportunities in modern web engineering and applied AI.
           </p>
 
           <div className="mt-8">
