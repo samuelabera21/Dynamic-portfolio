@@ -15,7 +15,7 @@ function formatPlatform(value: string) {
   return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
 }
 
-type PlatformKey = "github" | "facebook" | "youtube" | "linkedin" | "x" | "telegram" | "whatsapp" | "tiktok" | "website";
+type PlatformKey = "github" | "facebook" | "youtube" | "linkedin" | "instagram" | "x" | "telegram" | "whatsapp" | "tiktok" | "website";
 
 function normalizeSocialUrl(url: string): string {
   const trimmed = url.trim();
@@ -31,10 +31,11 @@ function detectPlatform(platform: string, url: string): PlatformKey {
   if (source.includes("facebook") || source.includes("fb")) return "facebook";
   if (source.includes("youtube") || source.includes("youtu.be")) return "youtube";
   if (source.includes("linkedin") || source.includes("linkedin")) return "linkedin";
+  if (source.includes("instagram") || source.includes("insta")) return "instagram";
   if (source.includes("twitter") || source.includes("x.com")) return "x";
   if (source.includes("telegram") || source.includes("t.me")) return "telegram";
   if (source.includes("whatsapp") || source.includes("wa.me")) return "whatsapp";
-  if (source.includes("tiktok") || source.includes("tik tok") || source.includes("tt")) return "tiktok";
+  if (source.includes("tiktok") || source.includes("tik tok") || source.includes("vm.tiktok") || source.includes("m.tiktok")) return "tiktok";
 
   return "website";
 }
@@ -44,6 +45,7 @@ function platformLabel(key: PlatformKey, fallback: string) {
   if (key === "facebook") return "Facebook";
   if (key === "youtube") return "YouTube";
   if (key === "linkedin") return "LinkedIn";
+  if (key === "instagram") return "Instagram";
   if (key === "x") return "X";
   if (key === "tiktok") return "TikTok";
   if (fallback.trim()) return formatPlatform(fallback);
@@ -81,6 +83,16 @@ function SocialIcon({ platform }: { platform: PlatformKey }) {
     return (
       <svg viewBox="0 0 24 24" fill="currentColor" className={common} aria-hidden="true">
         <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.15 1.45-2.15 2.95v5.66H9.33V9h3.42v1.56h.05c.48-.9 1.65-1.85 3.39-1.85 3.63 0 4.3 2.38 4.3 5.48v6.26ZM5.3 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14ZM7.08 20.45H3.5V9h3.57v11.45ZM22.22 0H1.77A1.78 1.78 0 0 0 0 1.78v20.44C0 23.2.8 24 1.77 24h20.45c.98 0 1.78-.8 1.78-1.78V1.78C24 .8 23.2 0 22.22 0Z" />
+      </svg>
+    );
+  }
+
+  if (platform === "instagram") {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={common} aria-hidden="true">
+        <rect x="3.5" y="3.5" width="17" height="17" rx="5" />
+        <circle cx="12" cy="12" r="4" />
+        <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
       </svg>
     );
   }

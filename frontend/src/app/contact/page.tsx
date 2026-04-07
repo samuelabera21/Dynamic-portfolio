@@ -34,11 +34,11 @@ function detectPlatform(platform: string, url: string): PlatformKey {
   if (source.includes("facebook") || source.includes("fb")) return "facebook";
   if (source.includes("youtube") || source.includes("youtu.be")) return "youtube";
   if (source.includes("linkedin")) return "linkedin";
+  if (source.includes("instagram") || source.includes("insta")) return "instagram";
   if (source.includes("twitter") || source.includes("x.com")) return "x";
   if (source.includes("telegram") || source.includes("t.me")) return "telegram";
   if (source.includes("whatsapp") || source.includes("wa.me")) return "whatsapp";
-  if (source.includes("tiktok") || source.includes("tik tok") || source.includes("tt")) return "tiktok";
-  if (source.includes("instagram") || source.includes("insta")) return "instagram";
+  if (source.includes("tiktok") || source.includes("tik tok") || source.includes("vm.tiktok") || source.includes("m.tiktok")) return "tiktok";
 
   return "website";
 }
