@@ -156,7 +156,7 @@ export default function HeroSection({ profile, showAvailableForHire }: Props) {
           </h1>
 
           <p className="max-w-3xl text-base leading-8 text-slate-100 sm:text-xl sm:leading-10">
-            I build web applications and explore machine learning solutions.
+            Aspiring Software Engineer driven to turn real-world problems into meaningful software solutions.
           </p>
 
           <div className="grid gap-2 text-sm text-slate-200 sm:grid-cols-2">
