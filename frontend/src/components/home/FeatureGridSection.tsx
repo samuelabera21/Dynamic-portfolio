@@ -45,36 +45,28 @@ export default function FeatureGridSection() {
       <div className="pointer-events-none absolute -left-20 top-8 h-56 w-56 rounded-full bg-cyan-500/10 blur-[100px]" />
       <div className="pointer-events-none absolute -right-16 bottom-0 h-56 w-56 rounded-full bg-blue-600/10 blur-[100px]" />
 
-      <div className="relative mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-white/10 pb-4">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">Software Engineering</p>
-          <h2 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-white sm:text-4xl">Basic Principles</h2>
-          <motion.p
-            initial={{ opacity: 0, y: 8 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.35 }}
-            transition={{ duration: 0.35 }}
-            whileHover={{ y: -1 }}
-            className="mt-2 max-w-2xl text-sm text-slate-300 sm:text-base"
-          >
-            {introChars.map((char, index) => (
-              <motion.span
-                key={`${char}-${index}`}
-                initial={{ opacity: 0, y: 5 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.16, delay: index * 0.01 }}
-                className="inline-block"
-              >
-                {char === " " ? "\u00A0" : char}
-              </motion.span>
-            ))}
-          </motion.p>
-        </div>
-
-        <span className="inline-flex rounded-full border border-cyan-300/35 bg-cyan-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-cyan-200">
-          AI-Ready Mindset
-        </span>
+      <div className="relative mb-6 border-b border-white/10 pb-5 text-center">
+        <motion.p
+          initial={{ opacity: 0, y: 10, scale: 0.98 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: true, amount: 0.35 }}
+          transition={{ duration: 0.4 }}
+          whileHover={{ y: -2, scale: 1.01 }}
+          className="mx-auto max-w-3xl text-sm font-medium leading-7 text-slate-200 sm:text-base"
+        >
+          {introChars.map((char, index) => (
+            <motion.span
+              key={`${char}-${index}`}
+              initial={{ opacity: 0, y: 5 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.15, delay: index * 0.009 }}
+              className="inline-block"
+            >
+              {char === " " ? "\u00A0" : char}
+            </motion.span>
+          ))}
+        </motion.p>
       </div>
 
       <div className="relative grid gap-4 md:grid-cols-2 xl:grid-cols-3">
