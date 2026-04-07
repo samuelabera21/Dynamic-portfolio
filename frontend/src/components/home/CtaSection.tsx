@@ -42,7 +42,17 @@ export default function CtaSection({ bio }: Props) {
           </div>
 
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-200">About Me</p>
+            <div className="flex items-center justify-between gap-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-200">About Me</p>
+              <Link
+                href="/about"
+                className="group inline-flex items-center gap-2 rounded-full border border-blue-300/35 bg-blue-500/10 px-3 py-1.5 text-xs font-semibold text-blue-100 transition hover:bg-blue-500/20"
+              >
+                Full story
+                <span className="text-sm leading-none transition-transform group-hover:translate-x-0.5">↗</span>
+              </Link>
+            </div>
+            <p className="mt-4 text-sm font-semibold uppercase tracking-[0.2em] text-slate-300">Who I am?</p>
             <h2 className="mt-4 max-w-2xl font-[family-name:var(--font-heading)] text-3xl font-semibold leading-tight text-white sm:text-4xl">
               <span className="block">Aspiring Software Engineer</span>
               <span className="block"></span>
