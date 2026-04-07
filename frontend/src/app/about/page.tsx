@@ -591,9 +591,15 @@ export default function AboutPage() {
           <div className="mb-6 border-b border-white/10 pb-5 text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Focus Areas</p>
             <h2 className="mt-2 font-[family-name:var(--font-heading)] text-4xl font-bold text-white">What I&apos;m Interested In</h2>
-            <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
-              A focused view of what I study, build, and keep improving as I grow in software engineering.
-            </p>
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.35 }}
+              transition={{ duration: 0.35 }}
+              className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base"
+            >
+              I focus on software development, AI, web development, and learning new technologies.
+            </motion.p>
           </div>
 
           <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
