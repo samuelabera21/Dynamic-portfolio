@@ -291,14 +291,12 @@ export default function AboutPage() {
     (isPdfDataUrl(profile.resumeUrl) || isHttpUrl(profile.resumeUrl));
   const hasSkills = showSkills && orderedCategories.some((category) => (groupedSkills[category] ?? []).length > 0);
   const templateFacts = [
-    { label: "Birthday", value: "1 May 1995" },
-    { label: "Website", value: "www.example.com" },
-    { label: "Phone", value: "+123 456 7890" },
-    { label: "City", value: profile.location ?? "Ethiopia" },
-    { label: "Age", value: "30" },
-    { label: "Degree", value: "Master" },
-    { label: "Email", value: "email@example.com" },
-    { label: "Freelance", value: profile.available ? "Available" : "Not available" },
+    { label: "Birthday", value: "09 Feb 2005" },
+    { label: "Phone", value: "+251923010537" },
+    { label: "City", value: "Ethiopia" },
+    { label: "Age", value: "21" },
+    { label: "Email", value: "samuelabera.dev@gmail.com" },
+    { label: "Freelance", value: "Available" },
   ];
 
   const handleResumeDownload = () => {
@@ -362,9 +360,9 @@ export default function AboutPage() {
 
               <div className="space-y-6">
                 <div>
-                  <h2 className="font-[family-name:var(--font-heading)] text-4xl font-bold text-white">UI/UX Designer & Web Developer.</h2>
+                  <h2 className="font-[family-name:var(--font-heading)] text-4xl font-bold text-white">Software Engineering Student and Web Developer.</h2>
                   <p className="mt-4 text-lg italic leading-8 text-slate-200">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                    Focused on building practical web applications while growing in modern software engineering.
                   </p>
                 </div>
 
@@ -380,7 +378,7 @@ export default function AboutPage() {
                 </div>
 
                 <p className="text-base leading-8 text-slate-300">
-                  Officiis eligendi itaque labore et dolorum mollitia officiis optio vero. Quisquam sunt adipisci omnis et ut. Nulla accusantium dolor incidunt officia tempore. Et eius omnis. Cupiditate ut dicta maxime officiis quidem quia. Sed et consectetur qui quia repellendus itaque neque.
+                  I am actively available for freelance opportunities and collaborative projects.
                 </p>
               </div>
             </div>
