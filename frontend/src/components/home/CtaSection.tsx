@@ -27,9 +27,10 @@ export default function CtaSection() {
           </div>
 
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-200">Career Path</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-200">About Me</p>
             <h2 className="mt-4 max-w-2xl font-[family-name:var(--font-heading)] text-3xl font-semibold leading-tight text-white sm:text-4xl">
-              Software Engineering Student | Full-Stack Developer | AI Enthusiast
+              <span className="block">Software Engineering Student</span>
+              <span className="block">Full-Stack Developer | AI Enthusiast</span>
             </h2>
             <p className="mt-5 max-w-2xl text-base leading-9 text-slate-300">
               Building scalable web applications and learning applied AI systems.
@@ -40,8 +41,7 @@ export default function CtaSection() {
                 href="/contact"
                 className="group inline-flex items-center gap-3 rounded-xl border border-white/35 px-5 py-3 text-base font-semibold text-white transition hover:bg-white/10"
               >
-                Work With Me
-                <span className="text-xl leading-none transition-transform group-hover:translate-x-1">→</span>
+                Contact Me
               </Link>
             </motion.div>
           </div>
