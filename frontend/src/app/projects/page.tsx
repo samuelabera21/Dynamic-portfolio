@@ -68,15 +68,6 @@ export default function ProjectsPage() {
               </motion.span>
             ))}
           </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 8 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.35 }}
-            transition={{ duration: 0.35, delay: 0.08 }}
-            className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-300"
-          >
-            Selected projects, simple filters, and quick previews.
-          </motion.p>
         </div>
 
         <div className="grid gap-3 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl md:grid-cols-3">
