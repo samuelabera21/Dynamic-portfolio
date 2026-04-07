@@ -1,22 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { unsubscribeNewsletter } from "@/lib/api";
 
-export default function UnsubscribePage() {
+function UnsubscribeContent() {
   const searchParams = useSearchParams();
-  const [status, setStatus] = useState<string>("Processing your request...");
-  const [error, setError] = useState<string | null>(null);
+  const email = searchParams.get("email") ?? "";
+  const token = searchParams.get("token") ?? "";
+  const missingParams = !email || !token;
+  const [status, setStatus] = useState<string>(
+    missingParams ? "Unable to process request." : "Processing your request..."
+  );
+  const [error, setError] = useState<string | null>(
+    missingParams ? "Missing unsubscribe information." : null
+  );
 
   useEffect(() => {
-    const email = searchParams.get("email") ?? "";
-    const token = searchParams.get("token") ?? "";
-
-    if (!email || !token) {
-      setError("Missing unsubscribe information.");
-      setStatus("Unable to process request.");
+    if (missingParams) {
       return;
     }
 
@@ -31,7 +33,7 @@ export default function UnsubscribePage() {
     };
 
     run();
-  }, [searchParams]);
+  }, [email, token, missingParams]);
 
   return (
     <section className="mx-auto flex min-h-[60vh] max-w-2xl items-center px-6 py-16 sm:px-10">
@@ -50,5 +52,13 @@ export default function UnsubscribePage() {
         </div>
       </div>
     </section>
+  );
+}
+
+export default function UnsubscribePage() {
+  return (
+    <Suspense fallback={<section className="mx-auto flex min-h-[60vh] max-w-2xl items-center px-6 py-16 sm:px-10"><div className="w-full rounded-3xl border border-white/10 bg-white/5 p-8 text-center text-white shadow-xl backdrop-blur-xl sm:p-10"><p className="text-sm leading-7 text-slate-300">Processing your request...</p></div></section>}>
+      <UnsubscribeContent />
+    </Suspense>
   );
 }

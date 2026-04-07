@@ -13,10 +13,7 @@ export default function GlobalFooter() {
 
   useEffect(() => {
     let mounted = true;
-    const isAdminRoute = pathname.startsWith("/admin");
-
-    if (isAdminRoute) {
-      setProfile(null);
+    if (hideOnAdmin) {
       return () => {
         mounted = false;
       };
@@ -40,7 +37,7 @@ export default function GlobalFooter() {
     return () => {
       mounted = false;
     };
-  }, [pathname]);
+  }, [hideOnAdmin]);
 
   if (hideOnAdmin || !profile) return null;
 

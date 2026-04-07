@@ -307,7 +307,7 @@ export default function AboutPage() {
         score: skillScore(name, category),
       }));
     });
-  }, [groupedSkills]);
+  }, [groupedSkills, orderedCategories]);
 
   const splitSkillColumns = useMemo(() => {
     const midpoint = Math.ceil(flatSkills.length / 2);
@@ -407,7 +407,7 @@ export default function AboutPage() {
         new Map(
           orderedCategories
             .flatMap((category) => groupedSkills[category] ?? [])
-            .map((skill) => [skill.trim().toLowerCase(), skill.trim()])
+            .map((skill): [string, string] => [skill.trim().toLowerCase(), skill.trim()])
             .filter((entry) => entry[1])
         ).values()
       );

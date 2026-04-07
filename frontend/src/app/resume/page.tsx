@@ -203,21 +203,6 @@ export default function ResumePage() {
         }
       };
 
-      const writeBullet = (text: string) => {
-        const safeText = sanitizeForPdf(text);
-        if (!safeText) return;
-
-        ensureSpace(15);
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(11);
-        const lines = doc.splitTextToSize(`- ${safeText}`, 510);
-        for (const line of lines) {
-          ensureSpace(15);
-          doc.text(line, marginX + 6, y);
-          y += 15;
-        }
-      };
-
       const writeLinkLine = (label: string, displayText: string, url: string) => {
         const safeLabel = sanitizeForPdf(label);
         const safeDisplay = sanitizeForPdf(displayText);

@@ -39,10 +39,6 @@ export default function Navbar() {
     [showBlog]
   );
 
-  useEffect(() => {
-    setMobileOpen(false);
-  }, [pathname]);
-
   if (hideOnAdmin) return null;
 
   return (

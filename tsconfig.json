@@ -7,5 +7,17 @@
     "esModuleInterop": true,
     "types": ["node"],
     "strict": true
-  }
+  },
+  "include": [
+    "server.ts",
+    "hash.ts",
+    "prisma.config.ts",
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "frontend/**",
+    "generated/**",
+    "dist/**",
+    "node_modules/**"
+  ]
 }
