@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Download, Github, Linkedin, Mail } from "lucide-react";
+import { Download, Linkedin, Mail } from "lucide-react";
 import { jsPDF } from "jspdf";
 import { getHome, getProjects } from "@/lib/api";
 import { HomeData } from "@/types/home";
@@ -22,6 +22,14 @@ function findSocialUrl(links: { platform: string; url: string }[], keyword: stri
   if (!match?.url) return null;
   if (match.url.startsWith("http://") || match.url.startsWith("https://")) return match.url;
   return `https://${match.url}`;
+}
+
+function GithubIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+      <path d="M12 .5C5.65.5.5 5.66.5 12.02c0 5.1 3.3 9.42 7.88 10.95.58.1.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.55-3.88-1.55-.52-1.34-1.28-1.7-1.28-1.7-1.05-.72.08-.71.08-.71 1.16.08 1.76 1.2 1.76 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.3-5.26-1.29-5.26-5.75 0-1.27.46-2.3 1.2-3.1-.12-.3-.52-1.52.11-3.17 0 0 .98-.31 3.2 1.19a11.1 11.1 0 0 1 5.83 0c2.22-1.5 3.2-1.19 3.2-1.19.63 1.65.24 2.87.12 3.17.75.8 1.2 1.83 1.2 3.1 0 4.48-2.7 5.45-5.28 5.74.41.36.78 1.07.78 2.17 0 1.57-.01 2.84-.01 3.23 0 .31.2.67.8.55A11.53 11.53 0 0 0 23.5 12C23.5 5.66 18.35.5 12 .5Z" />
+    </svg>
+  );
 }
 
 function formatProjectDate(input: string): string {
@@ -301,7 +309,7 @@ export default function ResumePage() {
                   samuelabera.dev@gmail.com
                 </a>
                 <a href={contactLinks.github} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-gray-200 transition hover:text-white">
-                  <Github className="h-4 w-4 text-gray-400" />
+                  <GithubIcon className="h-4 w-4 text-gray-400" />
                   github.com/samuelabera21
                 </a>
                 <a href={contactLinks.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-gray-200 transition hover:text-white">
