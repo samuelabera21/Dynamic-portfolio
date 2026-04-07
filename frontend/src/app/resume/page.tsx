@@ -134,7 +134,21 @@ export default function ResumePage() {
 
   const allSkills = useMemo(() => {
     if (!homeData?.skills) return [];
-    return Object.values(homeData.skills).flat();
+
+    const unique = new Map<string, string>();
+
+    Object.values(homeData.skills)
+      .flat()
+      .map((skill) => skill.trim())
+      .filter(Boolean)
+      .forEach((skill) => {
+        const normalized = skill.toLowerCase();
+        if (!unique.has(normalized)) {
+          unique.set(normalized, skill);
+        }
+      });
+
+    return Array.from(unique.values());
   }, [homeData]);
 
   const summarySocial = useMemo(() => {
