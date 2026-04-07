@@ -9,6 +9,9 @@ import ResumeSection from "@/components/resume/ResumeSection";
 import SkillBadge from "@/components/resume/SkillBadge";
 import { Project } from "@/types/project";
 
+const INITIAL_PROJECTS = 4;
+const PROJECTS_STEP = 4;
+
 function findSocialUrl(links: { platform: string; url: string }[], keyword: string): string | null {
   const match = links.find((item) => {
     const source = `${item.platform} ${item.url}`.toLowerCase();
@@ -23,6 +26,7 @@ function findSocialUrl(links: { platform: string; url: string }[], keyword: stri
 export default function ResumePage() {
   const [homeData, setHomeData] = useState<HomeData | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [visibleProjects, setVisibleProjects] = useState(INITIAL_PROJECTS);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -73,6 +77,13 @@ export default function ResumePage() {
       linkedin: findSocialUrl(social, "linkedin") ?? "https://linkedin.com/in/samuelabera21",
     };
   }, [homeData]);
+
+  const visibleProjectItems = useMemo(
+    () => projects.slice(0, visibleProjects),
+    [projects, visibleProjects]
+  );
+
+  const hasMoreProjects = visibleProjects < projects.length;
 
   if (loading) {
     return (
@@ -126,8 +137,8 @@ export default function ResumePage() {
           )}
         </header>
 
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-12">
-          <aside className="md:col-span-4">
+        <div className="grid grid-cols-1 items-start gap-8 md:grid-cols-12">
+          <aside className="md:col-span-4 md:sticky md:top-24">
             <ResumeSection title="Summary">
               <p className="text-sm leading-7 text-gray-300">
                 I am a software engineering student interested in web development and artificial intelligence.
@@ -171,11 +182,35 @@ export default function ResumePage() {
           <main className="md:col-span-8">
             <ResumeSection title="Projects" className="mb-0">
               {projects.length > 0 ? (
-                <div className="space-y-4 border-l border-gray-700 pl-4">
-                  {projects.map((project) => (
-                    <ResumeProjectCard key={project.id} project={project} />
-                  ))}
-                </div>
+                <>
+                  <div className="space-y-4 border-l border-gray-700 pl-4">
+                    {visibleProjectItems.map((project) => (
+                      <ResumeProjectCard key={project.id} project={project} />
+                    ))}
+                  </div>
+
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {hasMoreProjects ? (
+                      <button
+                        type="button"
+                        onClick={() => setVisibleProjects((count) => count + PROJECTS_STEP)}
+                        className="rounded-md border border-gray-600 px-3 py-1 text-sm text-gray-200 transition hover:bg-gray-800"
+                      >
+                        Load More Projects
+                      </button>
+                    ) : null}
+
+                    {visibleProjects > INITIAL_PROJECTS ? (
+                      <button
+                        type="button"
+                        onClick={() => setVisibleProjects(INITIAL_PROJECTS)}
+                        className="rounded-md border border-gray-600 px-3 py-1 text-sm text-gray-200 transition hover:bg-gray-800"
+                      >
+                        Show Less
+                      </button>
+                    ) : null}
+                  </div>
+                </>
               ) : (
                 <p className="text-sm text-gray-400">No projects yet. Add projects from admin panel to show them here.</p>
               )}
