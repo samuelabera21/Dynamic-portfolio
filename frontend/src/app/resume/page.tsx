@@ -231,6 +231,7 @@ export default function ResumePage() {
             <div className="border-l-2 border-emerald-400/80 pl-5">
               <h3 className="text-base font-bold uppercase tracking-wide text-white">BSc in Software Engineering</h3>
               <p className="mt-2 text-sm italic text-slate-300">Debre Berhan University</p>
+              <p className="mt-1 text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">Expected Graduate: 2028</p>
             </div>
           </div>
 
