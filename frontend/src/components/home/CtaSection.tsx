@@ -57,9 +57,9 @@ export default function CtaSection() {
         >
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-blue-200">Featured Role</p>
           <h3 className="mt-4 font-[family-name:var(--font-heading)] text-3xl font-semibold text-white">Full-Stack Developer</h3>
-          <p className="mt-8 text-lg text-slate-200">Remote / Addis Ababa</p>
+          <p className="mt-8 text-lg text-slate-200">Full-Stack &amp; AI Opportunities</p>
           <p className="mt-5 text-base leading-8 text-slate-300">
-            Open to impactful opportunities in modern web engineering and applied AI.
+            Open to internships and entry-level roles in web development and applied AI. Interested in building real-world systems and scalable applications.
           </p>
 
           <div className="mt-8">
