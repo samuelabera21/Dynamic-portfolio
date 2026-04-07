@@ -115,7 +115,7 @@ export default function Home() {
         </SectionShell>
 
         <div className="mx-6 sm:mx-10 lg:mx-12">
-          <CtaSection />
+          <CtaSection bio={profile.bio} />
         </div>
       </div>
     </section>

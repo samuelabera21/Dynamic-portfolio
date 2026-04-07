@@ -3,7 +3,22 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 
-export default function CtaSection() {
+type Props = {
+  bio?: string;
+};
+
+function normalizeBio(value?: string): string {
+  const text = value?.replace(/\s+/g, " ").trim();
+  if (!text) {
+    return "Building scalable web applications and learning applied AI systems.";
+  }
+
+  return text;
+}
+
+export default function CtaSection({ bio }: Props) {
+  const aboutBio = normalizeBio(bio);
+
   return (
     <motion.section
       initial={{ opacity: 0, y: 18 }}
@@ -29,11 +44,11 @@ export default function CtaSection() {
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-200">About Me</p>
             <h2 className="mt-4 max-w-2xl font-[family-name:var(--font-heading)] text-3xl font-semibold leading-tight text-white sm:text-4xl">
-              <span className="block">Software Engineering Student</span>
-              <span className="block">Full-Stack Developer | AI Enthusiast</span>
+              <span className="block">Aspiring Software Engineer</span>
+              <span className="block"></span>
             </h2>
             <p className="mt-5 max-w-2xl text-base leading-9 text-slate-300">
-              Building scalable web applications and learning applied AI systems.
+              {aboutBio}
             </p>
 
             <motion.div whileHover={{ x: 6 }} transition={{ type: "spring", stiffness: 220, damping: 18 }} className="mt-8 inline-flex">
@@ -56,10 +71,10 @@ export default function CtaSection() {
           className="flex h-full flex-col rounded-3xl border border-white/35 bg-black/55 p-7 backdrop-blur-sm"
         >
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-blue-200">Looking For Opportunities</p>
-          <h3 className="mt-4 font-[family-name:var(--font-heading)] text-3xl font-semibold text-white">Full-Stack Developer</h3>
+          <h3 className="mt-4 font-[family-name:var(--font-heading)] text-3xl font-semibold text-white"> </h3>
           <p className="mt-8 text-lg text-slate-200">Full-Stack &amp; AI Opportunities</p>
           <p className="mt-5 text-base leading-8 text-slate-300">
-            Open to internships and entry-level roles in web development and applied AI. Interested in building real-world systems and scalable applications.
+            Open to internships  in web development and applied AI. Interested in building real-world systems and scalable applications.
           </p>
 
           <div className="mt-8">
