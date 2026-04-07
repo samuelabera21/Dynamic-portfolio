@@ -86,6 +86,12 @@ export default function Home() {
           <CtaSection bio={profile.bio} />
         </div>
 
+        {showProjects ? (
+          <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
+            <FeaturedProjectsSection projects={featuredProjects} />
+          </SectionShell>
+        ) : null}
+
         <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
           <FeatureGridSection />
         </SectionShell>
@@ -97,12 +103,6 @@ export default function Home() {
         <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
           <AboutContactSection profile={profile} />
         </SectionShell>
-
-        {showProjects ? (
-          <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
-            <FeaturedProjectsSection projects={featuredProjects} />
-          </SectionShell>
-        ) : null}
 
         {showSkills ? (
           <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
