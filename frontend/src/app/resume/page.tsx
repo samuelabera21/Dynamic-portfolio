@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Contact, Download, GitBranch, Mail } from "lucide-react";
+import { jsPDF } from "jspdf";
 import { getHome, getProjects } from "@/lib/api";
 import { HomeData } from "@/types/home";
 import ResumeProjectCard from "@/components/resume/ProjectCard";
@@ -23,41 +24,10 @@ function findSocialUrl(links: { platform: string; url: string }[], keyword: stri
   return `https://${match.url}`;
 }
 
-function isPdfDataUrl(value: string): boolean {
-  return value.startsWith("data:application/pdf;base64,");
-}
-
-function isHttpUrl(value: string): boolean {
-  try {
-    const parsed = new URL(value);
-    return parsed.protocol === "http:" || parsed.protocol === "https:";
-  } catch {
-    return false;
-  }
-}
-
-function dataUrlToBlob(dataUrl: string): Blob {
-  const [meta, base64] = dataUrl.split(",");
-  const mimeMatch = meta.match(/data:(.*?);base64/);
-  const mimeType = mimeMatch?.[1] ?? "application/pdf";
-
-  const binary = atob(base64);
-  const bytes = new Uint8Array(binary.length);
-
-  for (let i = 0; i < binary.length; i += 1) {
-    bytes[i] = binary.charCodeAt(i);
-  }
-
-  return new Blob([bytes], { type: mimeType });
-}
-
-function downloadBlob(blob: Blob, fileName: string): void {
-  const objectUrl = URL.createObjectURL(blob);
-  const anchor = document.createElement("a");
-  anchor.href = objectUrl;
-  anchor.download = fileName;
-  anchor.click();
-  URL.revokeObjectURL(objectUrl);
+function formatProjectDate(input: string): string {
+  const date = new Date(input);
+  if (Number.isNaN(date.getTime())) return "Recent";
+  return date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
 }
 
 export default function ResumePage() {
@@ -124,30 +94,120 @@ export default function ResumePage() {
   const hasMoreProjects = visibleProjects < projects.length;
 
   const handleResumeDownload = async () => {
-    const resumeUrl = homeData?.profile?.resumeUrl;
-    if (!resumeUrl) return;
+    if (!homeData) return;
 
     setDownloadingResume(true);
+    setError(null);
 
     try {
-      if (isPdfDataUrl(resumeUrl)) {
-        const pdfBlob = dataUrlToBlob(resumeUrl);
-        downloadBlob(pdfBlob, "Samuel_Abera_Resume.pdf");
-        return;
-      }
+      const doc = new jsPDF({ unit: "pt", format: "a4" });
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const marginX = 40;
+      let y = 46;
 
-      if (isHttpUrl(resumeUrl)) {
-        const response = await fetch(resumeUrl);
-        if (!response.ok) {
-          throw new Error(`Resume download failed (${response.status})`);
+      const ensureSpace = (needed = 20) => {
+        if (y + needed > pageHeight - 40) {
+          doc.addPage();
+          y = 46;
         }
+      };
 
-        const blob = await response.blob();
-        downloadBlob(blob, "Samuel_Abera_Resume.pdf");
-        return;
+      const writeTitle = (text: string) => {
+        ensureSpace(28);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(18);
+        doc.text(text, marginX, y);
+        y += 24;
+      };
+
+      const writeSection = (title: string) => {
+        ensureSpace(24);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(13);
+        doc.text(title, marginX, y);
+        y += 10;
+        doc.setDrawColor(180, 180, 180);
+        doc.line(marginX, y, 555, y);
+        y += 16;
+      };
+
+      const writeParagraph = (text: string, indent = 0) => {
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        const lines = doc.splitTextToSize(text, 515 - indent);
+        for (const line of lines) {
+          ensureSpace(15);
+          doc.text(line, marginX + indent, y);
+          y += 15;
+        }
+      };
+
+      const writeBullet = (text: string) => {
+        ensureSpace(15);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        const lines = doc.splitTextToSize(`- ${text}`, 510);
+        for (const line of lines) {
+          ensureSpace(15);
+          doc.text(line, marginX + 6, y);
+          y += 15;
+        }
+      };
+
+      writeTitle("Samuel Abera");
+
+      writeSection("Summary");
+      writeParagraph("I am a software engineering student interested in web development and artificial intelligence.");
+      y += 6;
+      writeBullet("Email: samuelabera.dev@gmail.com");
+      writeBullet(`GitHub: ${contactLinks.github.replace(/^https?:\/\//, "")}`);
+      writeBullet(`LinkedIn: ${contactLinks.linkedin.replace(/^https?:\/\//, "")}`);
+
+      y += 6;
+      writeSection("Education");
+      writeParagraph("BSc in Software Engineering");
+      writeParagraph("Debre Berhan University");
+      writeParagraph("Expected Graduate: 2028");
+
+      y += 6;
+      writeSection("Skills");
+      writeParagraph(allSkills.length > 0 ? allSkills.join(", ") : "No skills added yet.");
+
+      y += 6;
+      writeSection("Projects");
+      if (projects.length === 0) {
+        writeParagraph("No projects added yet.");
+      } else {
+        projects.forEach((project) => {
+          ensureSpace(24);
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(12);
+          doc.text(project.title, marginX, y);
+          y += 15;
+
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(10);
+          doc.text(formatProjectDate(project.createdAt), marginX, y);
+          y += 14;
+
+          writeParagraph(project.description, 2);
+
+          if (project.techStack.length > 0) {
+            writeParagraph(`Tech: ${project.techStack.join(", ")}`, 2);
+          }
+
+          const links: string[] = [];
+          if (project.githubUrl) links.push(`GitHub: ${project.githubUrl}`);
+          if (project.liveUrl) links.push(`Live Demo: ${project.liveUrl}`);
+          if (links.length > 0) {
+            writeParagraph(links.join(" | "), 2);
+          }
+
+          y += 8;
+        });
       }
 
-      throw new Error("Resume URL is invalid.");
+      doc.save("Samuel_Abera_Resume.pdf");
     } catch (downloadError) {
       const message = downloadError instanceof Error ? downloadError.message : "Failed to download resume.";
       setError(message);
@@ -186,26 +246,15 @@ export default function ResumePage() {
       <div className="mx-auto max-w-5xl px-6 py-10">
         <header className="mb-8 flex items-center justify-between border-b border-gray-800 pb-4">
           <h1 className="text-3xl font-bold">Samuel Abera</h1>
-          {homeData.profile.resumeUrl ? (
-            <button
-              type="button"
-              onClick={handleResumeDownload}
-              disabled={downloadingResume}
-              className="inline-flex items-center gap-2 rounded-md border border-gray-600 px-3 py-2 text-sm text-gray-200 transition hover:bg-gray-800"
-            >
-              <Download className="h-4 w-4" />
-              {downloadingResume ? "Downloading..." : "Download Resume"}
-            </button>
-          ) : (
-            <button
-              type="button"
-              disabled
-              className="inline-flex cursor-not-allowed items-center gap-2 rounded-md border border-gray-700 px-3 py-2 text-sm text-gray-500"
-            >
-              <Download className="h-4 w-4" />
-              Download Resume
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={handleResumeDownload}
+            disabled={downloadingResume}
+            className="inline-flex items-center gap-2 rounded-md border border-gray-600 px-3 py-2 text-sm text-gray-200 transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-70"
+          >
+            <Download className="h-4 w-4" />
+            {downloadingResume ? "Downloading..." : "Download Resume"}
+          </button>
         </header>
 
         <div className="grid grid-cols-1 items-start gap-8 md:grid-cols-12">
