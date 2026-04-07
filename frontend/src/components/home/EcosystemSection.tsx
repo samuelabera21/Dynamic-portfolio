@@ -42,19 +42,39 @@ const workflowSteps = [
 ];
 
 export default function EcosystemSection() {
-  const pipelineText =
-    "UI \u2192 API \u2192 Backend \u2192 Database \u2192 Integrations \u2192 DevOps";
+  const introText =
+    "This section shows how I design, build, and ship production-ready software systems.";
+  const introChars = introText.split("");
 
   return (
     <section>
       <div className="mb-5 space-y-2 text-center">
         <h2 className="font-[family-name:var(--font-heading)] text-2xl font-bold text-white sm:text-3xl">Development Workflow</h2>
-        <p className="mx-auto max-w-3xl text-sm text-slate-300 sm:text-base">How I build and ship full-stack applications.</p>
       </div>
 
-      <div className="rounded-2xl border border-white/15 bg-white/5 p-5 text-center backdrop-blur-xl">
-        <p className="text-sm font-semibold text-slate-200 sm:text-base">{pipelineText}</p>
-      </div>
+      <motion.div
+        initial={{ opacity: 0, y: 14 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.35 }}
+        transition={{ duration: 0.45 }}
+        whileHover={{ y: -3, scale: 1.01 }}
+        className="rounded-2xl border border-white/20 bg-gradient-to-r from-blue-500/10 to-cyan-400/5 p-5 text-center backdrop-blur-xl"
+      >
+        <p className="mx-auto max-w-4xl text-sm font-medium leading-7 text-slate-100 sm:text-base">
+          {introChars.map((char, index) => (
+            <motion.span
+              key={`${char}-${index}`}
+              initial={{ opacity: 0, y: 6 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.18, delay: index * 0.012 }}
+              className="inline-block"
+            >
+              {char === " " ? "\u00A0" : char}
+            </motion.span>
+          ))}
+        </p>
+      </motion.div>
 
       <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {workflowSteps.map((step, index) => {
@@ -89,8 +109,6 @@ export default function EcosystemSection() {
           );
         })}
       </div>
-
-      <p className="mt-6 text-center text-base text-slate-300">Principles I focus on while learning and building projects.</p>
     </section>
   );
 }
