@@ -18,9 +18,17 @@ export default function SkillsFlipSection({ skills }: Props) {
 
   return (
     <section>
-      <div className="mb-5">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-300">Capabilities</p>
-        <h2 className="font-[family-name:var(--font-heading)] text-2xl font-bold text-white sm:text-3xl">Skills Matrix</h2>
+      <div className="mb-6 border-b border-white/10 pb-5 text-center">
+        <motion.h2
+          initial={{ opacity: 0, y: 10, scale: 0.98 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: false, amount: 0.35 }}
+          transition={{ duration: 0.4 }}
+          whileHover={{ y: -2, scale: 1.01 }}
+          className="font-[family-name:var(--font-heading)] text-2xl font-bold text-white sm:text-3xl"
+        >
+          My skills
+        </motion.h2>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
