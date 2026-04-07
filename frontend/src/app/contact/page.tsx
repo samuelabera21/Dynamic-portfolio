@@ -234,9 +234,9 @@ export default function ContactPage() {
 
       <div className="relative mx-auto w-full max-w-6xl">
         <header className="text-center">
-          <p className="text-sm font-semibold uppercase tracking-[0.32em] text-cyan-300">Contact</p>
-          <h1 className="mt-2 font-[family-name:var(--font-heading)] text-4xl font-bold text-white sm:text-5xl">CONTACT</h1>
-          <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-slate-300">
+          <p className="text-xs font-semibold uppercase tracking-[0.32em] text-cyan-300">Contact</p>
+          <h1 className="mt-2 font-[family-name:var(--font-heading)] text-3xl font-bold text-white sm:text-4xl">CONTACT</h1>
+          <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-slate-300">
             Send your project idea, collaboration request, or question. I usually respond quickly with next steps.
           </p>
         </header>
@@ -249,7 +249,7 @@ export default function ContactPage() {
                   <InfoIcon kind="address" />
                 </div>
                 <div>
-                  <h2 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-white">Address</h2>
+                  <h2 className="font-[family-name:var(--font-heading)] text-2xl font-bold text-white">Address</h2>
                   <p className="mt-1 text-sm text-slate-200">Ethiopia</p>
                 </div>
               </div>
@@ -261,7 +261,7 @@ export default function ContactPage() {
                   <InfoIcon kind="phone" />
                 </div>
                 <div>
-                  <h2 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-white">Call Me</h2>
+                  <h2 className="font-[family-name:var(--font-heading)] text-2xl font-bold text-white">Call Me</h2>
                   <a href="tel:+251923010537" className="mt-1 block text-sm text-slate-200 hover:text-cyan-200">
                     +251923010537
                   </a>
@@ -275,7 +275,7 @@ export default function ContactPage() {
                   <InfoIcon kind="email" />
                 </div>
                 <div>
-                  <h2 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-white">Email Me</h2>
+                  <h2 className="font-[family-name:var(--font-heading)] text-2xl font-bold text-white">Email Me</h2>
                   <a href="mailto:Samuelabera.dev@gmail.com" className="mt-1 block text-sm text-slate-200 hover:text-cyan-200">
                     Samuelabera.dev@gmail.com
                   </a>
@@ -285,7 +285,7 @@ export default function ContactPage() {
 
             <article className="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-[0_18px_45px_rgba(6,12,24,0.35)] backdrop-blur-xl">
               <div className="flex flex-wrap items-center justify-center gap-3">
-                <span className="text-sm font-semibold text-slate-200">Social Profiles</span>
+                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-200">Social Profiles</span>
                 {socialLinks.map((item, index) => {
                   const platform = detectPlatform(item.platform, item.url);
                   const label = platformLabel(platform, item.platform);
