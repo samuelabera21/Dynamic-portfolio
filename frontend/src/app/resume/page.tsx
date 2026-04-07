@@ -46,6 +46,18 @@ function formatProjectDate(input: string): string {
   return date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
 }
 
+function sanitizeForPdf(value: string): string {
+  return value
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[“”]/g, '"')
+    .replace(/[‘’]/g, "'")
+    .replace(/[–—]/g, "-")
+    .replace(/[^\x20-\x7E\n]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 async function toDataUrl(url: string): Promise<string | null> {
   try {
     const response = await fetch(url);
@@ -178,9 +190,12 @@ export default function ResumePage() {
       };
 
       const writeParagraph = (text: string, indent = 0) => {
+        const safeText = sanitizeForPdf(text);
+        if (!safeText) return;
+
         doc.setFont("helvetica", "normal");
         doc.setFontSize(11);
-        const lines = doc.splitTextToSize(text, 515 - indent);
+        const lines = doc.splitTextToSize(safeText, 515 - indent);
         for (const line of lines) {
           ensureSpace(15);
           doc.text(line, marginX + indent, y);
@@ -189,15 +204,40 @@ export default function ResumePage() {
       };
 
       const writeBullet = (text: string) => {
+        const safeText = sanitizeForPdf(text);
+        if (!safeText) return;
+
         ensureSpace(15);
         doc.setFont("helvetica", "normal");
         doc.setFontSize(11);
-        const lines = doc.splitTextToSize(`- ${text}`, 510);
+        const lines = doc.splitTextToSize(`- ${safeText}`, 510);
         for (const line of lines) {
           ensureSpace(15);
           doc.text(line, marginX + 6, y);
           y += 15;
         }
+      };
+
+      const writeLinkLine = (label: string, displayText: string, url: string) => {
+        const safeLabel = sanitizeForPdf(label);
+        const safeDisplay = sanitizeForPdf(displayText);
+        const safeUrl = url.trim();
+        if (!safeDisplay || !safeUrl) return;
+
+        ensureSpace(15);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        doc.setTextColor(20, 20, 20);
+
+        const baseX = marginX + 6;
+        const prefix = `${safeLabel}: `;
+        doc.text(prefix, baseX, y);
+
+        const linkX = baseX + doc.getTextWidth(prefix);
+        doc.setTextColor(37, 99, 235);
+        doc.textWithLink(safeDisplay, linkX, y, { url: safeUrl });
+        doc.setTextColor(20, 20, 20);
+        y += 15;
       };
 
       writeTitle("Samuel Abera");
@@ -206,9 +246,9 @@ export default function ResumePage() {
       writeSection("Summary");
       writeParagraph(summaryText);
       y += 6;
-      writeBullet("Email: samuelabera.dev@gmail.com");
-      writeBullet(`GitHub: ${contactLinks.github.replace(/^https?:\/\//, "")}`);
-      writeBullet(`LinkedIn: ${contactLinks.linkedin.replace(/^https?:\/\//, "")}`);
+      writeLinkLine("Email", "samuelabera.dev@gmail.com", contactLinks.email);
+      writeLinkLine("GitHub", contactLinks.github.replace(/^https?:\/\//, ""), contactLinks.github);
+      writeLinkLine("LinkedIn", contactLinks.linkedin.replace(/^https?:\/\//, ""), contactLinks.linkedin);
 
       y += 6;
       writeSection("Education");
@@ -229,7 +269,7 @@ export default function ResumePage() {
           ensureSpace(24);
           doc.setFont("helvetica", "bold");
           doc.setFontSize(12);
-          doc.text(project.title, marginX, y);
+          doc.text(sanitizeForPdf(project.title) || "Untitled Project", marginX, y);
           y += 15;
 
           doc.setFont("helvetica", "normal");
@@ -240,14 +280,14 @@ export default function ResumePage() {
           writeParagraph(project.description, 2);
 
           if (project.techStack.length > 0) {
-            writeParagraph(`Tech: ${project.techStack.join(", ")}`, 2);
+            writeParagraph(`Tech: ${project.techStack.map((item) => sanitizeForPdf(item)).filter(Boolean).join(", ")}`, 2);
           }
 
-          const links: string[] = [];
-          if (project.githubUrl) links.push(`GitHub: ${project.githubUrl}`);
-          if (project.liveUrl) links.push(`Live Demo: ${project.liveUrl}`);
-          if (links.length > 0) {
-            writeParagraph(links.join(" | "), 2);
+          if (project.githubUrl) {
+            writeLinkLine("GitHub", project.githubUrl.replace(/^https?:\/\//, ""), project.githubUrl);
+          }
+          if (project.liveUrl) {
+            writeLinkLine("Live Demo", project.liveUrl.replace(/^https?:\/\//, ""), project.liveUrl);
           }
 
           y += 8;
