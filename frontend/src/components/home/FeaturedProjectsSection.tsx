@@ -9,16 +9,39 @@ type Props = {
 };
 
 export default function FeaturedProjectsSection({ projects }: Props) {
+  const headingText = "Featured Projects";
+  const headingChars = headingText.split("");
+
   return (
     <section id="featured-projects">
-      <div className="mb-5 flex items-end justify-between gap-3">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-300">Product Layer</p>
-          <h2 className="font-[family-name:var(--font-heading)] text-2xl font-bold text-white sm:text-3xl">Featured Projects</h2>
-        </div>
-        <Link href="/projects" className="site-link-hover text-sm font-semibold text-blue-300 hover:text-blue-400">
-          View all projects
-        </Link>
+      <div className="mb-6 border-b border-white/10 pb-5 text-center">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-300">Product Layer</p>
+        <motion.h2
+          initial={{ opacity: 0, y: 10, scale: 0.98 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: true, amount: 0.35 }}
+          transition={{ duration: 0.4 }}
+          whileHover={{ y: -2, scale: 1.01 }}
+          className="mt-1 font-[family-name:var(--font-heading)] text-2xl font-bold text-white sm:text-3xl"
+        >
+          {headingChars.map((char, index) => (
+            <motion.span
+              key={`${char}-${index}`}
+              initial={{ opacity: 0, y: 5 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.15, delay: index * 0.012 }}
+              className="inline-block"
+            >
+              {char === " " ? "\u00A0" : char}
+            </motion.span>
+          ))}
+        </motion.h2>
+        <motion.div whileHover={{ y: -1 }} transition={{ type: "spring", stiffness: 240, damping: 18 }} className="mt-2">
+          <Link href="/projects" className="site-link-hover text-sm font-semibold text-blue-300 hover:text-blue-400">
+            View all projects
+          </Link>
+        </motion.div>
       </div>
 
       {projects.length > 0 ? (
