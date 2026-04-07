@@ -120,6 +120,9 @@ function firstName(name: string): string {
 }
 
 export default function HeroSection({ profile, showAvailableForHire }: Props) {
+  const heroImageSrc = profile.avatarUrl?.trim() || "/samuel.jpg";
+  const heroImageUnoptimized = heroImageSrc.startsWith("http://") || heroImageSrc.startsWith("https://") || heroImageSrc.startsWith("data:");
+
   const heroSocial = profile.socialLinks
     .map((item) => ({
       ...item,
@@ -131,10 +134,11 @@ export default function HeroSection({ profile, showAvailableForHire }: Props) {
     <section className="relative overflow-hidden bg-black px-8 pb-14 pt-16 sm:px-12 sm:pb-20 sm:pt-20">
       <div className="absolute inset-y-0 right-0 hidden w-[42%] md:block">
         <Image
-          src="/samuel.jpg"
+          src={heroImageSrc}
           alt={profile.name || "Samuel Abera"}
           fill
           priority
+          unoptimized={heroImageUnoptimized}
           className="object-cover object-center opacity-85"
         />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.85),rgba(0,0,0,0.15)_45%,rgba(0,0,0,0.35))]" />
@@ -217,9 +221,10 @@ export default function HeroSection({ profile, showAvailableForHire }: Props) {
         >
           <div className="relative h-72 w-full overflow-hidden rounded-2xl border border-white/15">
             <Image
-              src="/samuel.jpg"
+              src={heroImageSrc}
               alt={profile.name || "Samuel Abera"}
               fill
+              unoptimized={heroImageUnoptimized}
               className="object-cover"
             />
           </div>
