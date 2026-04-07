@@ -114,23 +114,26 @@ router.post("/", async (req, res) => {
       },
     });
 
-    // 🔥 SEND EMAILS (DO NOT BLOCK RESPONSE)
-    try {
-      await sendAdminNotification(name, senderEmail, message);
-
-      if (isValidEmail(senderEmail)) {
-        await sendAutoReply(senderEmail, name);
-        console.log("Auto-reply sent to:", senderEmail);
-      } else {
-        console.warn("Auto-reply skipped. Invalid sender email:", senderEmail);
-      }
-
-      console.log("Admin notification sent to:", process.env.EMAIL_USER);
-    } catch (emailError) {
-      console.error("Email error:", emailError);
-    }
-
+    // Return quickly to avoid proxy timeout while email provider responds.
     res.json(newMessage);
+
+    // 🔥 SEND EMAILS (DO NOT BLOCK RESPONSE)
+    void (async () => {
+      try {
+        await sendAdminNotification(name, senderEmail, message);
+
+        if (isValidEmail(senderEmail)) {
+          await sendAutoReply(senderEmail, name);
+          console.log("Auto-reply sent to:", senderEmail);
+        } else {
+          console.warn("Auto-reply skipped. Invalid sender email:", senderEmail);
+        }
+
+        console.log("Admin notification sent to:", process.env.EMAIL_USER);
+      } catch (emailError) {
+        console.error("Email error:", emailError);
+      }
+    })();
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error sending message" });
