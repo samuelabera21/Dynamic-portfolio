@@ -59,6 +59,8 @@ export default function BlogPage() {
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [blogEnabled, setBlogEnabled] = useState(true);
+  const introText = "Short notes, technology updates, and real project experience.";
+  const introChars = introText.split("");
 
   useEffect(() => {
     const run = async () => {
@@ -112,9 +114,36 @@ export default function BlogPage() {
       <div className="pointer-events-none absolute -right-24 top-72 h-72 w-72 rounded-full bg-blue-600/12 blur-[120px]" />
 
       <div className="relative mx-auto w-full max-w-7xl space-y-5 px-4 sm:px-6">
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
-          <h1 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-white">Blog Feed</h1>
-          <p className="mt-2 text-sm text-slate-300">Here I share my thoughts, real happenings in technology, and hands-on experience from what I build.</p>
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-5 text-center backdrop-blur-xl">
+          <motion.h1
+            initial={{ opacity: 0, y: 10, scale: 0.98 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, amount: 0.35 }}
+            transition={{ duration: 0.4 }}
+            className="font-[family-name:var(--font-heading)] text-2xl font-bold text-white sm:text-3xl"
+          >
+            {introChars.map((char, index) => (
+              <motion.span
+                key={`${char}-${index}`}
+                initial={{ opacity: 0, y: 6 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.15, delay: index * 0.01 }}
+                className="inline-block"
+              >
+                {char === " " ? "\u00A0" : char}
+              </motion.span>
+            ))}
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 8 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.35 }}
+            transition={{ duration: 0.35, delay: 0.08 }}
+            className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-300"
+          >
+            Short notes, technology updates, and real project experience.
+          </motion.p>
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
