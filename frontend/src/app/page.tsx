@@ -11,7 +11,6 @@ import FeaturedProjectsSection from "@/components/home/FeaturedProjectsSection";
 import SkillsFlipSection from "@/components/home/SkillsFlipSection";
 import TimelineSection from "@/components/home/TimelineSection";
 import InsightsSection from "@/components/home/InsightsSection";
-import AboutContactSection from "@/components/home/AboutContactSection";
 import CtaSection from "@/components/home/CtaSection";
 
 export default function Home() {
@@ -108,10 +107,6 @@ export default function Home() {
 
         <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
           <FeatureGridSection />
-        </SectionShell>
-
-        <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
-          <AboutContactSection profile={profile} />
         </SectionShell>
 
         <SectionShell className="mx-6 sm:mx-10 lg:mx-12">

@@ -36,11 +36,11 @@ export default function InsightsSection() {
             <div className="flex h-full flex-col">
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-300">Insights</p>
               <h2 className="mt-3 max-w-xl font-[family-name:var(--font-heading)] text-3xl font-semibold leading-tight text-white sm:text-4xl">
-                Engineering Notes
+                My Blog Posts
               </h2>
 
               <p className="mt-6 max-w-xl text-base leading-9 text-slate-300">
-                I share practical lessons from backend architecture, API strategy, and product system design. Each note focuses on implementation choices that keep projects stable as they scale.
+                I share my blog posts here about what is new in technology.
               </p>
 
               <motion.div
@@ -51,7 +51,7 @@ export default function InsightsSection() {
                 className="mt-7 rounded-xl border border-white/10 bg-white/5 px-5 py-4"
               >
                 <p className="text-base leading-8 text-slate-200">
-                  I regularly publish professional reflections on real project experience, emerging technologies, and practical engineering insights that contribute to long-term product excellence.
+                  I also write about what I learn from real projects and my personal experience.
                 </p>
               </motion.div>
 
