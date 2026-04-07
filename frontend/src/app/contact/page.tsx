@@ -283,9 +283,13 @@ export default function ContactPage() {
               </div>
             </article>
 
-            <article className="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-[0_18px_45px_rgba(6,12,24,0.35)] backdrop-blur-xl">
-              <div className="flex flex-wrap items-center justify-center gap-3">
+            <article className="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-[0_18px_45px_rgba(6,12,24,0.35)] backdrop-blur-xl">
+              <div className="flex items-center justify-between gap-3">
                 <span className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-200">Social Profiles</span>
+                <span className="text-xs text-slate-400">{socialLinks.length} links</span>
+              </div>
+
+              <div className="mt-4 grid grid-cols-4 justify-items-center gap-3 sm:grid-cols-5">
                 {socialLinks.map((item, index) => {
                   const platform = detectPlatform(item.platform, item.url);
                   const label = platformLabel(platform, item.platform);
@@ -295,7 +299,7 @@ export default function ContactPage() {
                       href={normalizeSocialUrl(item.url)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="site-icon-hover inline-flex h-9 w-9 items-center justify-center rounded-full border border-blue-300/40 bg-blue-500/10 text-blue-200"
+                      className="site-icon-hover inline-flex h-10 w-10 items-center justify-center rounded-xl border border-blue-300/40 bg-blue-500/10 text-blue-200"
                       aria-label={label}
                       title={label}
                     >
