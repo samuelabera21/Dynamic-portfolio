@@ -30,6 +30,24 @@ function formatProjectDate(input: string): string {
   return date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
 }
 
+async function toDataUrl(url: string): Promise<string | null> {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) return null;
+
+    const blob = await response.blob();
+
+    return await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result));
+      reader.onerror = () => reject(new Error("Failed to read image for PDF."));
+      reader.readAsDataURL(blob);
+    });
+  } catch {
+    return null;
+  }
+}
+
 export default function ResumePage() {
   const [homeData, setHomeData] = useState<HomeData | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
@@ -104,6 +122,16 @@ export default function ResumePage() {
       const pageHeight = doc.internal.pageSize.getHeight();
       const marginX = 40;
       let y = 46;
+      const headerImageSize = 72;
+      const headerImageX = 555 - headerImageSize;
+      const headerImageY = 34;
+
+      const headerImage = await toDataUrl("/resume.jpg");
+      if (headerImage) {
+        doc.addImage(headerImage, "JPEG", headerImageX, headerImageY, headerImageSize, headerImageSize);
+        doc.setDrawColor(180, 180, 180);
+        doc.rect(headerImageX, headerImageY, headerImageSize, headerImageSize);
+      }
 
       const ensureSpace = (needed = 20) => {
         if (y + needed > pageHeight - 40) {
@@ -155,6 +183,7 @@ export default function ResumePage() {
       };
 
       writeTitle("Samuel Abera");
+      y = Math.max(y, headerImageY + headerImageSize + 12);
 
       writeSection("Summary");
       writeParagraph("I am a software engineering student interested in web development and artificial intelligence.");
