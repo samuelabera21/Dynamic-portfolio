@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { motion } from "framer-motion";
 import ProjectCard from "@/components/ProjectCard";
 import { getProjects } from "@/lib/api";
 import { Project } from "@/types/project";
@@ -11,6 +12,8 @@ export default function ProjectsPage() {
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [tech, setTech] = useState("");
+  const introText = "Explore selected work with a clean view of real projects, filters, and previews.";
+  const introChars = introText.split("");
 
   useEffect(() => {
     const run = async () => {
@@ -44,9 +47,36 @@ export default function ProjectsPage() {
       <div className="pointer-events-none absolute -right-24 top-72 h-72 w-72 rounded-full bg-blue-600/12 blur-[120px]" />
 
       <div className="relative mx-auto w-full max-w-7xl space-y-6 px-4 sm:px-6">
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
-          <h1 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-white">Projects</h1>
-          <p className="mt-2 text-sm text-slate-300">Explore published work with dynamic filters and polished project previews.</p>
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl text-center">
+          <motion.h1
+            initial={{ opacity: 0, y: 10, scale: 0.98 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, amount: 0.35 }}
+            transition={{ duration: 0.4 }}
+            className="font-[family-name:var(--font-heading)] text-3xl font-bold text-white sm:text-4xl"
+          >
+            {introChars.map((char, index) => (
+              <motion.span
+                key={`${char}-${index}`}
+                initial={{ opacity: 0, y: 6 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.15, delay: index * 0.01 }}
+                className="inline-block"
+              >
+                {char === " " ? "\u00A0" : char}
+              </motion.span>
+            ))}
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 8 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.35 }}
+            transition={{ duration: 0.35, delay: 0.08 }}
+            className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-slate-300"
+          >
+            Explore selected work with a clean view of real projects, filters, and previews.
+          </motion.p>
         </div>
 
         <div className="grid gap-3 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl md:grid-cols-3">
