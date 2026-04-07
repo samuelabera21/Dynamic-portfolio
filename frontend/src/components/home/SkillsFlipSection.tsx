@@ -1,20 +1,57 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { GroupedSkills, SkillCategory } from "@/types/skill";
+import { GroupedSkills } from "@/types/skill";
 
 type Props = {
   skills: GroupedSkills;
 };
 
-const labels: Record<SkillCategory, string> = {
-  frontend: "Frontend",
-  backend: "Backend",
-  tools: "Tools",
-};
+const preferredOrder = [
+  "frontend",
+  "backend",
+  "tools",
+  "mobile",
+  "devops",
+  "cloud",
+  "database",
+  "ai-ml",
+  "data-science",
+  "cybersecurity",
+  "testing",
+  "ui-ux",
+  "system-design",
+  "productivity",
+];
+
+function formatCategoryLabel(category: string): string {
+  const key = category.toLowerCase();
+  const special: Record<string, string> = {
+    "ai-ml": "AI / ML",
+    "data-science": "Data Science",
+    "ui-ux": "UI / UX",
+    devops: "DevOps",
+    "system-design": "System Design",
+  };
+
+  if (special[key]) return special[key];
+  return category
+    .replace(/[-_]+/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+}
 
 export default function SkillsFlipSection({ skills }: Props) {
-  const categories: SkillCategory[] = ["frontend", "backend", "tools"];
+  const categories = Object.keys(skills)
+    .filter((category) => (skills[category] ?? []).length > 0)
+    .sort((a, b) => {
+      const aIndex = preferredOrder.indexOf(a.toLowerCase());
+      const bIndex = preferredOrder.indexOf(b.toLowerCase());
+
+      if (aIndex >= 0 && bIndex >= 0) return aIndex - bIndex;
+      if (aIndex >= 0) return -1;
+      if (bIndex >= 0) return 1;
+      return a.localeCompare(b);
+    });
 
   return (
     <section>
@@ -31,7 +68,7 @@ export default function SkillsFlipSection({ skills }: Props) {
         </motion.h2>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {categories.map((category) => (
           <motion.div
             key={category}
@@ -46,13 +83,13 @@ export default function SkillsFlipSection({ skills }: Props) {
             >
               <div className="absolute inset-0 flex items-center justify-center rounded-2xl border border-blue-400/30 bg-gradient-to-br from-blue-500/20 to-violet-500/15 p-5 shadow-[0_14px_30px_rgba(37,99,235,0.16)] [backface-visibility:hidden]">
                 <h3 className="text-center font-[family-name:var(--font-heading)] text-3xl font-bold text-white">
-                  {labels[category]}
+                  {formatCategoryLabel(category)}
                 </h3>
               </div>
 
               <div className="absolute inset-0 rounded-2xl border border-violet-400/40 bg-slate-950/92 p-5 [backface-visibility:hidden] [transform:rotateX(180deg)]">
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-violet-200">Development Workflow</p>
-                <h4 className="mt-2 font-[family-name:var(--font-heading)] text-lg font-bold text-white">{labels[category]} Skills</h4>
+                <h4 className="mt-2 font-[family-name:var(--font-heading)] text-lg font-bold text-white">{formatCategoryLabel(category)} Skills</h4>
 
                 <div className="mt-4 flex max-h-32 flex-wrap gap-2 overflow-y-auto pr-1">
                   {(skills[category] ?? []).map((item) => (
@@ -60,9 +97,6 @@ export default function SkillsFlipSection({ skills }: Props) {
                       {item}
                     </span>
                   ))}
-                  {(skills[category] ?? []).length === 0 ? (
-                    <span className="rounded-full border border-white/25 bg-white/10 px-2.5 py-1 text-xs text-slate-100">No skills yet</span>
-                  ) : null}
                 </div>
               </div>
             </div>

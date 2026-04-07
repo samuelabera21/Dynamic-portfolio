@@ -8,7 +8,7 @@ import { getHome, getProjects } from "@/lib/api";
 import SkillsFlipSection from "@/components/home/SkillsFlipSection";
 import { Profile } from "@/types/profile";
 import { Project } from "@/types/project";
-import { GroupedSkills, SkillCategory } from "@/types/skill";
+import { GroupedSkills } from "@/types/skill";
 
 type PlatformKey = "github" | "facebook" | "youtube" | "linkedin" | "x" | "telegram" | "whatsapp" | "tiktok" | "instagram" | "website";
 
@@ -188,7 +188,7 @@ function preferredSkillScore(name: string): number | null {
   return exact[key] ?? null;
 }
 
-function hashedSkillScore(name: string, category: SkillCategory): number {
+function hashedSkillScore(name: string, category: string): number {
   let hash = 0;
   const source = `${category}:${name.toLowerCase()}`;
 
@@ -199,7 +199,7 @@ function hashedSkillScore(name: string, category: SkillCategory): number {
   return 58 + (hash % 40);
 }
 
-function skillScore(name: string, category: SkillCategory): number {
+function skillScore(name: string, category: string): number {
   const preferred = preferredSkillScore(name);
   if (preferred !== null) return preferred;
   return hashedSkillScore(name, category);
@@ -270,7 +270,34 @@ export default function AboutPage() {
     };
   }, [loading]);
 
-  const orderedCategories: SkillCategory[] = ["frontend", "backend", "tools"];
+  const preferredCategoryOrder = [
+    "frontend",
+    "backend",
+    "tools",
+    "mobile",
+    "devops",
+    "cloud",
+    "database",
+    "ai-ml",
+    "data-science",
+    "cybersecurity",
+    "testing",
+    "ui-ux",
+    "system-design",
+    "productivity",
+  ];
+
+  const orderedCategories = Object.keys(groupedSkills)
+    .filter((category) => (groupedSkills[category] ?? []).length > 0)
+    .sort((a, b) => {
+      const aIndex = preferredCategoryOrder.indexOf(a.toLowerCase());
+      const bIndex = preferredCategoryOrder.indexOf(b.toLowerCase());
+
+      if (aIndex >= 0 && bIndex >= 0) return aIndex - bIndex;
+      if (aIndex >= 0) return -1;
+      if (bIndex >= 0) return 1;
+      return a.localeCompare(b);
+    });
 
   const flatSkills = useMemo(() => {
     return orderedCategories.flatMap((category) => {
@@ -292,7 +319,7 @@ export default function AboutPage() {
   if (loading) return <p className="text-sm text-slate-500">Loading profile...</p>;
   if (error || !profile) return <p className="text-sm font-medium text-red-600">{error ?? "Profile unavailable"}</p>;
 
-  const hasSkills = showSkills && orderedCategories.some((category) => (groupedSkills[category] ?? []).length > 0);
+  const hasSkills = showSkills && orderedCategories.length > 0;
   const templateFacts = [
     { label: "Birthday", value: "09 Feb 2005" },
     { label: "Phone", value: "+251923010537" },

@@ -1,4 +1,4 @@
-export type SkillCategory = "frontend" | "backend" | "tools";
+export type SkillCategory = string;
 
 export type Skill = {
   id: string;
@@ -8,7 +8,7 @@ export type Skill = {
 
 export type SkillPayload = {
   name: string;
-  category: SkillCategory;
+  category: string;
 };
 
 export type GroupedSkills = Record<string, string[]>;

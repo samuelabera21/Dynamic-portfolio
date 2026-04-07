@@ -4,11 +4,11 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import Modal from "@/components/Modal";
 import { createSkill, deleteSkill, getSkills, updateSkill } from "@/lib/api";
 import { getToken } from "@/lib/auth";
-import { Skill, SkillCategory } from "@/types/skill";
+import { Skill } from "@/types/skill";
 
 type FormValue = {
   name: string;
-  category: SkillCategory;
+  category: string;
 };
 
 const initialForm: FormValue = {
@@ -16,7 +16,26 @@ const initialForm: FormValue = {
   category: "frontend",
 };
 
-const categories: SkillCategory[] = ["frontend", "backend", "tools"];
+const suggestedCategories = [
+  "frontend",
+  "backend",
+  "tools",
+  "mobile",
+  "devops",
+  "cloud",
+  "database",
+  "ai-ml",
+  "data-science",
+  "cybersecurity",
+  "testing",
+  "ui-ux",
+  "system-design",
+  "productivity",
+];
+
+function normalizeCategory(value: string): string {
+  return value.trim().toLowerCase().replace(/\s+/g, "-");
+}
 
 export default function AdminSkillsPage() {
   const [skills, setSkills] = useState<Skill[]>([]);
@@ -29,9 +48,21 @@ export default function AdminSkillsPage() {
   const [skillToDelete, setSkillToDelete] = useState<Skill | null>(null);
 
   const sortedSkills = useMemo(() => {
+    const preferredOrder = new Map(suggestedCategories.map((category, index) => [category, index]));
+
     return [...skills].sort((a, b) => {
-      const categoryOrder = categories.indexOf(a.category as SkillCategory) - categories.indexOf(b.category as SkillCategory);
-      if (categoryOrder !== 0) return categoryOrder;
+      const aCategory = normalizeCategory(a.category);
+      const bCategory = normalizeCategory(b.category);
+      const aRank = preferredOrder.get(aCategory);
+      const bRank = preferredOrder.get(bCategory);
+
+      if (aRank !== undefined && bRank !== undefined && aRank !== bRank) return aRank - bRank;
+      if (aRank !== undefined && bRank === undefined) return -1;
+      if (aRank === undefined && bRank !== undefined) return 1;
+
+      const categoryCompare = aCategory.localeCompare(bCategory);
+      if (categoryCompare !== 0) return categoryCompare;
+
       return a.name.localeCompare(b.name);
     });
   }, [skills]);
@@ -71,12 +102,17 @@ export default function AdminSkillsPage() {
       const token = getToken();
       if (!token) throw new Error("Admin token missing. Please login again.");
 
+      const payload = {
+        ...form,
+        category: normalizeCategory(form.category),
+      };
+
       if (editingSkillId) {
-        const updated = await updateSkill(editingSkillId, form, token);
+        const updated = await updateSkill(editingSkillId, payload, token);
         setSkills((prev) => prev.map((skill) => (skill.id === editingSkillId ? updated : skill)));
         setSuccess("Skill updated successfully.");
       } else {
-        const created = await createSkill(form, token);
+        const created = await createSkill(payload, token);
         setSkills((prev) => [created, ...prev]);
         setSuccess("Skill created successfully.");
       }
@@ -93,7 +129,7 @@ export default function AdminSkillsPage() {
     setEditingSkillId(skill.id);
     setForm({
       name: skill.name,
-      category: (skill.category as SkillCategory) || "frontend",
+      category: skill.category || "frontend",
     });
     setSuccess(null);
     setError(null);
@@ -141,18 +177,20 @@ export default function AdminSkillsPage() {
 
           <div>
             <label htmlFor="skillCategory" className="mb-1 block text-sm font-semibold text-slate-700">Category</label>
-            <select
+            <input
               id="skillCategory"
+              list="skill-category-options"
               value={form.category}
-              onChange={(e) => setForm((prev) => ({ ...prev, category: e.target.value as SkillCategory }))}
+              onChange={(e) => setForm((prev) => ({ ...prev, category: e.target.value }))}
+              placeholder="e.g. frontend, ai-ml, cloud"
               className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
-            >
-              {categories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
+              required
+            />
+            <datalist id="skill-category-options">
+              {suggestedCategories.map((category) => (
+                <option key={category} value={category} />
               ))}
-            </select>
+            </datalist>
           </div>
 
           <div className="flex gap-2">
