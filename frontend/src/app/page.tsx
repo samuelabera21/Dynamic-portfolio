@@ -92,6 +92,12 @@ export default function Home() {
           </SectionShell>
         ) : null}
 
+        {showSkills ? (
+          <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
+            <SkillsFlipSection skills={skills} />
+          </SectionShell>
+        ) : null}
+
         <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
           <FeatureGridSection />
         </SectionShell>
@@ -103,12 +109,6 @@ export default function Home() {
         <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
           <AboutContactSection profile={profile} />
         </SectionShell>
-
-        {showSkills ? (
-          <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
-            <SkillsFlipSection skills={skills} />
-          </SectionShell>
-        ) : null}
 
         <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
           <TimelineSection />
