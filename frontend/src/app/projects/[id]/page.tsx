@@ -62,6 +62,11 @@ export default function ProjectDetailsPage() {
   }
 
   const overviewNeedsCollapse = project.description.trim().length > 900;
+  const detailLines = project.description
+    .split(/\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .slice(0, 6);
 
   return (
     <section className="relative min-h-screen overflow-hidden bg-[#060c18] pb-12 pt-6 text-slate-100">
@@ -165,7 +170,7 @@ export default function ProjectDetailsPage() {
           </div>
 
           <div className="border-t border-white/10 bg-white/[0.02] p-6 sm:p-8">
-            <h2 className="font-[family-name:var(--font-heading)] text-2xl font-semibold text-white">Overview</h2>
+            <h2 className="font-[family-name:var(--font-heading)] text-2xl font-semibold text-white">Long Description</h2>
             <div
               className={`relative mt-4 rounded-2xl border border-white/10 bg-[#0a1427]/70 p-5 sm:p-6 ${
                 overviewNeedsCollapse && !isOverviewExpanded ? "max-h-[360px] overflow-hidden" : ""
@@ -185,9 +190,53 @@ export default function ProjectDetailsPage() {
                 onClick={() => setIsOverviewExpanded((prev) => !prev)}
                 className="mt-4 inline-flex rounded-lg border border-cyan-300/35 bg-cyan-500/10 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-500/20"
               >
-                {isOverviewExpanded ? "Show less" : "Read full overview"}
+                {isOverviewExpanded ? "Show less" : "Read full description"}
               </button>
             ) : null}
+
+            <div className="mt-8 grid gap-6 lg:grid-cols-2">
+              <section className="rounded-2xl border border-white/10 bg-[#0a1427]/60 p-5">
+                <h3 className="font-[family-name:var(--font-heading)] text-xl font-semibold text-white">Details</h3>
+                {detailLines.length > 0 ? (
+                  <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-7 text-slate-200 marker:text-cyan-300">
+                    {detailLines.map((line, index) => (
+                      <li key={`${project.id}-detail-${index}`}>{line}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="mt-3 text-sm text-slate-300">No details provided.</p>
+                )}
+              </section>
+
+              <section className="rounded-2xl border border-white/10 bg-[#0a1427]/60 p-5">
+                <h3 className="font-[family-name:var(--font-heading)] text-xl font-semibold text-white">Features</h3>
+                {project.techStack.length > 0 ? (
+                  <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-7 text-slate-200 marker:text-emerald-300">
+                    {project.techStack.map((tech) => (
+                      <li key={`${project.id}-feature-${tech}`}>{tech}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="mt-3 text-sm text-slate-300">No features listed yet.</p>
+                )}
+              </section>
+            </div>
+
+            <section className="mt-6 rounded-2xl border border-white/10 bg-[#0a1427]/60 p-5">
+              <h3 className="font-[family-name:var(--font-heading)] text-xl font-semibold text-white">Screenshots</h3>
+              {project.imageUrl ? (
+                <div className="mt-4 overflow-hidden rounded-xl border border-white/10 bg-black/30 p-2">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={project.imageUrl}
+                    alt={`${project.title} screenshot`}
+                    className="h-auto w-full rounded-lg object-contain"
+                  />
+                </div>
+              ) : (
+                <p className="mt-3 text-sm text-slate-300">No screenshots available for this project.</p>
+              )}
+            </section>
           </div>
         </article>
       </div>
