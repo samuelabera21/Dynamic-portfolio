@@ -6,6 +6,15 @@ import jwt from "jsonwebtoken";
 const router = Router();
 import { PrismaPg } from "@prisma/adapter-pg";
 
+function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error("JWT_SECRET is not set");
+  }
+
+  return secret;
+}
+
 const connectionString = process.env.DATABASE_URL!;
 const adapter = new PrismaPg({ connectionString });
 
@@ -30,7 +39,7 @@ router.post("/login", async (req, res) => {
 
   const token = jwt.sign(
     { userId: user.id, role: user.role },
-    "SECRET_KEY",
+    getJwtSecret(),
     { expiresIn: "1d" }
   );
 

@@ -33,6 +33,15 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
+function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error("JWT_SECRET is not set");
+  }
+
+  return secret;
+}
+
 export const authMiddleware = (
   req: Request,
   res: Response,
@@ -51,7 +60,7 @@ export const authMiddleware = (
       return res.status(401).json({ message: "Invalid token format" });
     }
 
-    const decoded = jwt.verify(token, "SECRET_KEY") as any;
+    const decoded = jwt.verify(token, getJwtSecret()) as any;
 
     // ✅ attach user
     (req as any).user = decoded;
