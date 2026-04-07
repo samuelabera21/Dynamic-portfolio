@@ -82,6 +82,10 @@ export default function Home() {
       <div className="relative space-y-14 px-0 pt-0">
         <HeroSection profile={profile} showAvailableForHire={availableForHire} />
 
+        <div className="mx-6 sm:mx-10 lg:mx-12">
+          <CtaSection bio={profile.bio} />
+        </div>
+
         <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
           <FeatureGridSection />
         </SectionShell>
@@ -113,10 +117,6 @@ export default function Home() {
         <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
           <InsightsSection />
         </SectionShell>
-
-        <div className="mx-6 sm:mx-10 lg:mx-12">
-          <CtaSection bio={profile.bio} />
-        </div>
       </div>
     </section>
   );
