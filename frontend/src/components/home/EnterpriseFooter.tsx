@@ -151,6 +151,7 @@ export default function EnterpriseFooter({ profile }: Props) {
               <Link href="/about" className="site-link-hover hover:text-blue-400">About</Link>
               <Link href="/projects" className="site-link-hover hover:text-blue-400">Projects</Link>
               <Link href="/blog" className="site-link-hover hover:text-blue-400">Blog</Link>
+              <Link href="/contact" className="site-link-hover hover:text-blue-400">Send a message</Link>
             </div>
           </div>
 
@@ -226,10 +227,6 @@ export default function EnterpriseFooter({ profile }: Props) {
 
       <div className="mt-6 flex flex-col gap-5 text-xs text-slate-400">
         <div className="space-y-3">
-          <div className="flex flex-wrap gap-6 text-sm text-slate-300">
-            <Link href="/contact" className="site-link-hover hover:text-blue-400">Privacy Policy</Link>
-            <Link href="/about" className="site-link-hover hover:text-blue-400">Accessibility Statement</Link>
-          </div>
           <p>© {new Date().getFullYear()} Portfolio Platform. Powered by modern web stack.</p>
         </div>
 
