@@ -249,7 +249,7 @@ export default function ContactPage() {
                   <InfoIcon kind="address" />
                 </div>
                 <div>
-                  <h2 className="font-[family-name:var(--font-heading)] text-2xl font-bold text-white">Address</h2>
+                  <h2 className="font-[family-name:var(--font-heading)] text-lg font-semibold text-white sm:text-xl">Address</h2>
                   <p className="mt-1 text-sm text-slate-200">Ethiopia</p>
                 </div>
               </div>
@@ -261,7 +261,7 @@ export default function ContactPage() {
                   <InfoIcon kind="phone" />
                 </div>
                 <div>
-                  <h2 className="font-[family-name:var(--font-heading)] text-2xl font-bold text-white">Call Me</h2>
+                  <h2 className="font-[family-name:var(--font-heading)] text-lg font-semibold text-white sm:text-xl">Call Me</h2>
                   <a href="tel:+251923010537" className="mt-1 block text-sm text-slate-200 hover:text-cyan-200">
                     +251923010537
                   </a>
@@ -275,7 +275,7 @@ export default function ContactPage() {
                   <InfoIcon kind="email" />
                 </div>
                 <div>
-                  <h2 className="font-[family-name:var(--font-heading)] text-2xl font-bold text-white">Email Me</h2>
+                  <h2 className="font-[family-name:var(--font-heading)] text-lg font-semibold text-white sm:text-xl">Email Me</h2>
                   <a href="mailto:Samuelabera.dev@gmail.com" className="mt-1 block text-sm text-slate-200 hover:text-cyan-200">
                     Samuelabera.dev@gmail.com
                   </a>
