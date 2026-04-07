@@ -1,5 +1,6 @@
 # Skills Feature
-
+Email: sami21.good.bad@gmail.com
+Password: Admin@12345
 This feature manages categorized technical skills used across public pages and the admin panel.
 
 ## Public Experience
