@@ -1,180 +1,243 @@
 # Dynamic Portfolio Platform
 
-A full-stack portfolio platform with a public website, admin dashboard, content management APIs, and email/newsletter automation.
+A full-stack portfolio system with a public website, admin dashboard, blog, contact form, newsletter, and feature flags.
 
 ## Live Deployment
 
-- Frontend (Vercel): https://dynamic-portfolio-livid.vercel.app/
-- Backend API (Render): https://dynamic-portfolio-c7s2.onrender.com
+- Frontend: https://dynamic-portfolio-livid.vercel.app
+- Backend API: https://dynamic-portfolio-c7s2.onrender.com
 
-## What This Project Includes
+## What This Project Does
 
-- Public portfolio website (home, about, projects, blog, contact, resume)
-- Admin login and dashboard
-- Project, post, profile, skill, message, and settings management APIs
-- Contact email notification + auto-reply
-- Newsletter subscribe/unsubscribe and broadcast support
+- Public portfolio pages for home, about, resume, projects, blog, contact, and unsubscribe.
+- Admin dashboard for managing profile, projects, posts, skills, messages, and feature flags.
+- Blog publishing with public visibility controlled by a blog feature flag.
+- Contact messages stored in the database and forwarded by email.
+- Newsletter subscribe, unsubscribe, and broadcast support.
 
 ## Tech Stack
 
 ### Frontend
 
-- Next.js 16 (App Router)
+- Next.js 16 with the App Router
 - React 19
 - TypeScript
 - Tailwind CSS
 - Framer Motion
+- React Markdown
+- jsPDF for resume generation
 
 ### Backend
 
-- Node.js + Express
+- Node.js
+- Express
 - TypeScript
-- Prisma ORM + PostgreSQL (Neon)
+- Prisma ORM
+- PostgreSQL on Neon
 - JWT authentication
-- Nodemailer (Gmail SMTP)
+- Helmet and CORS
+- Brevo email API
 
-## High-Level Architecture
+### Deployment
 
-- Frontend calls `/api/*` routes.
-- Next.js rewrite proxies `/api/*` to the Render backend URL.
-- Express serves business APIs and uses Prisma to read/write PostgreSQL.
-- Protected admin endpoints require `Authorization: Bearer <jwt>`.
-- Contact + newsletter flows trigger outbound email through Gmail SMTP.
+- Vercel for the frontend
+- Render for the backend
 
-## Flow: Frontend
+## Project Flow
 
-1. User opens the Vercel site.
-2. Frontend requests data from `/api/home`, `/api/projects`, `/api/posts`, etc.
-3. Next.js rewrites `/api/*` to the Render backend base URL.
-4. UI renders public content.
-5. Admin user logs in on `/admin/login` and receives a JWT token.
-6. Token is used for admin API operations (dashboard, CRUD, message moderation, settings).
+### Public Site Flow
 
-## Flow: Backend
+1. A visitor opens the Vercel frontend.
+2. The frontend requests data from `/api/*` endpoints.
+3. Next.js rewrites `/api/*` to the deployed backend URL.
+4. The backend reads from Neon through Prisma and returns JSON.
+5. The homepage combines profile, projects, skills, and feature flags.
+6. The blog page checks the `showBlog` flag before showing posts.
+7. The contact form saves messages and sends email notifications through Brevo.
 
-1. Request enters Express app with Helmet + CORS + JSON middleware.
-2. Route handler executes domain logic.
-3. For protected routes, JWT middleware validates token using `JWT_SECRET`.
-4. Prisma queries PostgreSQL (Neon).
-5. JSON response is returned to frontend.
+### Admin Flow
 
-Main API groups:
+1. The admin logs in from `/admin/login`.
+2. The backend verifies the password against the `User` table.
+3. A JWT token is returned and stored in browser local storage.
+4. Protected admin requests send `Authorization: Bearer <token>`.
+5. The admin dashboard can manage posts, projects, profile, skills, messages, and settings.
 
-- `/home` public homepage data aggregation
-- `/auth` admin login
-- `/admin` dashboard stats (protected)
-- `/projects` project CRUD
-- `/posts` blog CRUD
-- `/profile` profile + social links
-- `/skills` skills CRUD/grouping
-- `/messages` contact messages + read/delete (protected read/manage)
-- `/settings` feature flags + newsletter endpoints
+### Email Flow
 
-## Flow: Email Service
+1. A visitor submits a contact message.
+2. The backend stores the message in PostgreSQL.
+3. The backend sends an admin notification email through Brevo.
+4. The backend sends an auto-reply to the sender when the email is valid.
+5. Newsletter subscribers are stored in the settings table and receive broadcast emails.
 
-### Contact Email Flow
+## Database Model
 
-1. Public user submits contact form.
-2. Backend saves message in database.
-3. Backend sends admin notification email to `EMAIL_USER`.
-4. Backend sends auto-reply to sender email (if valid).
+| Table | Purpose |
+| --- | --- |
+| `User` | Admin login account |
+| `Profile` | Main profile content for the portfolio |
+| `SocialLink` | Links connected to the profile |
+| `Project` | Portfolio projects and featured work |
+| `Post` | Blog posts and drafts |
+| `Skill` | Technical skill list grouped by category |
+| `Message` | Contact form submissions |
+| `Setting` | Feature flags and newsletter subscriber storage |
 
-### Newsletter Flow
+## API Overview
 
-1. User subscribes via `/settings/newsletter/subscribe`.
-2. Email is normalized and stored in settings table (`newsletterSubscribers`).
-3. When newsletter is sent, backend emails all subscribers.
-4. Each email includes a signed unsubscribe link.
-5. Unsubscribe endpoint verifies token and removes subscriber.
+- `GET /home` returns homepage data.
+- `POST /auth/login` returns an admin JWT token.
+- `GET /projects` and `GET /posts` serve public content.
+- `POST`, `PUT`, and `DELETE` routes manage content from the admin dashboard.
+- `GET /settings` returns feature flags for the public site.
+- `PUT /settings` updates feature flags from the admin dashboard.
+- `POST /settings/newsletter/subscribe` and related routes manage newsletter subscribers.
 
 ## Environment Variables
 
-### Backend (Render / local root `.env`)
+### Backend
 
-- `DATABASE_URL` PostgreSQL connection string (Neon)
-- `JWT_SECRET` token signing secret
-- `EMAIL_USER` Gmail address used to send mail
-- `EMAIL_PASS` Gmail app password
-- `FRONTEND_URL` allowed frontend origin (Vercel URL)
-- `NEXT_PUBLIC_FRONTEND_URL` optional second allowed origin
-- `NEWSLETTER_SECRET` secret for unsubscribe token signing (recommended)
-- `PORT` optional (Render provides it automatically)
+| Variable | Required | Purpose |
+| --- | --- | --- |
+| `DATABASE_URL` | Yes | Neon PostgreSQL connection string |
+| `JWT_SECRET` | Yes | Signs admin login tokens |
+| `BREVO_API_KEY` | Yes | Sends contact and newsletter emails |
+| `EMAIL_USER` | Yes | Admin email address that receives contact notifications |
+| `SMTP_FROM` | No | Sender name and email shown in Brevo messages |
+| `FRONTEND_URL` | Yes in production | Used for CORS and unsubscribe links |
+| `NEXT_PUBLIC_FRONTEND_URL` | No | Optional extra allowed frontend origin |
+| `NEWSLETTER_SECRET` | Recommended | Signs unsubscribe tokens |
+| `PORT` | No | Render sets this automatically |
 
-### Frontend (Vercel)
+### Frontend
 
-- `NEXT_PUBLIC_API_BASE_URL=https://dynamic-portfolio-c7s2.onrender.com`
+| Variable | Required | Purpose |
+| --- | --- | --- |
+| `NEXT_PUBLIC_API_BASE_URL` | Yes | Backend base URL used by the frontend rewrite |
 
-## Local Development
+## Local Setup
 
-### 1) Backend
+### 1. Clone and install the backend
 
-From project root:
-
-```bash
-npm install
-npm run build
-npm run dev
-```
-
-Backend default local URL: `http://localhost:3000`
-
-### 2) Frontend
-
-From `frontend` folder:
+From the project root:
 
 ```bash
 npm install
-npm run dev
 ```
 
-Frontend local URL: `http://localhost:3001`
+### 2. Create the backend `.env`
 
-Set frontend env for local dev:
+Create a `.env` file in the project root:
 
 ```env
-NEXT_PUBLIC_API_BASE_URL=http://localhost:3000
+DATABASE_URL="your_neon_postgres_connection_string"
+JWT_SECRET="replace_with_a_long_random_secret"
+BREVO_API_KEY="your_brevo_api_key"
+EMAIL_USER="your_admin_email@example.com"
+SMTP_FROM="Samuel Abera <your_sender_email@example.com>"
+FRONTEND_URL="http://localhost:3001"
+NEXT_PUBLIC_FRONTEND_URL="http://localhost:3001"
+NEWSLETTER_SECRET="replace_with_another_random_secret"
 ```
 
-## Production Deployment Notes
+### 3. Run Prisma migrations
 
-### Backend (Render)
+Apply the database schema to Neon or your local PostgreSQL instance:
 
-- Root Directory: leave empty
-- Build Command: `npm install --include=dev && npm run build`
-- Start Command: `npm start`
+```bash
+npx prisma migrate dev
+```
 
-### Frontend (Vercel)
+If you only need Prisma client generation, the root `postinstall` and build scripts already run `prisma generate`.
 
-- Set env: `NEXT_PUBLIC_API_BASE_URL=https://dynamic-portfolio-c7s2.onrender.com`
-- Redeploy after env changes
+### 4. Start the backend
+
+```bash
+npm run dev
+```
+
+The backend runs on `http://localhost:3000` by default.
+
+### 5. Install and configure the frontend
+
+Open the `frontend` folder:
+
+```bash
+cd frontend
+npm install
+```
+
+Create `frontend/.env.local`:
+
+```env
+NEXT_PUBLIC_API_BASE_URL="http://localhost:3000"
+```
+
+### 6. Start the frontend
+
+```bash
+npm run dev
+```
+
+The frontend runs on `http://localhost:3001`.
+
+## Production Deployment
+
+### Backend on Render
+
+Use the project root as the service folder.
+
+- Build command: `npm install --include=dev && npm run build`
+- Start command: `npm start`
+- Set all backend environment variables from the table above.
+- Set `FRONTEND_URL` to the deployed Vercel URL.
+
+### Frontend on Vercel
+
+Deploy the `frontend` folder as the Next.js app.
+
+- Set `NEXT_PUBLIC_API_BASE_URL` to the Render backend URL.
+- Redeploy after changing environment variables.
+- The frontend uses a rewrite so `/api/*` is proxied to the backend.
 
 ### CORS
 
-Set backend env:
+Make sure the backend allows the frontend origin through:
 
-- `FRONTEND_URL=https://dynamic-portfolio-livid.vercel.app`
-- `NEXT_PUBLIC_FRONTEND_URL=https://dynamic-portfolio-livid.vercel.app`
+- `FRONTEND_URL`
+- `NEXT_PUBLIC_FRONTEND_URL`
 
-## Admin Access Notes
+## Admin Account Setup
 
-- Admin login requires a user row in the `User` table.
-- If login says `Invalid credentials`, verify an admin user exists in the production database.
-- Passwords are bcrypt-hashed in storage.
+There is no public registration route.
 
-## Common Troubleshooting
+1. Create at least one row in the `User` table.
+2. Store the password as a bcrypt hash.
+3. Use `hash.ts` as a quick helper to generate a hash if needed.
+4. Sign in at `/admin/login`.
 
-- `Homepage Data Unavailable` usually means incorrect `NEXT_PUBLIC_API_BASE_URL` or missing frontend redeploy.
-- `prisma: not found` on Render means Prisma CLI was not available at build time.
-- `Invalid credentials` means no matching user or wrong password in database.
-- Slow first request on free Render is expected due to instance spin-down.
+## Important Behavior
 
-## Project Structure (Top Level)
+- Publishing a blog post does not automatically make the blog section visible.
+- Public blog visibility is controlled by the `showBlog` feature flag in the admin settings page.
+- If `showBlog` is off, the navbar hides the Blog link and the blog page shows the disabled state.
 
-- `frontend/` Next.js app
-- `src/` Express app source
-- `prisma/` schema + migrations
-- `generated/` generated Prisma outputs
-- `docs/` feature-level docs
+## Folder Structure
+
+- `frontend/` Next.js frontend application
+- `src/` Express backend source
+- `prisma/` Prisma schema and migrations
+- `generated/` Prisma client output
+- `docs/` feature-level notes
+
+## Troubleshooting
+
+- If the homepage shows an error, check `NEXT_PUBLIC_API_BASE_URL` and redeploy the frontend after changing it.
+- If admin login fails, verify that the `User` table has a valid bcrypt password hash.
+- If email does not send, confirm `BREVO_API_KEY`, `EMAIL_USER`, and `SMTP_FROM` are set correctly.
+- If unsubscribe links are wrong, verify `FRONTEND_URL`.
+- If the blog is hidden, check the `showBlog` feature flag in admin settings.
 
 ## License
 
