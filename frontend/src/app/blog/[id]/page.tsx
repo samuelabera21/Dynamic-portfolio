@@ -54,14 +54,15 @@ export default function BlogDetailsPage() {
       setError(null);
       try {
         const [settings, home] = await Promise.all([getSettings(), getHome().catch(() => null)]);
-        setBlogEnabled(settings.showBlog);
+        const blogVisible = settings.showBlog ?? true;
+        setBlogEnabled(blogVisible);
 
         if (home?.profile) {
           setAuthorName(home.profile.name || "Samuel Abera");
           setAuthorAvatar(home.profile.avatarUrl || "/favicon.png");
         }
 
-        if (!settings.showBlog) {
+        if (!blogVisible) {
           setPost(null);
           return;
         }

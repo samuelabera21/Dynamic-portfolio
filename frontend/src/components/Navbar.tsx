@@ -25,7 +25,7 @@ export default function Navbar() {
     const run = async () => {
       try {
         const settings = await getSettings();
-        setShowBlog(settings.showBlog);
+        setShowBlog(settings.showBlog ?? true);
       } catch {
         setShowBlog(true);
       }

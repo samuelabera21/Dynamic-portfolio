@@ -10,6 +10,13 @@ import {
 
 const router = Router();
 
+const defaultFlags = {
+  showProjects: true,
+  showSkills: true,
+  showBlog: true,
+  availableForHire: true,
+};
+
 router.post("/newsletter/subscribe", async (req, res) => {
   try {
     const email = String(req.body?.email ?? "").trim().toLowerCase();
@@ -99,10 +106,12 @@ router.get("/", async (req, res) => {
   try {
     const settings = await prisma.setting.findMany();
 
-    const formatted: Record<string, boolean> = {};
+    const formatted: Record<string, boolean> = { ...defaultFlags };
 
     settings.forEach((setting) => {
-      formatted[setting.key] = setting.value === "true";
+      if (setting.key in defaultFlags) {
+        formatted[setting.key] = setting.value === "true";
+      }
     });
 
     res.json(formatted);
@@ -125,9 +134,13 @@ router.put("/", authMiddleware, async (req, res) => {
 
     // 👉 update all flags dynamically
     const updatePromises = Object.keys(updates).map((key) => {
-      return prisma.setting.update({
+      return prisma.setting.upsert({
         where: { key },
-        data: {
+        update: {
+          value: updates[key] ? "true" : "false",
+        },
+        create: {
+          key,
           value: updates[key] ? "true" : "false",
         },
       });
@@ -138,10 +151,12 @@ router.put("/", authMiddleware, async (req, res) => {
     // 👉 return updated settings
     const settings = await prisma.setting.findMany();
 
-    const formatted: Record<string, boolean> = {};
+    const formatted: Record<string, boolean> = { ...defaultFlags };
 
     settings.forEach((setting) => {
-      formatted[setting.key] = setting.value === "true";
+      if (setting.key in defaultFlags) {
+        formatted[setting.key] = setting.value === "true";
+      }
     });
 
     res.json(formatted);
