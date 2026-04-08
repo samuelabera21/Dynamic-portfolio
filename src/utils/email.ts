@@ -1,8 +1,11 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
 const emailUser = process.env.EMAIL_USER?.trim();
-const resendApiKey = process.env.RESEND_API_KEY?.trim();
-const resendFromEmail = process.env.RESEND_FROM_EMAIL?.trim() || "onboarding@resend.dev";
+const smtpHost = process.env.SMTP_HOST?.trim() || "smtp-relay.brevo.com";
+const smtpPort = Number(process.env.SMTP_PORT || "587");
+const smtpUser = process.env.SMTP_USER?.trim();
+const smtpPass = process.env.SMTP_PASS?.trim();
+const smtpFrom = process.env.SMTP_FROM?.trim() || "Samuel Abera <samuelabera.dev@gmail.com>";
 
 export type MailDeliveryResult = {
   accepted: string[];
@@ -11,29 +14,46 @@ export type MailDeliveryResult = {
   messageId: string;
 };
 
-if (!emailUser || !resendApiKey) {
-  console.warn("Email is not configured. Set EMAIL_USER and RESEND_API_KEY in .env");
+if (!emailUser || !smtpUser || !smtpPass) {
+  console.warn("Email is not configured. Set EMAIL_USER, SMTP_USER, and SMTP_PASS in .env");
 }
 
-const resendClient = resendApiKey
-  ? new Resend(resendApiKey)
+const transporter = smtpUser && smtpPass
+  ? nodemailer.createTransport({
+      host: smtpHost,
+      port: smtpPort,
+      secure: smtpPort === 465,
+      auth: {
+        user: smtpUser,
+        pass: smtpPass,
+      },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 15000,
+    })
   : null;
 
-function ensureEmailConfigured(): Resend {
-  if (!resendClient || !emailUser) {
-    throw new Error("Email service is not configured. Set EMAIL_USER and RESEND_API_KEY.");
+function ensureEmailConfigured(): nodemailer.Transporter {
+  if (!transporter || !emailUser) {
+    throw new Error("Email service is not configured. Set EMAIL_USER, SMTP_USER, and SMTP_PASS.");
   }
 
-  return resendClient;
+  return transporter;
 }
 
-function toDeliveryResult(messageId: string, recipient: string | string[]): MailDeliveryResult {
-  const accepted = Array.isArray(recipient) ? recipient : [recipient];
+function toDeliveryResult(info: nodemailer.SentMessageInfo): MailDeliveryResult {
+  const accepted = (info.accepted as Array<string | { address: string }> | undefined ?? []).map((value) =>
+    typeof value === "string" ? value : value.address
+  );
+  const rejected = (info.rejected as Array<string | { address: string }> | undefined ?? []).map((value) =>
+    typeof value === "string" ? value : value.address
+  );
+
   return {
     accepted,
-    rejected: [],
-    response: "sent-via-resend",
-    messageId,
+    rejected,
+    response: info.response,
+    messageId: info.messageId,
   };
 }
 
@@ -52,15 +72,15 @@ export const sendAdminNotification = async (
   email: string,
   message: string
 ) : Promise<MailDeliveryResult> => {
-  const emailClient = ensureEmailConfigured();
+  const emailTransporter = ensureEmailConfigured();
   const adminRecipient = emailUser as string;
 
   const safeName = escapeHtml(name);
   const safeEmail = escapeHtml(email);
   const safeMessage = escapeHtml(message).replace(/\n/g, "<br/>");
 
-  const { data, error } = await emailClient.emails.send({
-    from: resendFromEmail,
+  const info = await emailTransporter.sendMail({
+    from: smtpFrom,
     to: adminRecipient,
     subject: "📩 New Portfolio Message",
     html: `
@@ -72,21 +92,17 @@ export const sendAdminNotification = async (
     `,
   });
 
-  if (error || !data?.id) {
-    throw new Error(error?.message || "Failed to send admin notification via Resend.");
-  }
-
-  return toDeliveryResult(data.id, adminRecipient);
+  return toDeliveryResult(info);
 };
 
 // ✅ Auto-reply to USER
 export const sendAutoReply = async (email: string, name: string): Promise<MailDeliveryResult> => {
-  const emailClient = ensureEmailConfigured();
+  const emailTransporter = ensureEmailConfigured();
 
   const safeName = escapeHtml(name);
 
-  const { data, error } = await emailClient.emails.send({
-    from: resendFromEmail,
+  const info = await emailTransporter.sendMail({
+    from: smtpFrom,
     to: email,
     subject: "Thanks for contacting me 👋",
     html: `
@@ -96,11 +112,7 @@ export const sendAutoReply = async (email: string, name: string): Promise<MailDe
     `,
   });
 
-  if (error || !data?.id) {
-    throw new Error(error?.message || "Failed to send auto-reply via Resend.");
-  }
-
-  return toDeliveryResult(data.id, email);
+  return toDeliveryResult(info);
 };
 
 export const sendNewsletterBroadcast = async ({
@@ -122,7 +134,7 @@ export const sendNewsletterBroadcast = async ({
 }) => {
   if (recipients.length === 0) return;
 
-  const emailClient = ensureEmailConfigured();
+  const emailTransporter = ensureEmailConfigured();
 
   const safeTitle = escapeHtml(title);
   const safeMessage = escapeHtml(message);
@@ -130,8 +142,8 @@ export const sendNewsletterBroadcast = async ({
   const safeLinkUrl = linkUrl ? escapeHtml(linkUrl) : "";
 
   await Promise.all(recipients.map(async (recipient) => {
-    const { data, error } = await emailClient.emails.send({
-      from: resendFromEmail,
+    await emailTransporter.sendMail({
+      from: smtpFrom,
       to: recipient,
       subject,
       html: `
@@ -142,9 +154,5 @@ export const sendNewsletterBroadcast = async ({
           <p>Best regards,<br/>Samuel</p>
         `,
     });
-
-    if (error || !data?.id) {
-      throw new Error(error?.message || `Failed to send newsletter to ${recipient}`);
-    }
   }));
 };
