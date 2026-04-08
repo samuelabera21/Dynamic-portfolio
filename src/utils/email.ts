@@ -33,9 +33,16 @@ function ensureEmailConfigured(): nodemailer.Transporter {
 }
 
 function toDeliveryResult(info: nodemailer.SentMessageInfo): MailDeliveryResult {
+  const accepted = (info.accepted as Array<string | { address: string }>).map((value) =>
+    typeof value === "string" ? value : value.address
+  );
+  const rejected = (info.rejected as Array<string | { address: string }>).map((value) =>
+    typeof value === "string" ? value : value.address
+  );
+
   return {
-    accepted: info.accepted.map((value) => String(value)),
-    rejected: info.rejected.map((value) => String(value)),
+    accepted,
+    rejected,
     response: info.response,
     messageId: info.messageId,
   };
