@@ -132,12 +132,18 @@ router.post("/", async (req, res) => {
 
     res.status(201).json(createdMessage);
   } catch (error) {
-    console.error(error);
+    const errorCode =
+      typeof error === "object" && error !== null && "code" in error
+        ? String((error as { code?: unknown }).code ?? "UNKNOWN")
+        : "UNKNOWN";
+    const errorMessage = error instanceof Error ? error.message : "Unknown email error";
+    console.error("Contact email delivery error:", { code: errorCode, message: errorMessage });
 
     if (createdMessage) {
       return res.status(502).json({
         message:
           "Your message was saved, but email delivery failed. Please try again soon.",
+        errorCode,
       });
     }
 

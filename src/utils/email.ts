@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 
-const emailUser = process.env.EMAIL_USER;
-const emailPass = process.env.EMAIL_PASS;
+const emailUser = process.env.EMAIL_USER?.trim();
+const emailPass = process.env.EMAIL_PASS?.trim();
 
 export type MailDeliveryResult = {
   accepted: string[];
