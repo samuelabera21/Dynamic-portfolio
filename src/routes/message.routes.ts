@@ -102,40 +102,43 @@ console.log("🔥 MESSAGE ROUTES ACTIVE");
 
 // ✅ 1. CREATE MESSAGE (PUBLIC + EMAIL)
 router.post("/", async (req, res) => {
+  let createdMessage: Awaited<ReturnType<typeof prisma.message.create>> | null = null;
+
   try {
     const { name, email, message } = req.body;
+    const senderName = String(name ?? "").trim();
     const senderEmail = String(email ?? "").trim().toLowerCase();
+    const senderMessage = String(message ?? "").trim();
 
-    const newMessage = await prisma.message.create({
+    if (!senderName || !senderMessage || !isValidEmail(senderEmail)) {
+      return res.status(400).json({ message: "Please provide a valid name, email, and message." });
+    }
+
+    createdMessage = await prisma.message.create({
       data: {
-        name,
+        name: senderName,
         email: senderEmail,
-        message,
+        message: senderMessage,
       },
     });
 
-    // Return quickly to avoid proxy timeout while email provider responds.
-    res.json(newMessage);
+    const adminResult = await sendAdminNotification(senderName, senderEmail, senderMessage);
+    const autoReplyResult = await sendAutoReply(senderEmail, senderName);
 
-    // 🔥 SEND EMAILS (DO NOT BLOCK RESPONSE)
-    void (async () => {
-      try {
-        await sendAdminNotification(name, senderEmail, message);
+    console.log("Admin notification sent to:", process.env.EMAIL_USER, adminResult.messageId);
+    console.log("Auto-reply sent to:", senderEmail, autoReplyResult.messageId);
 
-        if (isValidEmail(senderEmail)) {
-          await sendAutoReply(senderEmail, name);
-          console.log("Auto-reply sent to:", senderEmail);
-        } else {
-          console.warn("Auto-reply skipped. Invalid sender email:", senderEmail);
-        }
-
-        console.log("Admin notification sent to:", process.env.EMAIL_USER);
-      } catch (emailError) {
-        console.error("Email error:", emailError);
-      }
-    })();
+    res.status(201).json(createdMessage);
   } catch (error) {
     console.error(error);
+
+    if (createdMessage) {
+      return res.status(502).json({
+        message:
+          "Your message was saved, but email delivery failed. Please try again soon.",
+      });
+    }
+
     res.status(500).json({ message: "Error sending message" });
   }
 });

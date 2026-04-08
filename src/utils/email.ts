@@ -3,17 +3,43 @@ import nodemailer from "nodemailer";
 const emailUser = process.env.EMAIL_USER;
 const emailPass = process.env.EMAIL_PASS;
 
+export type MailDeliveryResult = {
+  accepted: string[];
+  rejected: string[];
+  response: string;
+  messageId: string;
+};
+
 if (!emailUser || !emailPass) {
   console.warn("Email is not configured. Set EMAIL_USER and EMAIL_PASS in .env");
 }
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: emailUser,
-    pass: emailPass,
-  },
-});
+const transporter = emailUser && emailPass
+  ? nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: emailUser,
+        pass: emailPass,
+      },
+    })
+  : null;
+
+function ensureEmailConfigured(): nodemailer.Transporter {
+  if (!transporter) {
+    throw new Error("Email service is not configured. Set EMAIL_USER and EMAIL_PASS.");
+  }
+
+  return transporter;
+}
+
+function toDeliveryResult(info: nodemailer.SentMessageInfo): MailDeliveryResult {
+  return {
+    accepted: info.accepted.map((value) => String(value)),
+    rejected: info.rejected.map((value) => String(value)),
+    response: info.response,
+    messageId: info.messageId,
+  };
+}
 
 function escapeHtml(value: string): string {
   return value
@@ -29,37 +55,47 @@ export const sendAdminNotification = async (
   name: string,
   email: string,
   message: string
-) => {
-  if (!emailUser || !emailPass) return;
+) : Promise<MailDeliveryResult> => {
+  const emailTransporter = ensureEmailConfigured();
 
-  await transporter.sendMail({
+  const safeName = escapeHtml(name);
+  const safeEmail = escapeHtml(email);
+  const safeMessage = escapeHtml(message).replace(/\n/g, "<br/>");
+
+  const info = await emailTransporter.sendMail({
     from: emailUser,
     to: emailUser, // YOU receive it
     subject: "📩 New Portfolio Message",
     html: `
       <h2>New Message Received</h2>
-      <p><strong>Name:</strong> ${name}</p>
-      <p><strong>Email:</strong> ${email}</p>
+      <p><strong>Name:</strong> ${safeName}</p>
+      <p><strong>Email:</strong> ${safeEmail}</p>
       <p><strong>Message:</strong></p>
-      <p>${message}</p>
+      <p>${safeMessage}</p>
     `,
   });
+
+  return toDeliveryResult(info);
 };
 
 // ✅ Auto-reply to USER
-export const sendAutoReply = async (email: string, name: string) => {
-  if (!emailUser || !emailPass) return;
+export const sendAutoReply = async (email: string, name: string): Promise<MailDeliveryResult> => {
+  const emailTransporter = ensureEmailConfigured();
 
-  await transporter.sendMail({
+  const safeName = escapeHtml(name);
+
+  const info = await emailTransporter.sendMail({
     from: emailUser,
     to: email,
     subject: "Thanks for contacting me 👋",
     html: `
-      <h3>Hello ${name},</h3>
+      <h3>Hello ${safeName},</h3>
       <p>Thank you for reaching out. I received your message and will get back to you soon.</p>
       <p>Best regards,<br/>Samuel</p>
     `,
   });
+
+  return toDeliveryResult(info);
 };
 
 export const sendNewsletterBroadcast = async ({
@@ -79,7 +115,9 @@ export const sendNewsletterBroadcast = async ({
   linkUrl?: string;
   unsubscribeLinkForRecipient?: (recipient: string) => string;
 }) => {
-  if (!emailUser || !emailPass || recipients.length === 0) return;
+  if (recipients.length === 0) return;
+
+  const emailTransporter = ensureEmailConfigured();
 
   const safeTitle = escapeHtml(title);
   const safeMessage = escapeHtml(message);
@@ -88,7 +126,7 @@ export const sendNewsletterBroadcast = async ({
 
   await Promise.all(
     recipients.map((recipient) =>
-      transporter.sendMail({
+      emailTransporter.sendMail({
         from: emailUser,
         to: recipient,
         subject,
