@@ -21,6 +21,9 @@ const transporter = emailUser && emailPass
         user: emailUser,
         pass: emailPass,
       },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 15000,
     })
   : null;
 

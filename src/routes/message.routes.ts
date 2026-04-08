@@ -122,8 +122,10 @@ router.post("/", async (req, res) => {
       },
     });
 
-    const adminResult = await sendAdminNotification(senderName, senderEmail, senderMessage);
-    const autoReplyResult = await sendAutoReply(senderEmail, senderName);
+    const [adminResult, autoReplyResult] = await Promise.all([
+      sendAdminNotification(senderName, senderEmail, senderMessage),
+      sendAutoReply(senderEmail, senderName),
+    ]);
 
     console.log("Admin notification sent to:", process.env.EMAIL_USER, adminResult.messageId);
     console.log("Auto-reply sent to:", senderEmail, autoReplyResult.messageId);
