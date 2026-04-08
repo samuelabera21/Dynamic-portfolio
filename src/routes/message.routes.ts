@@ -85,7 +85,7 @@
 import { Router } from "express";
 import prisma from "../lib/prisma";
 import { authMiddleware } from "../middleware/auth.middleware";
-import { sendAdminNotification, sendAutoReply } from "../utils/email";
+import { EmailDeliveryError, sendAdminNotification, sendAutoReply } from "../utils/email";
 
 function isValidEmail(value: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
@@ -132,18 +132,24 @@ router.post("/", async (req, res) => {
 
     res.status(201).json(createdMessage);
   } catch (error) {
+    const emailError = error as EmailDeliveryError;
     const errorCode =
       typeof error === "object" && error !== null && "code" in error
         ? String((error as { code?: unknown }).code ?? "UNKNOWN")
         : "UNKNOWN";
     const errorMessage = error instanceof Error ? error.message : "Unknown email error";
-    console.error("Contact email delivery error:", { code: errorCode, message: errorMessage });
+    console.error("Contact email delivery error:", {
+      code: errorCode,
+      message: errorMessage,
+      details: emailError.details,
+    });
 
     if (createdMessage) {
       return res.status(502).json({
         message:
           "Your message was saved, but email delivery failed. Please try again soon.",
         errorCode,
+        errorDetails: emailError.details || errorMessage,
       });
     }
 

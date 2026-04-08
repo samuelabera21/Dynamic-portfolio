@@ -16,6 +16,11 @@ if (!emailUser || !brevoApiKey) {
 type BrevoRecipient = { email: string; name?: string };
 type BrevoSender = { email: string; name?: string };
 
+export type EmailDeliveryError = Error & {
+  code?: string;
+  details?: string;
+};
+
 function ensureEmailConfigured(): { adminEmail: string; apiKey: string } {
   if (!emailUser || !brevoApiKey) {
     throw new Error("Email service is not configured. Set EMAIL_USER and BREVO_API_KEY.");
@@ -92,8 +97,9 @@ async function sendViaBrevoHttp({
 
   if (!response.ok || !parsed.messageId) {
     const details = parsed.errors?.map((entry) => entry.message).filter(Boolean).join("; ");
-    const error = new Error(details || parsed.message || responseText || "Failed to send email via Brevo API.") as Error & { code?: string };
+    const error = new Error(details || parsed.message || responseText || "Failed to send email via Brevo API.") as EmailDeliveryError;
     error.code = parsed.code || `BREVO_HTTP_${response.status}`;
+    error.details = details || parsed.message || responseText;
     throw error;
   }
 
