@@ -27,12 +27,17 @@ function ensureEmailConfigured(): { adminEmail: string; apiKey: string } {
 function parseSender(value: string): BrevoSender {
   const match = value.match(/^\s*(.*?)\s*<([^>]+)>\s*$/);
   if (match) {
-    const name = match[1].trim();
-    const email = match[2].trim();
+    const name = match[1].replace(/^"|"$/g, "").trim();
+    const email = match[2].trim().toLowerCase();
     return name ? { name, email } : { email };
   }
 
-  return { email: value.trim() };
+  const normalized = value.trim();
+  if (normalized.includes(" ")) {
+    return { email: normalized.slice(normalized.lastIndexOf(" ") + 1).trim().toLowerCase() };
+  }
+
+  return { email: normalized.toLowerCase() };
 }
 
 function normalizeRecipients(recipients: string | string[]): BrevoRecipient[] {
@@ -76,10 +81,18 @@ async function sendViaBrevoHttp({
   });
 
   const responseText = await response.text();
-  const parsed = responseText ? (JSON.parse(responseText) as { messageId?: string; message?: string; code?: string }) : {};
+  const parsed = responseText
+    ? (JSON.parse(responseText) as {
+        messageId?: string;
+        message?: string;
+        code?: string;
+        errors?: Array<{ message?: string }>;
+      })
+    : {};
 
   if (!response.ok || !parsed.messageId) {
-    const error = new Error(parsed.message || responseText || "Failed to send email via Brevo API.") as Error & { code?: string };
+    const details = parsed.errors?.map((entry) => entry.message).filter(Boolean).join("; ");
+    const error = new Error(details || parsed.message || responseText || "Failed to send email via Brevo API.") as Error & { code?: string };
     error.code = parsed.code || `BREVO_HTTP_${response.status}`;
     throw error;
   }
