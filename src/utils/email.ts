@@ -1,11 +1,6 @@
-import nodemailer from "nodemailer";
-
 const emailUser = process.env.EMAIL_USER?.trim();
-const smtpHost = process.env.SMTP_HOST?.trim() || "smtp-relay.brevo.com";
-const smtpPort = Number(process.env.SMTP_PORT || "587");
-const smtpUser = process.env.SMTP_USER?.trim();
-const smtpPass = process.env.SMTP_PASS?.trim();
-const smtpFrom = process.env.SMTP_FROM?.trim() || "Samuel Abera <samuelabera.dev@gmail.com>";
+const brevoApiKey = process.env.BREVO_API_KEY?.trim();
+const senderText = process.env.SMTP_FROM?.trim() || "Samuel Abera <samuelabera.dev@gmail.com>";
 
 export type MailDeliveryResult = {
   accepted: string[];
@@ -14,47 +9,82 @@ export type MailDeliveryResult = {
   messageId: string;
 };
 
-if (!emailUser || !smtpUser || !smtpPass) {
-  console.warn("Email is not configured. Set EMAIL_USER, SMTP_USER, and SMTP_PASS in .env");
+if (!emailUser || !brevoApiKey) {
+  console.warn("Email is not configured. Set EMAIL_USER and BREVO_API_KEY in .env");
 }
 
-const transporter = smtpUser && smtpPass
-  ? nodemailer.createTransport({
-      host: smtpHost,
-      port: smtpPort,
-      secure: smtpPort === 465,
-      auth: {
-        user: smtpUser,
-        pass: smtpPass,
-      },
-      connectionTimeout: 10000,
-      greetingTimeout: 10000,
-      socketTimeout: 15000,
-    })
-  : null;
+type BrevoRecipient = { email: string; name?: string };
+type BrevoSender = { email: string; name?: string };
 
-function ensureEmailConfigured(): nodemailer.Transporter {
-  if (!transporter || !emailUser) {
-    throw new Error("Email service is not configured. Set EMAIL_USER, SMTP_USER, and SMTP_PASS.");
+function ensureEmailConfigured(): { adminEmail: string; apiKey: string } {
+  if (!emailUser || !brevoApiKey) {
+    throw new Error("Email service is not configured. Set EMAIL_USER and BREVO_API_KEY.");
   }
 
-  return transporter;
+  return { adminEmail: emailUser, apiKey: brevoApiKey };
 }
 
-function toDeliveryResult(info: nodemailer.SentMessageInfo): MailDeliveryResult {
-  const accepted = (info.accepted as Array<string | { address: string }> | undefined ?? []).map((value) =>
-    typeof value === "string" ? value : value.address
-  );
-  const rejected = (info.rejected as Array<string | { address: string }> | undefined ?? []).map((value) =>
-    typeof value === "string" ? value : value.address
-  );
+function parseSender(value: string): BrevoSender {
+  const match = value.match(/^\s*(.*?)\s*<([^>]+)>\s*$/);
+  if (match) {
+    const name = match[1].trim();
+    const email = match[2].trim();
+    return name ? { name, email } : { email };
+  }
 
+  return { email: value.trim() };
+}
+
+function normalizeRecipients(recipients: string | string[]): BrevoRecipient[] {
+  const list = Array.isArray(recipients) ? recipients : [recipients];
+  return list.map((email) => ({ email }));
+}
+
+function toDeliveryResult(messageId: string, recipients: BrevoRecipient[]): MailDeliveryResult {
   return {
-    accepted,
-    rejected,
-    response: info.response,
-    messageId: info.messageId,
+    accepted: recipients.map((recipient) => recipient.email),
+    rejected: [],
+    response: "sent-via-brevo-http",
+    messageId,
   };
+}
+
+async function sendViaBrevoHttp({
+  recipients,
+  subject,
+  html,
+}: {
+  recipients: BrevoRecipient[];
+  subject: string;
+  html: string;
+}): Promise<MailDeliveryResult> {
+  const { apiKey } = ensureEmailConfigured();
+
+  const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      "api-key": apiKey,
+    },
+    body: JSON.stringify({
+      sender: parseSender(senderText),
+      to: recipients,
+      subject,
+      htmlContent: html,
+    }),
+  });
+
+  const responseText = await response.text();
+  const parsed = responseText ? (JSON.parse(responseText) as { messageId?: string; message?: string; code?: string }) : {};
+
+  if (!response.ok || !parsed.messageId) {
+    const error = new Error(parsed.message || responseText || "Failed to send email via Brevo API.") as Error & { code?: string };
+    error.code = parsed.code || `BREVO_HTTP_${response.status}`;
+    throw error;
+  }
+
+  return toDeliveryResult(parsed.messageId, recipients);
 }
 
 function escapeHtml(value: string): string {
@@ -72,16 +102,14 @@ export const sendAdminNotification = async (
   email: string,
   message: string
 ) : Promise<MailDeliveryResult> => {
-  const emailTransporter = ensureEmailConfigured();
-  const adminRecipient = emailUser as string;
+  const { adminEmail } = ensureEmailConfigured();
 
   const safeName = escapeHtml(name);
   const safeEmail = escapeHtml(email);
   const safeMessage = escapeHtml(message).replace(/\n/g, "<br/>");
 
-  const info = await emailTransporter.sendMail({
-    from: smtpFrom,
-    to: adminRecipient,
+  return sendViaBrevoHttp({
+    recipients: normalizeRecipients(adminEmail),
     subject: "📩 New Portfolio Message",
     html: `
       <h2>New Message Received</h2>
@@ -91,19 +119,16 @@ export const sendAdminNotification = async (
       <p>${safeMessage}</p>
     `,
   });
-
-  return toDeliveryResult(info);
 };
 
 // ✅ Auto-reply to USER
 export const sendAutoReply = async (email: string, name: string): Promise<MailDeliveryResult> => {
-  const emailTransporter = ensureEmailConfigured();
+  ensureEmailConfigured();
 
   const safeName = escapeHtml(name);
 
-  const info = await emailTransporter.sendMail({
-    from: smtpFrom,
-    to: email,
+  return sendViaBrevoHttp({
+    recipients: normalizeRecipients(email),
     subject: "Thanks for contacting me 👋",
     html: `
       <h3>Hello ${safeName},</h3>
@@ -111,8 +136,6 @@ export const sendAutoReply = async (email: string, name: string): Promise<MailDe
       <p>Best regards,<br/>Samuel</p>
     `,
   });
-
-  return toDeliveryResult(info);
 };
 
 export const sendNewsletterBroadcast = async ({
@@ -134,7 +157,7 @@ export const sendNewsletterBroadcast = async ({
 }) => {
   if (recipients.length === 0) return;
 
-  const emailTransporter = ensureEmailConfigured();
+  ensureEmailConfigured();
 
   const safeTitle = escapeHtml(title);
   const safeMessage = escapeHtml(message);
@@ -142,9 +165,8 @@ export const sendNewsletterBroadcast = async ({
   const safeLinkUrl = linkUrl ? escapeHtml(linkUrl) : "";
 
   await Promise.all(recipients.map(async (recipient) => {
-    await emailTransporter.sendMail({
-      from: smtpFrom,
-      to: recipient,
+    await sendViaBrevoHttp({
+      recipients: normalizeRecipients(recipient),
       subject,
       html: `
           <h2>${safeTitle}</h2>
