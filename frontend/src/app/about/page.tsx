@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { jsPDF } from "jspdf";
 import { motion } from "framer-motion";
 import { getHome, getProjects } from "@/lib/api";
@@ -172,39 +172,6 @@ function normalizeSocialUrl(url: string): string {
   return `https://${trimmed}`;
 }
 
-function preferredSkillScore(name: string): number | null {
-  const key = name.trim().toLowerCase();
-  const exact: Record<string, number> = {
-    html: 100,
-    css: 90,
-    javascript: 75,
-    "java script": 75,
-    php: 80,
-    "wordpress/cms": 90,
-    wordpress: 90,
-    photoshop: 55,
-  };
-
-  return exact[key] ?? null;
-}
-
-function hashedSkillScore(name: string, category: string): number {
-  let hash = 0;
-  const source = `${category}:${name.toLowerCase()}`;
-
-  for (let i = 0; i < source.length; i += 1) {
-    hash = (hash * 31 + source.charCodeAt(i)) % 9973;
-  }
-
-  return 58 + (hash % 40);
-}
-
-function skillScore(name: string, category: string): number {
-  const preferred = preferredSkillScore(name);
-  if (preferred !== null) return preferred;
-  return hashedSkillScore(name, category);
-}
-
 function interestList(): string[] {
   return [
     "Software Development",
@@ -225,8 +192,6 @@ export default function AboutPage() {
   const [error, setError] = useState<string | null>(null);
   const [resumeError, setResumeError] = useState<string | null>(null);
   const [downloadingResume, setDownloadingResume] = useState(false);
-  const [skillBarsVisible, setSkillBarsVisible] = useState(false);
-  const skillSectionRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     const run = async () => {
@@ -247,28 +212,6 @@ export default function AboutPage() {
 
     run();
   }, []);
-
-  useEffect(() => {
-    const node = skillSectionRef.current;
-    if (!node) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const [entry] = entries;
-        if (entry?.isIntersecting) {
-          setSkillBarsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.25 }
-    );
-
-    observer.observe(node);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [loading]);
 
   const preferredCategoryOrder = [
     "frontend",
@@ -298,21 +241,6 @@ export default function AboutPage() {
       if (bIndex >= 0) return 1;
       return a.localeCompare(b);
     });
-
-  const flatSkills = useMemo(() => {
-    return orderedCategories.flatMap((category) => {
-      return (groupedSkills[category] ?? []).map((name) => ({
-        category,
-        name,
-        score: skillScore(name, category),
-      }));
-    });
-  }, [groupedSkills, orderedCategories]);
-
-  const splitSkillColumns = useMemo(() => {
-    const midpoint = Math.ceil(flatSkills.length / 2);
-    return [flatSkills.slice(0, midpoint), flatSkills.slice(midpoint)];
-  }, [flatSkills]);
 
   const interests = interestList();
 
@@ -580,33 +508,9 @@ export default function AboutPage() {
         </article>
 
         {hasSkills ? (
-          <article
-            ref={skillSectionRef}
-            className="rounded-3xl border border-white/10 bg-[#040912]/80 p-5 shadow-[0_20px_40px_rgba(2,7,18,0.45)] sm:p-8"
-          >
+          <article className="rounded-3xl border border-white/10 bg-[#040912]/80 p-5 shadow-[0_20px_40px_rgba(2,7,18,0.45)] sm:p-8">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-300">Skills</p>
             <h2 className="mt-2 font-[family-name:var(--font-heading)] text-4xl font-bold text-white">My Skills</h2>
-
-            <div className="mt-8 grid gap-8 lg:grid-cols-2">
-              {splitSkillColumns.map((column, columnIndex) => (
-                <div key={`skill-column-${columnIndex}`} className="space-y-5">
-                  {column.map((item) => (
-                    <div key={`${item.category}-${item.name}`}>
-                      <div className="mb-2 flex items-center justify-between text-sm font-semibold uppercase tracking-wide text-slate-200">
-                        <span>{item.name}</span>
-                        <span>{item.score}%</span>
-                      </div>
-                      <div className="h-3 overflow-hidden rounded-full bg-white/10">
-                        <div
-                          className="h-full rounded-full bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500 transition-all duration-[1400ms]"
-                          style={{ width: skillBarsVisible ? `${item.score}%` : "0%" }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
 
             <div className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
               <SkillsFlipSection skills={groupedSkills} />
