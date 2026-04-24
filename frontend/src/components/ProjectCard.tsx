@@ -28,12 +28,16 @@ export default function ProjectCard({ project }: Props) {
               src={project.imageUrl}
               alt=""
               aria-hidden="true"
+              loading="lazy"
+              decoding="async"
               className="absolute inset-0 h-full w-full scale-110 object-cover opacity-30 blur-2xl"
             />
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={project.imageUrl}
               alt={project.title}
+              loading="lazy"
+              decoding="async"
               className="relative h-full w-full object-contain transition duration-500 group-hover:scale-[1.02]"
             />
           </>
