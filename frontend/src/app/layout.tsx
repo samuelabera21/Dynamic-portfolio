@@ -4,6 +4,9 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import GlobalFooter from "@/components/GlobalFooter";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
+import { getHomeServer, getSettingsServer } from "@/lib/server-api";
+
+export const revalidate = 60;
 
 const headingFont = Space_Grotesk({
   variable: "--font-heading",
@@ -38,17 +41,30 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  return <RootLayoutShell>{children}</RootLayoutShell>;
+}
+
+async function RootLayoutShell({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  const [home, settings] = await Promise.all([
+    getHomeServer(revalidate).catch(() => null),
+    getSettingsServer(revalidate).catch(() => null),
+  ]);
+
   return (
     <html
       lang="en"
       className={`${headingFont.variable} ${bodyFont.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-[#05070d] text-slate-900">
-        <Navbar />
+        <Navbar showBlog={settings?.showBlog ?? true} />
         <main className="w-full flex-1 px-0 pb-0 pt-16">
           {children}
         </main>
-        <GlobalFooter />
+        <GlobalFooter initialProfile={home?.profile ?? null} />
         <ScrollToTopButton />
       </body>
     </html>
