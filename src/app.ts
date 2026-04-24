@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
+import compression from "compression";
 import authRoutes from "./routes/auth.routes";
 import { authMiddleware } from "./middleware/auth.middleware";
 import projectRoutes from "./routes/project.routes";
@@ -32,6 +33,7 @@ const allowedOrigins = [
 app.set("trust proxy", 1);
 app.disable("x-powered-by");
 app.use(helmet());
+app.use(compression());
 app.use(
   cors({
     origin: allowedOrigins,
