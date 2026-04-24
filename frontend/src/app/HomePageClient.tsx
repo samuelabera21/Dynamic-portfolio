@@ -64,24 +64,13 @@ export default function HomePageClient({
     );
   }
 
-  if (error || !homeData) {
-    return (
-      <section className="rounded-2xl border border-red-400/30 bg-[#0b0f19] p-6 shadow-lg">
-        <h1 className="font-[family-name:var(--font-heading)] text-xl font-bold text-white">Homepage Data Unavailable</h1>
-        <p className="mt-2 text-sm font-medium text-red-300">{error ?? "Could not load homepage data."}</p>
-        <p className="mt-1 text-sm text-slate-300">Try refreshing the page. If the issue continues, check backend GET /home response.</p>
-      </section>
-    );
-  }
-
-  const {
-    profile,
-    featuredProjects,
-    skills,
-    showProjects = true,
-    showSkills = true,
-    availableForHire = true,
-  } = homeData;
+  const hasHomeData = Boolean(homeData);
+  const profile = homeData?.profile;
+  const featuredProjects = homeData?.featuredProjects ?? [];
+  const skills = homeData?.skills;
+  const showProjects = homeData?.showProjects ?? true;
+  const showSkills = homeData?.showSkills ?? true;
+  const availableForHire = homeData?.availableForHire ?? true;
 
   return (
     <section className="relative space-y-10 overflow-hidden bg-[#060c18] pb-0">
@@ -89,22 +78,36 @@ export default function HomePageClient({
       <div className="pointer-events-none absolute -right-40 top-80 h-80 w-80 rounded-full bg-violet-600/20 blur-[120px]" />
 
       <div className="relative space-y-14 px-0 pt-0">
-        <HeroSection profile={profile} showAvailableForHire={availableForHire} />
-
-        <div className="mx-6 sm:mx-10 lg:mx-12">
-          <CtaSection bio={profile.bio} />
-        </div>
-
-        {showProjects ? (
-          <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
-            <FeaturedProjectsSection projects={featuredProjects} />
-          </SectionShell>
+        {error || !hasHomeData ? (
+          <div className="mx-6 rounded-2xl border border-red-400/30 bg-[#0b0f19] p-6 shadow-lg sm:mx-10 lg:mx-12">
+            <h1 className="font-[family-name:var(--font-heading)] text-xl font-bold text-white">Homepage Data Unavailable</h1>
+            <p className="mt-2 text-sm font-medium text-red-300">{error ?? "Could not load homepage data."}</p>
+            <p className="mt-1 text-sm text-slate-300">
+              Dynamic content is temporarily unavailable. Static sections are still visible while backend data recovers.
+            </p>
+          </div>
         ) : null}
 
-        {showSkills ? (
-          <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
-            <SkillsFlipSection skills={skills} />
-          </SectionShell>
+        {hasHomeData && profile ? (
+          <>
+            <HeroSection profile={profile} showAvailableForHire={availableForHire} />
+
+            <div className="mx-6 sm:mx-10 lg:mx-12">
+              <CtaSection bio={profile.bio} />
+            </div>
+
+            {showProjects ? (
+              <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
+                <FeaturedProjectsSection projects={featuredProjects} />
+              </SectionShell>
+            ) : null}
+
+            {showSkills && skills ? (
+              <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
+                <SkillsFlipSection skills={skills} />
+              </SectionShell>
+            ) : null}
+          </>
         ) : null}
 
         <SectionShell className="mx-6 sm:mx-10 lg:mx-12">
