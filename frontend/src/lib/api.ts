@@ -13,37 +13,96 @@ type RequestConfig = {
   method?: "GET" | "POST" | "PUT" | "DELETE";
   token?: string | null;
   body?: unknown;
+  cacheTtlMs?: number;
+  skipCache?: boolean;
 };
 
-async function request<T>(path: string, config: RequestConfig = {}): Promise<T> {
-  const { method = "GET", token, body } = config;
+const PUBLIC_CACHE_TTL_MS = 60_000;
+const responseCache = new Map<string, { expiresAt: number; data: unknown }>();
+const inflightCache = new Map<string, Promise<unknown>>();
 
-  const res = await fetch(`${API_BASE}${path}`, {
-    method,
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-    body: body ? JSON.stringify(body) : undefined,
-    cache: "no-store",
-  });
+function isCacheableRequest(path: string, method: RequestConfig["method"], token?: string | null, body?: unknown): boolean {
+  return method === "GET" && !token && !body && !path.startsWith("/admin");
+}
 
-  if (!res.ok) {
-    const contentType = res.headers.get("content-type") ?? "";
-
-    if (contentType.includes("application/json")) {
-      const errorBody = await res
-        .json()
-        .catch(() => ({ message: `Request failed (${res.status})` }));
-      throw new Error(errorBody.message ?? `Request failed (${res.status})`);
+function invalidateCache(prefixes: string[]): void {
+  for (const key of responseCache.keys()) {
+    if (prefixes.some((prefix) => key.startsWith(prefix))) {
+      responseCache.delete(key);
     }
-
-    const errorText = await res.text().catch(() => "");
-    const summary = errorText.trim().slice(0, 200);
-    throw new Error(summary || `Request failed (${res.status})`);
   }
 
-  return res.json() as Promise<T>;
+  for (const key of inflightCache.keys()) {
+    if (prefixes.some((prefix) => key.startsWith(prefix))) {
+      inflightCache.delete(key);
+    }
+  }
+}
+
+async function request<T>(path: string, config: RequestConfig = {}): Promise<T> {
+  const { method = "GET", token, body, cacheTtlMs = PUBLIC_CACHE_TTL_MS, skipCache = false } = config;
+  const canCache = !skipCache && isCacheableRequest(path, method, token, body);
+
+  if (canCache) {
+    const cached = responseCache.get(path);
+    if (cached && cached.expiresAt > Date.now()) {
+      return cached.data as T;
+    }
+
+    const inflight = inflightCache.get(path);
+    if (inflight) {
+      return inflight as Promise<T>;
+    }
+  }
+
+  const operation = (async () => {
+    const res = await fetch(`${API_BASE}${path}`, {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: body ? JSON.stringify(body) : undefined,
+      cache: canCache ? "default" : "no-store",
+    });
+
+    if (!res.ok) {
+      const contentType = res.headers.get("content-type") ?? "";
+
+      if (contentType.includes("application/json")) {
+        const errorBody = await res
+          .json()
+          .catch(() => ({ message: `Request failed (${res.status})` }));
+        throw new Error(errorBody.message ?? `Request failed (${res.status})`);
+      }
+
+      const errorText = await res.text().catch(() => "");
+      const summary = errorText.trim().slice(0, 200);
+      throw new Error(summary || `Request failed (${res.status})`);
+    }
+
+    const data = (await res.json()) as T;
+    if (canCache) {
+      responseCache.set(path, {
+        data,
+        expiresAt: Date.now() + cacheTtlMs,
+      });
+    }
+
+    return data;
+  })();
+
+  if (canCache) {
+    inflightCache.set(path, operation as Promise<unknown>);
+  }
+
+  try {
+    return await operation;
+  } finally {
+    if (canCache) {
+      inflightCache.delete(path);
+    }
+  }
 }
 
 function toQueryString(filters: ProjectFilters): string {
@@ -87,11 +146,14 @@ export async function updateSettings(
   payload: Partial<FeatureFlags>,
   token: string
 ): Promise<FeatureFlags> {
-  return request<FeatureFlags>("/settings", {
+  const result = await request<FeatureFlags>("/settings", {
     method: "PUT",
     body: payload,
     token,
   });
+
+  invalidateCache(["/settings", "/home"]);
+  return result;
 }
 
 export async function getProjects(filters: ProjectFilters = {}): Promise<Project[]> {
@@ -106,11 +168,14 @@ export async function createProject(
   payload: ProjectPayload,
   token: string
 ): Promise<Project> {
-  return request<Project>("/projects", {
+  const result = await request<Project>("/projects", {
     method: "POST",
     body: payload,
     token,
   });
+
+  invalidateCache(["/projects", "/home"]);
+  return result;
 }
 
 export async function updateProject(
@@ -118,11 +183,14 @@ export async function updateProject(
   payload: Partial<ProjectPayload>,
   token: string
 ): Promise<Project> {
-  return request<Project>(`/projects/${id}`, {
+  const result = await request<Project>(`/projects/${id}`, {
     method: "PUT",
     body: payload,
     token,
   });
+
+  invalidateCache(["/projects", "/home"]);
+  return result;
 }
 
 export async function deleteProject(id: string, token: string): Promise<void> {
@@ -130,6 +198,8 @@ export async function deleteProject(id: string, token: string): Promise<void> {
     method: "DELETE",
     token,
   });
+
+  invalidateCache(["/projects", "/home"]);
 }
 
 export async function sendMessage(payload: MessagePayload): Promise<Message> {
@@ -202,11 +272,14 @@ export async function getAdminPosts(token: string): Promise<Post[]> {
 }
 
 export async function createPost(payload: PostPayload, token: string): Promise<Post> {
-  return request<Post>("/posts", {
+  const result = await request<Post>("/posts", {
     method: "POST",
     body: payload,
     token,
   });
+
+  invalidateCache(["/posts", "/home"]);
+  return result;
 }
 
 export async function updatePost(
@@ -214,11 +287,14 @@ export async function updatePost(
   payload: Partial<PostPayload>,
   token: string
 ): Promise<Post> {
-  return request<Post>(`/posts/${id}`, {
+  const result = await request<Post>(`/posts/${id}`, {
     method: "PUT",
     body: payload,
     token,
   });
+
+  invalidateCache(["/posts", "/home"]);
+  return result;
 }
 
 export async function deletePost(id: string, token: string): Promise<void> {
@@ -226,6 +302,8 @@ export async function deletePost(id: string, token: string): Promise<void> {
     method: "DELETE",
     token,
   });
+
+  invalidateCache(["/posts", "/home"]);
 }
 
 export async function getProfile(): Promise<Profile> {
@@ -236,11 +314,14 @@ export async function updateProfile(
   payload: ProfilePayload,
   token: string
 ): Promise<Profile> {
-  return request<Profile>("/profile", {
+  const result = await request<Profile>("/profile", {
     method: "PUT",
     body: payload,
     token,
   });
+
+  invalidateCache(["/profile", "/home"]);
+  return result;
 }
 
 export async function getSkills(token?: string): Promise<Skill[]> {
@@ -254,11 +335,14 @@ export async function getGroupedSkills(): Promise<GroupedSkills> {
 }
 
 export async function createSkill(payload: SkillPayload, token: string): Promise<Skill> {
-  return request<Skill>("/skills", {
+  const result = await request<Skill>("/skills", {
     method: "POST",
     body: payload,
     token,
   });
+
+  invalidateCache(["/skills", "/home"]);
+  return result;
 }
 
 export async function updateSkill(
@@ -266,11 +350,14 @@ export async function updateSkill(
   payload: SkillPayload,
   token: string
 ): Promise<Skill> {
-  return request<Skill>(`/skills/${id}`, {
+  const result = await request<Skill>(`/skills/${id}`, {
     method: "PUT",
     body: payload,
     token,
   });
+
+  invalidateCache(["/skills", "/home"]);
+  return result;
 }
 
 export async function deleteSkill(id: string, token: string): Promise<void> {
@@ -278,4 +365,6 @@ export async function deleteSkill(id: string, token: string): Promise<void> {
     method: "DELETE",
     token,
   });
+
+  invalidateCache(["/skills", "/home"]);
 }
