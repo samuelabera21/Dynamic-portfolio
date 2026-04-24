@@ -194,15 +194,31 @@ type AboutPageClientProps = {
   initialError?: string | null;
 };
 
+const fallbackProfile: Profile = {
+  id: "fallback-about-profile",
+  name: "Samuel Abera",
+  role: "Software Engineering Student and Web Developer",
+  bio: "Focused on building practical web applications while growing in modern software engineering.",
+  avatarUrl: "",
+  resumeUrl: "",
+  location: "Ethiopia",
+  available: true,
+  socialLinks: [],
+};
+
+const fallbackSkills: GroupedSkills = {};
+
+const fallbackStaticProjects: Project[] = [];
+
 export default function AboutPageClient({
   initialData = null,
   initialError = null,
 }: AboutPageClientProps) {
-  const [profile, setProfile] = useState<Profile | null>(initialData?.home.profile ?? null);
+  const [profile, setProfile] = useState<Profile>(initialData?.home.profile ?? fallbackProfile);
   const [projects, setProjects] = useState<Project[]>(
-    initialData?.projects.filter((item) => item.published) ?? []
+    initialData?.projects.filter((item) => item.published) ?? fallbackStaticProjects
   );
-  const [groupedSkills, setGroupedSkills] = useState<GroupedSkills>(initialData?.home.skills ?? {});
+  const [groupedSkills, setGroupedSkills] = useState<GroupedSkills>(initialData?.home.skills ?? fallbackSkills);
   const [showSkills, setShowSkills] = useState(initialData?.home.showSkills ?? true);
   const [loading, setLoading] = useState(!initialData && !initialError);
   const [error, setError] = useState<string | null>(initialError);
@@ -263,7 +279,7 @@ export default function AboutPageClient({
   const interests = interestList();
 
   if (loading) return <p className="text-sm text-slate-500">Loading profile...</p>;
-  if (error || !profile) return <p className="text-sm font-medium text-red-600">{error ?? "Profile unavailable"}</p>;
+  const isFallbackMode = Boolean(error || !initialData);
 
   const hasSkills = showSkills && orderedCategories.length > 0;
   const templateFacts = [
@@ -427,6 +443,15 @@ export default function AboutPageClient({
       <div className="pointer-events-none absolute right-[-80px] top-[260px] h-72 w-72 rounded-full bg-emerald-500/10 blur-[120px]" />
 
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-6 sm:px-10 lg:px-12">
+        {isFallbackMode ? (
+          <article className="rounded-3xl border border-amber-300/20 bg-amber-500/10 p-4 text-sm text-amber-100 shadow-[0_18px_45px_rgba(6,12,24,0.45)] backdrop-blur-xl">
+            <p className="font-semibold">About data is temporarily using fallback content.</p>
+            <p className="mt-1 text-amber-100/80">
+              The page will switch back to live backend content automatically when Neon becomes available again.
+            </p>
+          </article>
+        ) : null}
+
         <article className="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-[0_18px_45px_rgba(6,12,24,0.45)] backdrop-blur-xl sm:p-8">
           <div className="space-y-5">
             <div>

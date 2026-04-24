@@ -9,10 +9,22 @@ type GlobalFooterProps = {
   initialProfile?: Profile | null;
 };
 
+const fallbackProfile: Profile = {
+  id: "fallback-footer-profile",
+  name: "Samuel Abera",
+  role: "Software Engineer",
+  bio: "Portfolio footer content is temporarily using fallback data while the backend recovers.",
+  avatarUrl: "",
+  resumeUrl: "",
+  location: "Ethiopia",
+  available: true,
+  socialLinks: [],
+};
+
 export default function GlobalFooter({ initialProfile = null }: GlobalFooterProps) {
   const pathname = usePathname();
   const hideOnAdmin = pathname.startsWith("/admin");
-  const [profile] = useState<Profile | null>(initialProfile);
+  const [profile] = useState<Profile | null>(initialProfile ?? fallbackProfile);
 
   if (hideOnAdmin || !profile) return null;
 
