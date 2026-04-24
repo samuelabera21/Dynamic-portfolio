@@ -2,10 +2,13 @@ import { Router } from "express";
 import prisma from "../lib/prisma";
 
 const router = Router();
+const PUBLIC_CACHE_CONTROL = "public, max-age=30, s-maxage=60, stale-while-revalidate=300";
 
 // ✅ GET HOME DATA (PUBLIC)
 router.get("/", async (req, res) => {
   try {
+    res.set("Cache-Control", PUBLIC_CACHE_CONTROL);
+
     let profile = await prisma.profile.findFirst({
       orderBy: { updatedAt: "desc" },
       include: { socialLinks: true },
