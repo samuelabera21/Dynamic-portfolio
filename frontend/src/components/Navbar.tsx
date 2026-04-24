@@ -2,9 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
-import { getSettings } from "@/lib/api";
 
 const links = [
   { href: "/", label: "Home" },
@@ -15,24 +14,14 @@ const links = [
   { href: "/contact", label: "Contact" },
 ];
 
-export default function Navbar() {
+type NavbarProps = {
+  showBlog?: boolean;
+};
+
+export default function Navbar({ showBlog = true }: NavbarProps) {
   const pathname = usePathname();
   const hideOnAdmin = pathname.startsWith("/admin");
-  const [showBlog, setShowBlog] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  useEffect(() => {
-    const run = async () => {
-      try {
-        const settings = await getSettings();
-        setShowBlog(settings.showBlog ?? true);
-      } catch {
-        setShowBlog(true);
-      }
-    };
-
-    run();
-  }, []);
 
   const visibleLinks = useMemo(
     () => links.filter((link) => (link.href === "/blog" ? showBlog : true)),
