@@ -64,6 +64,33 @@ function previewText(content: string): string {
   return `${normalized.slice(0, 160)}...`;
 }
 
+const fallbackPosts: Post[] = [
+  {
+    id: "fallback-blog-1",
+    title: "Keeping a portfolio usable during backend limits",
+    content:
+      "This page is showing fallback content while the database transfer limit is exhausted. The live blog will return automatically when Neon becomes available again.",
+    published: true,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: "fallback-blog-2",
+    title: "Faster first load with caching and ISR",
+    content:
+      "Server wrappers, cache headers, and lightweight client fallbacks help the site feel faster without changing the live content flow when the backend is healthy.",
+    published: true,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: "fallback-blog-3",
+    title: "Why graceful fallbacks matter",
+    content:
+      "A professional fallback keeps the site readable and useful during outages, instead of showing raw error text or a broken blank page.",
+    published: true,
+    createdAt: new Date().toISOString(),
+  },
+];
+
 export default function BlogPageClient({
   initialData = null,
   initialError = null,
@@ -75,6 +102,7 @@ export default function BlogPageClient({
   const [error, setError] = useState<string | null>(initialError);
   const [search, setSearch] = useState("");
   const [blogEnabled, setBlogEnabled] = useState(initialData?.settings.showBlog ?? true);
+  const [offlineMode, setOfflineMode] = useState(Boolean(initialError));
   const introText = "Short notes, technology updates, and real project experience.";
   const introChars = introText.split("");
 
@@ -102,7 +130,10 @@ export default function BlogPageClient({
         const data = await getPosts();
         setPosts(data);
       } catch (err) {
+        setOfflineMode(true);
         setError(err instanceof Error ? err.message : "Unable to load blog posts");
+        setBlogEnabled(true);
+        setPosts(fallbackPosts);
       } finally {
         setLoading(false);
       }
@@ -126,6 +157,8 @@ export default function BlogPageClient({
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
   }, [posts, search]);
+
+  const showOfflineBanner = offlineMode || Boolean(error);
 
   return (
     <section className="relative min-h-screen overflow-hidden bg-[#060c18] pb-10 pt-6 text-slate-100">
@@ -173,9 +206,17 @@ export default function BlogPageClient({
         ) : null}
 
         {loading ? <p className="text-sm text-slate-300">Loading blog posts...</p> : null}
-        {error ? <p className="text-sm font-medium text-red-300">{error}</p> : null}
 
-        {!loading && !error && blogEnabled && visiblePosts.length === 0 ? (
+        {showOfflineBanner ? (
+          <div className="rounded-xl border border-amber-300/20 bg-amber-500/10 p-5 text-sm text-amber-100 shadow-[0_18px_45px_rgba(6,12,24,0.45)]">
+            <p className="font-semibold">Blog data is temporarily unavailable.</p>
+            <p className="mt-2 leading-7 text-amber-100/80">
+              You are seeing fallback posts for now. The live blog will automatically return when the database comes back online.
+            </p>
+          </div>
+        ) : null}
+
+        {!loading && !showOfflineBanner && blogEnabled && visiblePosts.length === 0 ? (
           <p className="rounded-xl border border-white/10 bg-white/5 p-6 text-sm text-slate-300">No posts found.</p>
         ) : null}
 
@@ -212,7 +253,7 @@ export default function BlogPageClient({
                     <div className="mt-1 flex h-[155px] flex-col">
                       <h2 className="text-xl font-bold leading-8 text-white">{post.title}</h2>
                       <p className="mt-2 flex-1 overflow-hidden text-[15px] leading-7 text-slate-200">{excerpt}</p>
-                      {isLong ? (
+                      {!offlineMode && isLong ? (
                         <Link href={`/blog/${post.id}`} className="mt-1 inline-block text-sm font-medium text-cyan-300 hover:text-cyan-200">
                           Show more
                         </Link>
@@ -240,12 +281,18 @@ export default function BlogPageClient({
 
                 <div className="mt-auto flex items-center justify-between px-4 pb-4 text-xs text-slate-400">
                   <span>{formatDate(post.createdAt)}</span>
-                  <Link
-                    href={`/blog/${post.id}`}
-                    className="rounded-full border border-cyan-300/35 bg-cyan-500/10 px-3 py-1 font-semibold text-cyan-200 hover:bg-cyan-500/20"
-                  >
-                    Open Post
-                  </Link>
+                  {!offlineMode ? (
+                    <Link
+                      href={`/blog/${post.id}`}
+                      className="rounded-full border border-cyan-300/35 bg-cyan-500/10 px-3 py-1 font-semibold text-cyan-200 hover:bg-cyan-500/20"
+                    >
+                      Open Post
+                    </Link>
+                  ) : (
+                    <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1 font-semibold text-slate-400">
+                      Fallback
+                    </span>
+                  )}
                 </div>
               </motion.article>
             );
