@@ -9,6 +9,7 @@ import {
 } from "../utils/newsletter";
 
 const router = Router();
+const PUBLIC_CACHE_CONTROL = "public, max-age=30, s-maxage=60, stale-while-revalidate=300";
 
 const defaultFlags = {
   showProjects: true,
@@ -104,6 +105,8 @@ router.delete("/newsletter/subscribers", authMiddleware, async (req, res) => {
 // ✅ 1. GET SETTINGS (PUBLIC)
 router.get("/", async (req, res) => {
   try {
+    res.set("Cache-Control", PUBLIC_CACHE_CONTROL);
+
     const settings = await prisma.setting.findMany();
 
     const formatted: Record<string, boolean> = { ...defaultFlags };
