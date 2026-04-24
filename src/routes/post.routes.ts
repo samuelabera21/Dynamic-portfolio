@@ -4,6 +4,7 @@ import { authMiddleware } from "../middleware/auth.middleware";
 import { notifyNewsletterSubscribers } from "../utils/newsletter";
 
 const router = Router();
+const PUBLIC_CACHE_CONTROL = "public, max-age=30, s-maxage=60, stale-while-revalidate=300";
 
 console.log("🔥 POST ROUTES ACTIVE");
 
@@ -43,6 +44,8 @@ router.post("/", authMiddleware, async (req, res) => {
 // ✅ GET ALL POSTS (PUBLIC)
 router.get("/", async (req, res) => {
   try {
+    res.set("Cache-Control", PUBLIC_CACHE_CONTROL);
+
     const posts = await prisma.post.findMany({
       where: {
         published: true, // 🔥 only public posts
@@ -78,6 +81,8 @@ router.get("/admin/all", authMiddleware, async (req, res) => {
 // ✅ GET SINGLE POST
 router.get("/:id", async (req, res) => {
   try {
+    res.set("Cache-Control", PUBLIC_CACHE_CONTROL);
+
     const id = req.params.id as string;
 
     const post = await prisma.post.findUnique({
