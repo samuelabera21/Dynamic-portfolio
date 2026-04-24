@@ -3,11 +3,14 @@ import prisma from "../lib/prisma";
 import { authMiddleware } from "../middleware/auth.middleware";
 
 const router = Router();
+const PUBLIC_CACHE_CONTROL = "public, max-age=30, s-maxage=60, stale-while-revalidate=300";
 
 
 // ✅ 1. GET ALL SKILLS (PUBLIC)
 router.get("/", async (req, res) => {
   try {
+    res.set("Cache-Control", PUBLIC_CACHE_CONTROL);
+
     const skills = await prisma.skill.findMany();
 
     res.json(skills);
@@ -23,6 +26,8 @@ router.get("/", async (req, res) => {
 // ✅ 2. GET GROUPED SKILLS (PUBLIC)
 router.get("/grouped", async (req, res) => {
   try {
+    res.set("Cache-Control", PUBLIC_CACHE_CONTROL);
+
     const skills = await prisma.skill.findMany();
 
     const grouped: Record<string, string[]> = {};
