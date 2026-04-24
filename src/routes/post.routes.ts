@@ -2,9 +2,11 @@ import { Router } from "express";
 import prisma from "../lib/prisma";
 import { authMiddleware } from "../middleware/auth.middleware";
 import { notifyNewsletterSubscribers } from "../utils/newsletter";
+import { clearCacheByPrefix, getOrSetCache } from "../lib/response-cache";
 
 const router = Router();
 const PUBLIC_CACHE_CONTROL = "public, max-age=30, s-maxage=60, stale-while-revalidate=300";
+const PUBLIC_DATA_CACHE_TTL_MS = 30_000;
 
 console.log("🔥 POST ROUTES ACTIVE");
 
@@ -33,6 +35,8 @@ router.post("/", authMiddleware, async (req, res) => {
       }).catch((error) => console.error("Newsletter error:", error));
     }
 
+    clearCacheByPrefix(["posts:", "home:"]);
+
     res.json(post);
   } catch (error) {
     console.error(error);
@@ -46,14 +50,16 @@ router.get("/", async (req, res) => {
   try {
     res.set("Cache-Control", PUBLIC_CACHE_CONTROL);
 
-    const posts = await prisma.post.findMany({
-      where: {
-        published: true, // 🔥 only public posts
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+    const posts = await getOrSetCache("posts:list", PUBLIC_DATA_CACHE_TTL_MS, async () =>
+      prisma.post.findMany({
+        where: {
+          published: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      })
+    );
 
     res.json(posts);
   } catch (error) {
@@ -85,9 +91,14 @@ router.get("/:id", async (req, res) => {
 
     const id = req.params.id as string;
 
-    const post = await prisma.post.findUnique({
-      where: { id },
-    });
+    const post = await getOrSetCache(
+      `posts:item:${id}`,
+      PUBLIC_DATA_CACHE_TTL_MS,
+      async () =>
+        prisma.post.findUnique({
+          where: { id },
+        })
+    );
 
     if (!post || !post.published) {
       return res.status(404).json({ message: "Post not found" });
@@ -128,6 +139,8 @@ router.put("/:id", authMiddleware, async (req, res) => {
       }).catch((error) => console.error("Newsletter error:", error));
     }
 
+    clearCacheByPrefix(["posts:", "home:"]);
+
     res.json(updated);
   } catch (error) {
     res.status(500).json({ message: "Error updating post" });
@@ -143,6 +156,8 @@ router.delete("/:id", authMiddleware, async (req, res) => {
     await prisma.post.delete({
       where: { id },
     });
+
+    clearCacheByPrefix(["posts:", "home:"]);
 
     res.json({ message: "Post deleted" });
   } catch (error) {

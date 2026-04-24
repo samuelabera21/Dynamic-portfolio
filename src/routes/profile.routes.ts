@@ -1,35 +1,43 @@
 import { Router } from "express";
 import prisma from "../lib/prisma";
 import { authMiddleware } from "../middleware/auth.middleware";
+import { clearCacheByPrefix, getOrSetCache } from "../lib/response-cache";
 
 const router = Router();
+const PUBLIC_CACHE_CONTROL = "public, max-age=30, s-maxage=60, stale-while-revalidate=300";
+const PUBLIC_DATA_CACHE_TTL_MS = 30_000;
 
 
 // ✅ 1. GET PROFILE (PUBLIC)
 router.get("/", async (req, res) => {
   try {
-    let profile = await prisma.profile.findFirst({
-      orderBy: { updatedAt: "desc" },
-      include: {
-        socialLinks: true,
-      },
-    });
+    res.set("Cache-Control", PUBLIC_CACHE_CONTROL);
 
-    // 👉 Auto-create if not exists
-    if (!profile) {
-      profile = await prisma.profile.create({
-        data: {
-          name: "Your Name",
-          role: "Software Developer",
-          bio: "Edit this from admin panel",
-          avatarUrl: "",
-          resumeUrl: "",
-        },
+    const profile = await getOrSetCache("profile:public", PUBLIC_DATA_CACHE_TTL_MS, async () => {
+      let current = await prisma.profile.findFirst({
+        orderBy: { updatedAt: "desc" },
         include: {
           socialLinks: true,
         },
       });
-    }
+
+      if (!current) {
+        current = await prisma.profile.create({
+          data: {
+            name: "Your Name",
+            role: "Software Developer",
+            bio: "Edit this from admin panel",
+            avatarUrl: "",
+            resumeUrl: "",
+          },
+          include: {
+            socialLinks: true,
+          },
+        });
+      }
+
+      return current;
+    });
 
     res.json(profile);
   } catch (error) {
@@ -113,6 +121,8 @@ router.put("/", authMiddleware, async (req, res) => {
       where: { id: profile.id },
       include: { socialLinks: true },
     });
+
+    clearCacheByPrefix(["profile:", "home:"]);
 
     res.json(updatedProfile);
   } catch (error) {

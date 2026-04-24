@@ -1,9 +1,11 @@
 import { Router } from "express";
 import prisma from "../lib/prisma";
 import { authMiddleware } from "../middleware/auth.middleware";
+import { clearCacheByPrefix, getOrSetCache } from "../lib/response-cache";
 
 const router = Router();
 const PUBLIC_CACHE_CONTROL = "public, max-age=30, s-maxage=60, stale-while-revalidate=300";
+const PUBLIC_DATA_CACHE_TTL_MS = 30_000;
 
 
 // ✅ 1. GET ALL SKILLS (PUBLIC)
@@ -11,7 +13,9 @@ router.get("/", async (req, res) => {
   try {
     res.set("Cache-Control", PUBLIC_CACHE_CONTROL);
 
-    const skills = await prisma.skill.findMany();
+    const skills = await getOrSetCache("skills:list", PUBLIC_DATA_CACHE_TTL_MS, async () =>
+      prisma.skill.findMany()
+    );
 
     res.json(skills);
   } catch (error) {
@@ -28,7 +32,9 @@ router.get("/grouped", async (req, res) => {
   try {
     res.set("Cache-Control", PUBLIC_CACHE_CONTROL);
 
-    const skills = await prisma.skill.findMany();
+    const skills = await getOrSetCache("skills:grouped-source", PUBLIC_DATA_CACHE_TTL_MS, async () =>
+      prisma.skill.findMany()
+    );
 
     const grouped: Record<string, string[]> = {};
 
@@ -59,6 +65,8 @@ router.post("/", authMiddleware, async (req, res) => {
       },
     });
 
+    clearCacheByPrefix(["skills:", "home:"]);
+
     res.json(skill);
   } catch (error) {
     console.error(error);
@@ -82,6 +90,8 @@ router.put("/:id", authMiddleware, async (req, res) => {
       },
     });
 
+    clearCacheByPrefix(["skills:", "home:"]);
+
     res.json(updated);
   } catch (error) {
     console.error(error);
@@ -98,6 +108,8 @@ router.delete("/:id", authMiddleware, async (req, res) => {
     await prisma.skill.delete({
       where: { id },
     });
+
+    clearCacheByPrefix(["skills:", "home:"]);
 
     res.json({ message: "Skill deleted" });
   } catch (error) {

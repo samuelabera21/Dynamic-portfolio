@@ -7,9 +7,11 @@ import {
   removeNewsletterSubscriber,
   verifyUnsubscribeToken,
 } from "../utils/newsletter";
+import { clearCacheByPrefix, getOrSetCache } from "../lib/response-cache";
 
 const router = Router();
 const PUBLIC_CACHE_CONTROL = "public, max-age=30, s-maxage=60, stale-while-revalidate=300";
+const PUBLIC_DATA_CACHE_TTL_MS = 30_000;
 
 const defaultFlags = {
   showProjects: true,
@@ -106,15 +108,18 @@ router.delete("/newsletter/subscribers", authMiddleware, async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     res.set("Cache-Control", PUBLIC_CACHE_CONTROL);
+    const formatted = await getOrSetCache("settings:public", PUBLIC_DATA_CACHE_TTL_MS, async () => {
+      const settings = await prisma.setting.findMany();
 
-    const settings = await prisma.setting.findMany();
+      const current: Record<string, boolean> = { ...defaultFlags };
 
-    const formatted: Record<string, boolean> = { ...defaultFlags };
+      settings.forEach((setting) => {
+        if (setting.key in defaultFlags) {
+          current[setting.key] = setting.value === "true";
+        }
+      });
 
-    settings.forEach((setting) => {
-      if (setting.key in defaultFlags) {
-        formatted[setting.key] = setting.value === "true";
-      }
+      return current;
     });
 
     res.json(formatted);
@@ -161,6 +166,8 @@ router.put("/", authMiddleware, async (req, res) => {
         formatted[setting.key] = setting.value === "true";
       }
     });
+
+    clearCacheByPrefix(["settings:", "home:", "projects:", "posts:", "skills:"]);
 
     res.json(formatted);
 

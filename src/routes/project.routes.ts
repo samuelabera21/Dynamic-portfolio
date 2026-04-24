@@ -4,9 +4,11 @@ import prisma from "../lib/prisma";
 import { authMiddleware } from "../middleware/auth.middleware";
 import { adminMiddleware } from "../middleware/admin.middleware";
 import { notifyNewsletterSubscribers } from "../utils/newsletter";
+import { clearCacheByPrefix, getOrSetCache } from "../lib/response-cache";
 
 const router = Router();
 const PUBLIC_CACHE_CONTROL = "public, max-age=30, s-maxage=60, stale-while-revalidate=300";
+const PUBLIC_DATA_CACHE_TTL_MS = 30_000;
 console.log("🔥 PROJECT ROUTES ACTIVE");
 
 async function isPublicProjectsEnabled(): Promise<boolean> {
@@ -56,6 +58,8 @@ router.post("/", authMiddleware, adminMiddleware, async (req, res) => {
       }).catch((error) => console.error("Newsletter error:", error));
     }
 
+    clearCacheByPrefix(["projects:", "home:"]);
+
     res.json(project);
   } catch (error) {
     console.error(error);
@@ -74,47 +78,45 @@ router.get("/", async (req, res) => {
     }
 
     const { tech, featured, search } = req.query;
+    const queryKey = JSON.stringify({ tech, featured, search });
 
-    const projects = await prisma.project.findMany({
-      where: {
-        // ✅ only show published projects
-        published: true,
-
-        // ✅ filter by tech
-        ...(tech && {
-          techStack: {
-            has: tech as string,
+    const projects = await getOrSetCache(
+      `projects:list:${queryKey}`,
+      PUBLIC_DATA_CACHE_TTL_MS,
+      async () =>
+        prisma.project.findMany({
+          where: {
+            published: true,
+            ...(tech && {
+              techStack: {
+                has: tech as string,
+              },
+            }),
+            ...(featured && {
+              featured: featured === "true",
+            }),
+            ...(search && {
+              OR: [
+                {
+                  title: {
+                    contains: search as string,
+                    mode: "insensitive",
+                  },
+                },
+                {
+                  description: {
+                    contains: search as string,
+                    mode: "insensitive",
+                  },
+                },
+              ],
+            }),
           },
-        }),
-
-        // ✅ filter featured
-        ...(featured && {
-          featured: featured === "true",
-        }),
-
-        // ✅ search in title OR description
-        ...(search && {
-          OR: [
-            {
-              title: {
-                contains: search as string,
-                mode: "insensitive",
-              },
-            },
-            {
-              description: {
-                contains: search as string,
-                mode: "insensitive",
-              },
-            },
-          ],
-        }),
-      },
-
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+          orderBy: {
+            createdAt: "desc",
+          },
+        })
+    );
 
     res.json(projects);
   } catch (error) {
@@ -136,9 +138,13 @@ router.get("/:id", async (req, res) => {
 
     const id = req.params.id as string;
 
-    const project = await prisma.project.findUnique({
-      where: { id },
-    });
+    const project = await getOrSetCache(
+      `projects:item:${id}`,
+      PUBLIC_DATA_CACHE_TTL_MS,
+      async () => prisma.project.findUnique({
+        where: { id },
+      })
+    );
 
     if (!project || !project.published) {
       return res.status(404).json({ message: "Project not found" });
@@ -199,6 +205,8 @@ router.put("/:id", authMiddleware, adminMiddleware, async (req, res) => {
       }).catch((error) => console.error("Newsletter error:", error));
     }
 
+    clearCacheByPrefix(["projects:", "home:"]);
+
     res.json(updatedProject);
   } catch (error) {
     console.error(error);
@@ -216,6 +224,8 @@ router.delete("/:id", authMiddleware, adminMiddleware, async (req, res) => {
     await prisma.project.delete({
       where: { id },
     });
+
+    clearCacheByPrefix(["projects:", "home:"]);
 
     res.json({ message: "Project deleted" });
   } catch (error) {
