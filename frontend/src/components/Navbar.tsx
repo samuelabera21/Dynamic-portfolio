@@ -44,14 +44,18 @@ export default function Navbar() {
   return (
     <header className="fixed inset-x-0 top-0 z-50 bg-[#05070d]/95 backdrop-blur-md shadow-[0_1px_0_rgba(255,255,255,0.04)]">
       <nav className="mx-auto flex h-20 w-full max-w-[1400px] items-center justify-between px-4 sm:px-6 lg:px-10">
-        <Link href="/" aria-label="Home" className="inline-flex items-center">
+        <Link
+          href="/"
+          aria-label="Home"
+          className="inline-flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-white/5 p-1"
+        >
           <Image
             src="/favicon.png"
             alt="Samuel Abera logo"
-            width={44}
-            height={44}
+            width={40}
+            height={40}
             priority
-            className="h-11 w-11 rounded-full object-cover"
+            className="h-10 w-10 object-contain"
           />
         </Link>
 
