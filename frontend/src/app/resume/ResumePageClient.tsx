@@ -68,6 +68,53 @@ function sanitizeForPdf(value: string): string {
     .trim();
 }
 
+const fallbackHomeData: HomeData = {
+  profile: {
+    id: "fallback-resume-profile",
+    name: "Samuel Abera",
+    role: "Software Engineering Student and Web Developer",
+    bio: "Focused on building practical web applications while growing in modern software engineering.",
+    avatarUrl: "",
+    resumeUrl: "",
+    location: "Ethiopia",
+    available: true,
+    socialLinks: [],
+  },
+  featuredProjects: [],
+  skills: {},
+  showProjects: true,
+  showSkills: true,
+  showBlog: true,
+  availableForHire: true,
+};
+
+const fallbackProjects: Project[] = [
+  {
+    id: "fallback-resume-project-1",
+    title: "Portfolio Performance Refresh",
+    description: "Frontend improvements focused on faster navigation, better loading behavior, and polished fallback states.",
+    imageUrl: null,
+    githubUrl: null,
+    liveUrl: null,
+    techStack: ["Next.js", "TypeScript", "ISR"],
+    featured: true,
+    published: true,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: "fallback-resume-project-2",
+    title: "Backend Resilience Layer",
+    description: "Caching, compression, and outage-safe responses to keep the public site working during external quota limits.",
+    imageUrl: null,
+    githubUrl: null,
+    liveUrl: null,
+    techStack: ["Express", "Prisma", "Caching"],
+    featured: true,
+    published: true,
+    createdAt: new Date().toISOString(),
+  },
+];
+
 async function toDataUrl(url: string): Promise<string | null> {
   try {
     const response = await fetch(url);
@@ -90,9 +137,9 @@ export default function ResumePageClient({
   initialData = null,
   initialError = null,
 }: ResumePageClientProps) {
-  const [homeData, setHomeData] = useState<HomeData | null>(initialData?.home ?? null);
+  const [homeData, setHomeData] = useState<HomeData>(initialData?.home ?? fallbackHomeData);
   const [projects, setProjects] = useState<Project[]>(
-    initialData?.projects.filter((project) => project.published) ?? []
+    initialData?.projects.filter((project) => project.published) ?? fallbackProjects
   );
   const [visibleProjects, setVisibleProjects] = useState(INITIAL_PROJECTS);
   const [loading, setLoading] = useState(!initialData && !initialError);
@@ -112,6 +159,8 @@ export default function ResumePageClient({
         setProjects(projectData.filter((project) => project.published));
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unable to load resume data");
+        setHomeData(fallbackHomeData);
+        setProjects(fallbackProjects);
       } finally {
         setLoading(false);
       }
@@ -157,6 +206,7 @@ export default function ResumePageClient({
   const summaryText = homeData?.profile.bio?.trim() || "I am a software engineering student interested in web development and artificial intelligence.";
 
   const hasMoreProjects = visibleProjects < projects.length;
+  const isOfflineMode = Boolean(error || initialError);
 
   const handleResumeDownload = async () => {
     if (!homeData) return;
@@ -319,20 +369,18 @@ export default function ResumePageClient({
     );
   }
 
-  if (error || !homeData) {
-    return (
-      <section className="min-h-screen bg-gray-950 px-6 py-16 text-white lg:px-10">
-        <div className="mx-auto w-full max-w-6xl rounded-2xl border border-red-400/30 bg-red-500/10 p-6">
-          <h1 className="text-2xl font-bold text-white">Resume</h1>
-          <p className="mt-3 text-sm text-red-200">{error ?? "Unable to load resume data."}</p>
-        </div>
-      </section>
-    );
-  }
-
   return (
     <section className="min-h-screen bg-black text-white">
       <div className="mx-auto max-w-5xl px-6 py-10">
+        {isOfflineMode ? (
+          <div className="mb-6 rounded-2xl border border-amber-300/20 bg-amber-500/10 p-4 text-sm text-amber-100">
+            <p className="font-semibold">Resume data is temporarily using fallback content.</p>
+            <p className="mt-1 text-amber-100/80">
+              The layout stays available while Neon is limited, and it will switch back to live backend data automatically when the database is reachable again.
+            </p>
+          </div>
+        ) : null}
+
         <header className="mb-8 flex items-center justify-between border-b border-gray-800 pb-4">
           <h1 className="text-3xl font-bold">Samuel Abera</h1>
           <button
@@ -393,9 +441,33 @@ export default function ResumePageClient({
               {projects.length > 0 ? (
                 <>
                   <div className="space-y-4 border-l border-gray-700 pl-4">
-                    {visibleProjectItems.map((project) => (
-                      <ResumeProjectCard key={project.id} project={project} />
-                    ))}
+                    {visibleProjectItems.map((project) =>
+                      isOfflineMode ? (
+                        <article key={project.id} className="rounded-xl border border-gray-700 bg-gray-900 p-4">
+                          <div className="mb-2 inline-flex rounded-full border border-amber-300/30 bg-amber-500/10 px-2.5 py-1 text-[11px] font-semibold tracking-[0.16em] text-amber-100">
+                            FALLBACK
+                          </div>
+                          <h3 className="text-lg font-semibold text-white">{project.title}</h3>
+                          <p className="mt-1 text-sm text-gray-400">{formatProjectDate(project.createdAt)}</p>
+                          <p className="mt-3 line-clamp-2 text-sm leading-6 text-gray-300">{project.description}</p>
+
+                          {project.techStack.length > 0 ? (
+                            <div className="mt-3 flex flex-wrap gap-2">
+                              {project.techStack.map((tech) => (
+                                <span
+                                  key={`${project.id}-${tech}`}
+                                  className="rounded-full border border-gray-600 px-2.5 py-1 text-xs text-gray-300"
+                                >
+                                  {tech}
+                                </span>
+                              ))}
+                            </div>
+                          ) : null}
+                        </article>
+                      ) : (
+                        <ResumeProjectCard key={project.id} project={project} />
+                      )
+                    )}
                   </div>
 
                   <div className="mt-4 flex flex-wrap gap-2">
@@ -421,7 +493,9 @@ export default function ResumePageClient({
                   </div>
                 </>
               ) : (
-                <p className="text-sm text-gray-400">No projects yet. Add projects from admin panel to show them here.</p>
+                <p className="text-sm text-gray-400">
+                  Project data is currently unavailable, so fallback content is shown in the summary above.
+                </p>
               )}
             </ResumeSection>
           </main>
