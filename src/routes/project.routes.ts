@@ -6,6 +6,7 @@ import { adminMiddleware } from "../middleware/admin.middleware";
 import { notifyNewsletterSubscribers } from "../utils/newsletter";
 
 const router = Router();
+const PUBLIC_CACHE_CONTROL = "public, max-age=30, s-maxage=60, stale-while-revalidate=300";
 console.log("🔥 PROJECT ROUTES ACTIVE");
 
 async function isPublicProjectsEnabled(): Promise<boolean> {
@@ -65,6 +66,8 @@ router.post("/", authMiddleware, adminMiddleware, async (req, res) => {
 // ✅ GET ALL PROJECTS (PUBLIC)
 router.get("/", async (req, res) => {
   try {
+    res.set("Cache-Control", PUBLIC_CACHE_CONTROL);
+
     const showProjects = await isPublicProjectsEnabled();
     if (!showProjects) {
       return res.json([]);
@@ -124,6 +127,8 @@ router.get("/", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   try {
+    res.set("Cache-Control", PUBLIC_CACHE_CONTROL);
+
     const showProjects = await isPublicProjectsEnabled();
     if (!showProjects) {
       return res.status(404).json({ message: "Project not found" });
