@@ -77,6 +77,8 @@ export default function FeaturedProjectsSection({ projects }: Props) {
                   <img
                     src={project.imageUrl}
                     alt={project.title}
+                    loading="lazy"
+                    decoding="async"
                     className="h-full w-full rounded-lg object-contain transition-transform duration-300 group-hover:scale-[1.02]"
                   />
                 ) : (
