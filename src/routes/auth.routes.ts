@@ -1,10 +1,9 @@
 import { Router } from "express";
-import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import prisma from "../lib/prisma";
 
 const router = Router();
-import { PrismaPg } from "@prisma/adapter-pg";
 
 function getJwtSecret(): string {
   const secret = process.env.JWT_SECRET;
@@ -14,11 +13,6 @@ function getJwtSecret(): string {
 
   return secret;
 }
-
-const connectionString = process.env.DATABASE_URL!;
-const adapter = new PrismaPg({ connectionString });
-
-const prisma = new PrismaClient({ adapter });
 
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;

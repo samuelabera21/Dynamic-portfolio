@@ -100,7 +100,7 @@ A full-stack portfolio system with a public website, admin dashboard, blog, cont
 
 | Variable | Required | Purpose |
 | --- | --- | --- |
-| `DATABASE_URL` | Yes | Neon PostgreSQL connection string |
+| `DATABASE_URL` | Yes | Neon PostgreSQL pooled connection string (recommended) |
 | `JWT_SECRET` | Yes | Signs admin login tokens |
 | `BREVO_API_KEY` | Yes | Sends contact and newsletter emails |
 | `EMAIL_USER` | Yes | Admin email address that receives contact notifications |
@@ -238,6 +238,8 @@ There is no public registration route.
 - If email does not send, confirm `BREVO_API_KEY`, `EMAIL_USER`, and `SMTP_FROM` are set correctly.
 - If unsubscribe links are wrong, verify `FRONTEND_URL`.
 - If the blog is hidden, check the `showBlog` feature flag in admin settings.
+- Check backend health with `GET /health` (app only) and `GET /health?db=1` (app + database).
+- If `neonPoolerDetected` is `false`, update `DATABASE_URL` to Neon pooler connection details.
 
 ## License
 
