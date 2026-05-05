@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { getProfile, updateProfile } from "@/lib/api";
+import { fileToDataUrl, imageFileToDataUrl } from "@/lib/image-upload";
 import { getToken } from "@/lib/auth";
 import { ProfilePayload } from "@/types/profile";
 
@@ -20,15 +21,6 @@ const defaultForm: ProfilePayload = {
   available: true,
   socialLinks: [],
 };
-
-function fileToDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result));
-    reader.onerror = () => reject(new Error("Failed to read selected file."));
-    reader.readAsDataURL(file);
-  });
-}
 
 export default function AdminProfilePage() {
   const [form, setForm] = useState<ProfilePayload>(defaultForm);
@@ -101,7 +93,11 @@ export default function AdminProfilePage() {
 
     try {
       setError(null);
-      const value = await fileToDataUrl(file);
+      const value = await imageFileToDataUrl(file, {
+        maxWidth: 512,
+        maxHeight: 512,
+        quality: 0.82,
+      });
       setForm((prev) => ({ ...prev, avatarUrl: value }));
       setAvatarFileName(file.name);
     } catch (err) {
@@ -143,14 +139,14 @@ export default function AdminProfilePage() {
       const updated = await updateProfile(payload, token);
       setSuccess("Profile updated successfully.");
       setForm({
-        name: updated.name,
-        role: updated.role,
-        bio: updated.bio,
-        avatarUrl: updated.avatarUrl,
-        resumeUrl: updated.resumeUrl,
-        location: updated.location ?? "",
-        available: updated.available,
-        socialLinks: updated.socialLinks.map((link) => ({
+        name: updated.name ?? payload.name,
+        role: updated.role ?? payload.role,
+        bio: updated.bio ?? payload.bio,
+        avatarUrl: payload.avatarUrl,
+        resumeUrl: payload.resumeUrl,
+        location: updated.location ?? payload.location ?? "",
+        available: updated.available ?? payload.available,
+        socialLinks: (updated.socialLinks ?? payload.socialLinks).map((link) => ({
           platform: link.platform,
           url: link.url,
         })),

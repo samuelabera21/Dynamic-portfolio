@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { ProjectPayload } from "@/types/project";
+import { imageFileToDataUrl } from "@/lib/image-upload";
 
 type Props = {
   initialValue?: ProjectPayload;
@@ -19,15 +20,6 @@ const defaultValue: ProjectPayload = {
   featured: false,
   published: true,
 };
-
-function fileToDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result));
-    reader.onerror = () => reject(new Error("Failed to read selected image."));
-    reader.readAsDataURL(file);
-  });
-}
 
 function parseTechStack(input: string): string[] {
   return input
@@ -48,7 +40,11 @@ export default function ProjectForm({ initialValue, submitLabel, onSubmit }: Pro
 
     try {
       setError(null);
-      const value = await fileToDataUrl(file);
+      const value = await imageFileToDataUrl(file, {
+        maxWidth: 1600,
+        maxHeight: 1000,
+        quality: 0.84,
+      });
       setForm((prev) => ({ ...prev, imageUrl: value }));
       setImageFileName(file.name);
     } catch (err) {

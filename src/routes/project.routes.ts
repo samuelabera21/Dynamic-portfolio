@@ -60,7 +60,17 @@ router.post("/", authMiddleware, adminMiddleware, async (req, res) => {
 
     clearCacheByPrefix(["projects:", "home:"]);
 
-    res.json(project);
+    res.json({
+      id: project.id,
+      title: project.title,
+      description: project.description,
+      githubUrl: project.githubUrl,
+      liveUrl: project.liveUrl,
+      techStack: project.techStack,
+      featured: project.featured,
+      published: project.published,
+      createdAt: project.createdAt,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error creating project" });
@@ -247,7 +257,17 @@ router.put("/:id", authMiddleware, adminMiddleware, async (req, res) => {
 
     clearCacheByPrefix(["projects:", "home:"]);
 
-    res.json(updatedProject);
+    res.json({
+      id: updatedProject.id,
+      title: updatedProject.title,
+      description: updatedProject.description,
+      githubUrl: updatedProject.githubUrl,
+      liveUrl: updatedProject.liveUrl,
+      techStack: updatedProject.techStack,
+      featured: updatedProject.featured,
+      published: updatedProject.published,
+      createdAt: updatedProject.createdAt,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error updating project" });

@@ -129,7 +129,17 @@ router.put("/", authMiddleware, adminMiddleware, async (req, res) => {
 
     clearCacheByPrefix(["profile:", "home:"]);
 
-    res.json(updatedProfile);
+    res.json({
+      id: updatedProfile?.id,
+      name: updatedProfile?.name,
+      role: updatedProfile?.role,
+      bio: updatedProfile?.bio,
+      location: updatedProfile?.location,
+      available: updatedProfile?.available,
+      socialLinks: updatedProfile?.socialLinks ?? [],
+      createdAt: updatedProfile?.createdAt,
+      updatedAt: updatedProfile?.updatedAt,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error updating profile" });
