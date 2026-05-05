@@ -3,7 +3,7 @@
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import ProjectForm from "@/components/ProjectForm";
-import { getProject, updateProject } from "@/lib/api";
+import { getAdminProject, updateProject } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import { Project, ProjectPayload } from "@/types/project";
 
@@ -32,13 +32,16 @@ export default function EditProjectPage() {
       setLoading(true);
       setError(null);
       try {
-        const data = await getProject(params.id);
+        const token = getToken();
+        if (!token) throw new Error("Admin token missing. Please login again.");
+
+        const data = await getAdminProject(params.id, token);
         setProject(data);
       } catch (err) {
         setError(
           err instanceof Error
             ? err.message
-            : "Unable to load project. Unpublished projects may require backend admin GET support."
+            : "Unable to load project."
         );
       } finally {
         setLoading(false);

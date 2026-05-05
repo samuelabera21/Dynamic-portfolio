@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Modal from "@/components/Modal";
-import { deleteProject, getProjects, updateProject } from "@/lib/api";
+import { deleteProject, getAdminProjects, updateProject } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import { Project } from "@/types/project";
 
@@ -21,7 +21,7 @@ export default function AdminProjectsPage() {
       const token = getToken();
       if (!token) throw new Error("Admin token not found. Please login again.");
 
-      const data = await getProjects({ includeUnpublished: true });
+      const data = await getAdminProjects(token);
       setProjects(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to load projects");

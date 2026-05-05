@@ -1,6 +1,7 @@
 import { Router } from "express";
 import prisma from "../lib/prisma";
 import { authMiddleware } from "../middleware/auth.middleware";
+import { adminMiddleware } from "../middleware/admin.middleware";
 import { clearCacheByPrefix, getOrSetCache } from "../lib/response-cache";
 
 const router = Router();
@@ -60,7 +61,7 @@ router.get("/", async (req, res) => {
 
 
 // 🔒 2. UPDATE PROFILE (ADMIN ONLY)
-router.put("/", authMiddleware, async (req, res) => {
+router.put("/", authMiddleware, adminMiddleware, async (req, res) => {
   try {
     const {
       name,

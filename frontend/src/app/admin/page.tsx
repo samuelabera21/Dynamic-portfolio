@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Dashboard from "@/components/Dashboard/Dashboard";
-import { getAdminDashboard, getAdminPosts, getMessages, getProjects } from "@/lib/api";
+import { getAdminDashboard, getAdminPosts, getAdminProjects, getMessages } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import { DashboardStats, RecentMessageItem, RecentPostItem, RecentProjectItem } from "@/types/dashboard";
 import { Message } from "@/types/message";
@@ -36,7 +36,7 @@ export default function AdminDashboardPage() {
         const [dashboardData, messageData, projectData, postData] = await Promise.all([
           getAdminDashboard(token),
           getMessages(token),
-          getProjects({ includeUnpublished: true }),
+          getAdminProjects(token),
           getAdminPosts(token),
         ]);
 

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import prisma from "../lib/prisma";
 import { authMiddleware } from "../middleware/auth.middleware";
+import { adminMiddleware } from "../middleware/admin.middleware";
 import { notifyNewsletterSubscribers } from "../utils/newsletter";
 import { clearCacheByPrefix, getOrSetCache } from "../lib/response-cache";
 
@@ -12,7 +13,7 @@ console.log("🔥 POST ROUTES ACTIVE");
 
 
 // ✅ CREATE POST (ADMIN)
-router.post("/", authMiddleware, async (req, res) => {
+router.post("/", authMiddleware, adminMiddleware, async (req, res) => {
   try {
     const { title, content, published } = req.body;
 
@@ -69,7 +70,7 @@ router.get("/", async (req, res) => {
 
 
 // 🔒 GET ALL POSTS (ADMIN - includes drafts)
-router.get("/admin/all", authMiddleware, async (req, res) => {
+router.get("/admin/all", authMiddleware, adminMiddleware, async (req, res) => {
   try {
     const posts = await prisma.post.findMany({
       orderBy: {
@@ -112,7 +113,7 @@ router.get("/:id", async (req, res) => {
 
 
 // 🔒 UPDATE POST
-router.put("/:id", authMiddleware, async (req, res) => {
+router.put("/:id", authMiddleware, adminMiddleware, async (req, res) => {
   try {
     const id = req.params.id as string;
     const { title, content, published } = req.body;
@@ -149,7 +150,7 @@ router.put("/:id", authMiddleware, async (req, res) => {
 
 
 // 🔒 DELETE POST
-router.delete("/:id", authMiddleware, async (req, res) => {
+router.delete("/:id", authMiddleware, adminMiddleware, async (req, res) => {
   try {
     const id = req.params.id as string;
 

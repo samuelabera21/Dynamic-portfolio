@@ -85,6 +85,7 @@
 import { Router } from "express";
 import prisma from "../lib/prisma";
 import { authMiddleware } from "../middleware/auth.middleware";
+import { adminMiddleware } from "../middleware/admin.middleware";
 import { EmailDeliveryError, sendAdminNotification, sendAutoReply } from "../utils/email";
 
 function isValidEmail(value: string): boolean {
@@ -158,7 +159,7 @@ router.post("/", async (req, res) => {
 });
 
 // 🔒 2. GET ALL MESSAGES (ADMIN)
-router.get("/", authMiddleware, async (req, res) => {
+router.get("/", authMiddleware, adminMiddleware, async (req, res) => {
   try {
     const { filter } = req.query;
 
@@ -186,7 +187,7 @@ router.get("/", authMiddleware, async (req, res) => {
 
 
 // 🔒 3. GET SINGLE MESSAGE + AUTO MARK AS READ
-router.get("/:id", authMiddleware, async (req, res) => {
+router.get("/:id", authMiddleware, adminMiddleware, async (req, res) => {
   try {
    const id = req.params.id as string;
 
@@ -222,7 +223,7 @@ router.get("/:id", authMiddleware, async (req, res) => {
 
 
 // 🔒 4. MARK AS READ (MANUAL) - main endpoint used by frontend
-router.put("/:id", authMiddleware, async (req, res) => {
+router.put("/:id", authMiddleware, adminMiddleware, async (req, res) => {
   try {
     const id = req.params.id as string;
 
@@ -242,7 +243,7 @@ router.put("/:id", authMiddleware, async (req, res) => {
 });
 
 // 🔒 4b. Backward-compatible endpoint
-router.put("/:id/read", authMiddleware, async (req, res) => {
+router.put("/:id/read", authMiddleware, adminMiddleware, async (req, res) => {
   try {
     const id = req.params.id as string;
 
@@ -263,7 +264,7 @@ router.put("/:id/read", authMiddleware, async (req, res) => {
 
 
 // 🔒 5. DELETE MESSAGE
-router.delete("/:id", authMiddleware, async (req, res) => {
+router.delete("/:id", authMiddleware, adminMiddleware, async (req, res) => {
   try {
     const id = req.params.id as string;
 

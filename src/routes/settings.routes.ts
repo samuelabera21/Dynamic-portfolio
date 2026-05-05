@@ -1,6 +1,7 @@
 import { Router } from "express";
 import prisma from "../lib/prisma";
 import { authMiddleware } from "../middleware/auth.middleware";
+import { adminMiddleware } from "../middleware/admin.middleware";
 import {
   addNewsletterSubscriber,
   getNewsletterSubscribers,
@@ -72,7 +73,7 @@ router.post("/newsletter/unsubscribe", async (req, res) => {
   }
 });
 
-router.get("/newsletter/subscribers", authMiddleware, async (_req, res) => {
+router.get("/newsletter/subscribers", authMiddleware, adminMiddleware, async (_req, res) => {
   try {
     const subscribers = await getNewsletterSubscribers();
     res.json({ subscribers, total: subscribers.length });
@@ -82,7 +83,7 @@ router.get("/newsletter/subscribers", authMiddleware, async (_req, res) => {
   }
 });
 
-router.delete("/newsletter/subscribers", authMiddleware, async (req, res) => {
+router.delete("/newsletter/subscribers", authMiddleware, adminMiddleware, async (req, res) => {
   try {
     const email = String(req.body?.email ?? "").trim().toLowerCase();
 
@@ -131,7 +132,7 @@ router.get("/", async (req, res) => {
 
 
 // 🔒 2. UPDATE SETTINGS (ADMIN ONLY)
-router.put("/", authMiddleware, async (req, res) => {
+router.put("/", authMiddleware, adminMiddleware, async (req, res) => {
   try {
     const updates: Record<string, boolean> = req.body;
 

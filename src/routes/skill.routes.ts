@@ -1,6 +1,7 @@
 import { Router } from "express";
 import prisma from "../lib/prisma";
 import { authMiddleware } from "../middleware/auth.middleware";
+import { adminMiddleware } from "../middleware/admin.middleware";
 import { clearCacheByPrefix, getOrSetCache } from "../lib/response-cache";
 
 const router = Router();
@@ -54,7 +55,7 @@ router.get("/grouped", async (req, res) => {
 });
 
 // 🔒 2. CREATE SKILL (ADMIN)
-router.post("/", authMiddleware, async (req, res) => {
+router.post("/", authMiddleware, adminMiddleware, async (req, res) => {
   try {
     const { name, category } = req.body;
 
@@ -76,7 +77,7 @@ router.post("/", authMiddleware, async (req, res) => {
 
 
 // 🔒 3. UPDATE SKILL (ADMIN)
-router.put("/:id", authMiddleware, async (req, res) => {
+router.put("/:id", authMiddleware, adminMiddleware, async (req, res) => {
   try {
     const id = req.params.id as string;
 
@@ -101,7 +102,7 @@ router.put("/:id", authMiddleware, async (req, res) => {
 
 
 // 🔒 4. DELETE SKILL (ADMIN)
-router.delete("/:id", authMiddleware, async (req, res) => {
+router.delete("/:id", authMiddleware, adminMiddleware, async (req, res) => {
   try {
      const id = req.params.id as string;
 

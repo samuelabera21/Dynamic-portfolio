@@ -77,6 +77,27 @@ router.post("/", authMiddleware, adminMiddleware, async (req, res) => {
   }
 });
 
+// 🔒 GET ALL PROJECTS (ADMIN - includes drafts and ignores public visibility)
+router.get("/admin/all", authMiddleware, adminMiddleware, async (_req, res) => {
+  try {
+    const projects = await prisma.project.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    res.json(
+      projects.map((project) => ({
+        ...project,
+        imageUrl: stripDataUrl(project.imageUrl),
+      }))
+    );
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error fetching projects" });
+  }
+});
+
 // ✅ GET ALL PROJECTS (PUBLIC)
 router.get("/", async (req, res) => {
   try {
@@ -165,6 +186,29 @@ router.get("/:id", async (req, res) => {
     );
 
     if (!project || !project.published) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    res.json({
+      ...project,
+      imageUrl: stripDataUrl(project.imageUrl),
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error fetching project" });
+  }
+});
+
+// 🔒 GET SINGLE PROJECT (ADMIN - includes unpublished)
+router.get("/admin/:id", authMiddleware, adminMiddleware, async (req, res) => {
+  try {
+    const id = req.params.id as string;
+
+    const project = await prisma.project.findUnique({
+      where: { id },
+    });
+
+    if (!project) {
       return res.status(404).json({ message: "Project not found" });
     }
 

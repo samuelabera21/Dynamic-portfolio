@@ -200,6 +200,18 @@ export async function getProject(id: string): Promise<Project> {
   return request<Project>(`/projects/${id}`);
 }
 
+export async function getAdminProjects(token: string): Promise<Project[]> {
+  return request<Project[]>("/projects/admin/all", {
+    token,
+  });
+}
+
+export async function getAdminProject(id: string, token: string): Promise<Project> {
+  return request<Project>(`/projects/admin/${id}`, {
+    token,
+  });
+}
+
 export async function createProject(
   payload: ProjectPayload,
   token: string
