@@ -17,7 +17,7 @@ type RequestConfig = {
   skipCache?: boolean;
 };
 
-const PUBLIC_CACHE_TTL_MS = 60_000;
+const PUBLIC_CACHE_TTL_MS = 300_000; // 5 minutes
 const responseCache = new Map<string, { expiresAt: number; data: unknown }>();
 const inflightCache = new Map<string, Promise<unknown>>();
 

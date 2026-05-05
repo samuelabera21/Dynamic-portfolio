@@ -30,18 +30,18 @@ async function fetchJson<T>(path: string, revalidate = 60): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-export function getHomeServer(revalidate = 60): Promise<HomeData> {
+export function getHomeServer(revalidate = 300): Promise<HomeData> {
   return fetchJson<HomeData>("/home", revalidate);
 }
 
-export function getSettingsServer(revalidate = 60): Promise<FeatureFlags> {
+export function getSettingsServer(revalidate = 300): Promise<FeatureFlags> {
   return fetchJson<FeatureFlags>("/settings", revalidate);
 }
 
-export function getPostsServer(revalidate = 60): Promise<Post[]> {
+export function getPostsServer(revalidate = 300): Promise<Post[]> {
   return fetchJson<Post[]>("/posts", revalidate);
 }
 
-export function getProjectsServer(filters: ProjectFilters = {}, revalidate = 60): Promise<Project[]> {
+export function getProjectsServer(filters: ProjectFilters = {}, revalidate = 300): Promise<Project[]> {
   return fetchJson<Project[]>(`/projects${toQueryString(filters)}`, revalidate);
 }
