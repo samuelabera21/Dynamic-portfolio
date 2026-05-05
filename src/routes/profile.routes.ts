@@ -128,7 +128,12 @@ router.put("/", authMiddleware, async (req, res) => {
 
     clearCacheByPrefix(["profile:", "home:"]);
 
-    res.json(updatedProfile);
+    // Sanitize large data URLs from profile before returning
+    const safe = { ...updatedProfile } as any;
+    if (safe?.avatarUrl && typeof safe.avatarUrl === "string" && safe.avatarUrl.startsWith("data:")) safe.avatarUrl = "";
+    if (safe?.resumeUrl && typeof safe.resumeUrl === "string" && safe.resumeUrl.startsWith("data:")) safe.resumeUrl = "";
+
+    res.json(safe);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error updating profile" });

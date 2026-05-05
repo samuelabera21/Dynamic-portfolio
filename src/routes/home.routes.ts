@@ -86,7 +86,28 @@ router.get("/", async (req, res) => {
         availableForHire: flags.availableForHire,
       };
     });
+  
+    // Sanitize large data URLs from profile and projects for public responses
+    const sanitizeDataUrl = (s: string | null | undefined) => {
+      if (!s) return s;
+      if (typeof s === "string" && s.startsWith("data:")) return "";
+      return s;
+    };
 
+    if (payload.profile) {
+      const p = payload.profile as any;
+      p.avatarUrl = sanitizeDataUrl(p.avatarUrl);
+      p.resumeUrl = sanitizeDataUrl(p.resumeUrl);
+    }
+
+    if (Array.isArray(payload.featuredProjects)) {
+      payload.featuredProjects = payload.featuredProjects.map((p: any) => ({
+        ...p,
+        imageUrl: sanitizeDataUrl(p.imageUrl as string | null),
+      }));
+    }
+
+    res.json(payload);
     res.json(payload);
   } catch (error) {
     console.error(error);
