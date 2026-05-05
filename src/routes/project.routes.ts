@@ -20,13 +20,6 @@ async function isPublicProjectsEnabled(): Promise<boolean> {
   return setting.value === "true";
 }
 
-function stripDataUrl(value?: string | null) {
-  if (!value) return value;
-  if (typeof value !== "string") return value;
-  if (value.startsWith("data:")) return null;
-  return value;
-}
-
 // ✅ CREATE PROJECT (ADMIN ONLY)
 router.post("/", authMiddleware, adminMiddleware, async (req, res) => {
   try {
@@ -67,10 +60,7 @@ router.post("/", authMiddleware, adminMiddleware, async (req, res) => {
 
     clearCacheByPrefix(["projects:", "home:"]);
 
-    res.json({
-      ...project,
-      imageUrl: stripDataUrl(project.imageUrl),
-    });
+    res.json(project);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error creating project" });
@@ -86,12 +76,7 @@ router.get("/admin/all", authMiddleware, adminMiddleware, async (_req, res) => {
       },
     });
 
-    res.json(
-      projects.map((project) => ({
-        ...project,
-        imageUrl: stripDataUrl(project.imageUrl),
-      }))
-    );
+    res.json(projects);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error fetching projects" });
@@ -151,11 +136,7 @@ router.get("/", async (req, res) => {
         })
     );
 
-    // Sanitize large data: URIs from imageUrl before sending to clients
-    const projects = (projectsRaw || []).map((p: any) => ({
-      ...p,
-      imageUrl: stripDataUrl(p.imageUrl),
-    }));
+    const projects = projectsRaw || [];
 
     res.json(projects);
   } catch (error) {
@@ -189,10 +170,7 @@ router.get("/:id", async (req, res) => {
       return res.status(404).json({ message: "Project not found" });
     }
 
-    res.json({
-      ...project,
-      imageUrl: stripDataUrl(project.imageUrl),
-    });
+    res.json(project);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error fetching project" });
@@ -212,10 +190,7 @@ router.get("/admin/:id", authMiddleware, adminMiddleware, async (req, res) => {
       return res.status(404).json({ message: "Project not found" });
     }
 
-    res.json({
-      ...project,
-      imageUrl: stripDataUrl(project.imageUrl),
-    });
+    res.json(project);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error fetching project" });
@@ -272,10 +247,7 @@ router.put("/:id", authMiddleware, adminMiddleware, async (req, res) => {
 
     clearCacheByPrefix(["projects:", "home:"]);
 
-    res.json({
-      ...updatedProject,
-      imageUrl: stripDataUrl(updatedProject.imageUrl),
-    });
+    res.json(updatedProject);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error updating project" });

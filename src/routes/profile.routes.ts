@@ -8,13 +8,6 @@ const router = Router();
 const PUBLIC_CACHE_CONTROL = "public, max-age=60, s-maxage=300, stale-while-revalidate=600";
 const PUBLIC_DATA_CACHE_TTL_MS = 300_000; // 5 minutes
 
-function stripDataUrl(value?: string | null) {
-  if (!value) return value;
-  if (typeof value !== "string") return value;
-  if (value.startsWith("data:")) return null;
-  return value;
-}
-
 
 // ✅ 1. GET PROFILE (PUBLIC)
 router.get("/", async (req, res) => {
@@ -47,12 +40,7 @@ router.get("/", async (req, res) => {
       return current;
     });
 
-    // sanitize before sending
-    const safeProfile = profile
-      ? { ...profile, avatarUrl: stripDataUrl(profile.avatarUrl), resumeUrl: stripDataUrl(profile.resumeUrl) }
-      : profile;
-
-    res.json(safeProfile);
+    res.json(profile);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error fetching profile" });
