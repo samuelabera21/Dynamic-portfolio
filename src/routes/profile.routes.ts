@@ -102,18 +102,22 @@ router.put("/", authMiddleware, async (req, res) => {
     }
 
     // 👉 Replace social links
-    if (socialLinks) {
+    if (Array.isArray(socialLinks)) {
       await prisma.socialLink.deleteMany({
         where: { profileId: profile.id },
       });
 
-      await prisma.socialLink.createMany({
-        data: socialLinks.map((link: any) => ({
-          platform: link.platform,
-          url: link.url,
+      const toCreate = socialLinks
+        .map((link: any) => ({
+          platform: String(link.platform ?? "").trim(),
+          url: String(link.url ?? "").trim(),
           profileId: profile.id,
-        })),
-      });
+        }))
+        .filter((item) => item.platform && item.url);
+
+      if (toCreate.length > 0) {
+        await prisma.socialLink.createMany({ data: toCreate });
+      }
     }
 
     // 👉 Return updated profile
