@@ -132,7 +132,7 @@ router.put("/", authMiddleware, async (req, res) => {
       }
     }
 
-    // 👉 Return updated profile
+    // 👉 Return updated profile (NO sanitization for admin - they manage full data)
     const updatedProfile = await prisma.profile.findUnique({
       where: { id: profile.id },
       include: { socialLinks: true },
@@ -140,12 +140,7 @@ router.put("/", authMiddleware, async (req, res) => {
 
     clearCacheByPrefix(["profile:", "home:"]);
 
-    // Sanitize large data URLs from profile before returning
-    const safe = { ...updatedProfile } as any;
-    if (safe?.avatarUrl && typeof safe.avatarUrl === "string" && safe.avatarUrl.startsWith("data:")) safe.avatarUrl = "";
-    if (safe?.resumeUrl && typeof safe.resumeUrl === "string" && safe.resumeUrl.startsWith("data:")) safe.resumeUrl = "";
-
-    res.json(safe);
+    res.json(updatedProfile);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error updating profile" });
