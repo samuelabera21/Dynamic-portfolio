@@ -20,6 +20,13 @@ async function isPublicProjectsEnabled(): Promise<boolean> {
   return setting.value === "true";
 }
 
+function stripDataUrl(value?: string | null) {
+  if (!value) return value;
+  if (typeof value !== "string") return value;
+  if (value.startsWith("data:")) return null;
+  return value;
+}
+
 // ✅ CREATE PROJECT (ADMIN ONLY)
 router.post("/", authMiddleware, adminMiddleware, async (req, res) => {
   try {
@@ -60,7 +67,10 @@ router.post("/", authMiddleware, adminMiddleware, async (req, res) => {
 
     clearCacheByPrefix(["projects:", "home:"]);
 
-    res.json(project);
+    res.json({
+      ...project,
+      imageUrl: stripDataUrl(project.imageUrl),
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error creating project" });
@@ -80,13 +90,15 @@ router.get("/", async (req, res) => {
     const { tech, featured, search } = req.query;
     const queryKey = JSON.stringify({ tech, featured, search });
 
-    const projects = await getOrSetCache(
-      `projects:list:${queryKey}`,
+    const includeUnpublished = req.query.includeUnpublished === "true";
+
+    const projectsRaw = await getOrSetCache(
+      `projects:list:${queryKey}:${includeUnpublished}`,
       PUBLIC_DATA_CACHE_TTL_MS,
       async () =>
         prisma.project.findMany({
           where: {
-            published: true,
+            ...(includeUnpublished ? {} : { published: true }),
             ...(tech && {
               techStack: {
                 has: tech as string,
@@ -117,6 +129,12 @@ router.get("/", async (req, res) => {
           },
         })
     );
+
+    // Sanitize large data: URIs from imageUrl before sending to clients
+    const projects = (projectsRaw || []).map((p: any) => ({
+      ...p,
+      imageUrl: stripDataUrl(p.imageUrl),
+    }));
 
     res.json(projects);
   } catch (error) {
@@ -150,7 +168,10 @@ router.get("/:id", async (req, res) => {
       return res.status(404).json({ message: "Project not found" });
     }
 
-    res.json(project);
+    res.json({
+      ...project,
+      imageUrl: stripDataUrl(project.imageUrl),
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error fetching project" });
@@ -207,7 +228,10 @@ router.put("/:id", authMiddleware, adminMiddleware, async (req, res) => {
 
     clearCacheByPrefix(["projects:", "home:"]);
 
-    res.json(updatedProject);
+    res.json({
+      ...updatedProject,
+      imageUrl: stripDataUrl(updatedProject.imageUrl),
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error updating project" });
