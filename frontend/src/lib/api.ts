@@ -80,8 +80,44 @@ async function request<T>(path: string, config: RequestConfig = {}): Promise<T> 
       const summary = errorText.trim().slice(0, 200);
       throw new Error(summary || `Request failed (${res.status})`);
     }
+    // Try parse JSON safely. If parsing fails (truncated/invalid JSON), attempt one retry.
+    let data: T;
+    try {
+      data = (await res.json()) as T;
+    } catch (parseError) {
+      // Attempt a single retry after a short delay for transient truncation issues.
+      await new Promise((r) => setTimeout(r, 300));
+      try {
+        const res2 = await fetch(`${API_BASE}${path}`, {
+          method,
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: body ? JSON.stringify(body) : undefined,
+          cache: canCache ? "default" : "no-store",
+        });
 
-    const data = (await res.json()) as T;
+        if (!res2.ok) {
+          const ct = res2.headers.get("content-type") ?? "";
+          if (ct.includes("application/json")) {
+            const errb = await res2.json().catch(() => ({ message: `Request failed (${res2.status})` }));
+            throw new Error(errb.message ?? `Request failed (${res2.status})`);
+          }
+
+          const txt = await res2.text().catch(() => "");
+          throw new Error(txt || `Request failed (${res2.status})`);
+        }
+
+        data = (await res2.json()) as T;
+      } catch (secondErr) {
+        // Provide clearer message including partial body if available
+        const raw = await res.text().catch(() => "");
+        const snippet = raw ? raw.slice(0, 1200) : "(no response body)";
+        const message = `Invalid JSON response from ${path}: ${String(parseError)} — response snippet: ${snippet}`;
+        throw new Error(message);
+      }
+    }
     if (canCache) {
       responseCache.set(path, {
         data,
