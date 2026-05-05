@@ -108,7 +108,6 @@ router.get("/", async (req, res) => {
     }
 
     res.json(payload);
-    res.json(payload);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error fetching home data" });
