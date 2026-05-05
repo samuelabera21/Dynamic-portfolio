@@ -3,8 +3,6 @@ import { getHomeServer, getProjectsServer } from "@/lib/server-api";
 import { HomeData } from "@/types/home";
 import { Project } from "@/types/project";
 
-export const revalidate = 60;
-
 type ResumeInitialData = {
   home: HomeData;
   projects: Project[];
@@ -16,8 +14,8 @@ export default async function ResumePage() {
 
   try {
     const [home, projects] = await Promise.all([
-      getHomeServer(revalidate),
-      getProjectsServer({}, revalidate),
+      getHomeServer(),
+      getProjectsServer({}),
     ]);
 
     initialData = {

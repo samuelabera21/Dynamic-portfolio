@@ -4,8 +4,6 @@ import { HomeData } from "@/types/home";
 import { Post } from "@/types/post";
 import { FeatureFlags } from "@/types/settings";
 
-export const revalidate = 60;
-
 type BlogInitialData = {
   settings: FeatureFlags;
   home: HomeData | null;
@@ -18,12 +16,12 @@ export default async function BlogPage() {
 
   try {
     const [settings, home] = await Promise.all([
-      getSettingsServer(revalidate),
-      getHomeServer(revalidate).catch(() => null),
+      getSettingsServer(),
+      getHomeServer().catch(() => null),
     ]);
 
     const blogVisible = settings.showBlog ?? true;
-    const posts = blogVisible ? await getPostsServer(revalidate) : [];
+    const posts = blogVisible ? await getPostsServer() : [];
 
     initialData = {
       settings,

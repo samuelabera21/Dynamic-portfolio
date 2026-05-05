@@ -6,8 +6,6 @@ import GlobalFooter from "@/components/GlobalFooter";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
 import { getHomeServer, getSettingsServer } from "@/lib/server-api";
 
-export const revalidate = 60;
-
 const headingFont = Space_Grotesk({
   variable: "--font-heading",
   subsets: ["latin"],
@@ -50,8 +48,8 @@ async function RootLayoutShell({
   children: React.ReactNode;
 }>) {
   const [home, settings] = await Promise.all([
-    getHomeServer(revalidate).catch(() => null),
-    getSettingsServer(revalidate).catch(() => null),
+    getHomeServer().catch(() => null),
+    getSettingsServer().catch(() => null),
   ]);
 
   return (
