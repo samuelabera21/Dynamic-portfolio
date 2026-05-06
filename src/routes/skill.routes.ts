@@ -5,17 +5,31 @@ import { adminMiddleware } from "../middleware/admin.middleware";
 import { clearCacheByPrefix, getOrSetCache } from "../lib/response-cache";
 
 const router = Router();
-const PUBLIC_CACHE_CONTROL = "public, max-age=60, s-maxage=300, stale-while-revalidate=600";
-const PUBLIC_DATA_CACHE_TTL_MS = 300_000; // 5 minutes
+const PUBLIC_CACHE_CONTROL = "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400";
+const PUBLIC_DATA_CACHE_TTL_MS = 3_600_000; // 1 hour
+const MAX_PUBLIC_SKILLS = 100;
 
 
 // ✅ 1. GET ALL SKILLS (PUBLIC)
 router.get("/", async (req, res) => {
   try {
     res.set("Cache-Control", PUBLIC_CACHE_CONTROL);
+    const parsedLimit = Number(req.query.limit);
+    const limit =
+      Number.isFinite(parsedLimit) && parsedLimit > 0
+        ? Math.min(Math.floor(parsedLimit), MAX_PUBLIC_SKILLS)
+        : MAX_PUBLIC_SKILLS;
 
-    const skills = await getOrSetCache("skills:list", PUBLIC_DATA_CACHE_TTL_MS, async () =>
-      prisma.skill.findMany()
+    const skills = await getOrSetCache(`skills:list:${limit}`, PUBLIC_DATA_CACHE_TTL_MS, async () =>
+      prisma.skill.findMany({
+        select: {
+          id: true,
+          name: true,
+          category: true,
+        },
+        orderBy: [{ category: "asc" }, { name: "asc" }],
+        take: limit,
+      })
     );
 
     res.json(skills);
@@ -32,9 +46,21 @@ router.get("/", async (req, res) => {
 router.get("/grouped", async (req, res) => {
   try {
     res.set("Cache-Control", PUBLIC_CACHE_CONTROL);
+    const parsedLimit = Number(req.query.limit);
+    const limit =
+      Number.isFinite(parsedLimit) && parsedLimit > 0
+        ? Math.min(Math.floor(parsedLimit), MAX_PUBLIC_SKILLS)
+        : MAX_PUBLIC_SKILLS;
 
-    const skills = await getOrSetCache("skills:grouped-source", PUBLIC_DATA_CACHE_TTL_MS, async () =>
-      prisma.skill.findMany()
+    const skills = await getOrSetCache(`skills:grouped-source:${limit}`, PUBLIC_DATA_CACHE_TTL_MS, async () =>
+      prisma.skill.findMany({
+        select: {
+          name: true,
+          category: true,
+        },
+        orderBy: [{ category: "asc" }, { name: "asc" }],
+        take: limit,
+      })
     );
 
     const grouped: Record<string, string[]> = {};

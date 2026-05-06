@@ -17,7 +17,7 @@ type RequestConfig = {
   skipCache?: boolean;
 };
 
-const PUBLIC_CACHE_TTL_MS = 300_000; // 5 minutes
+const PUBLIC_CACHE_TTL_MS = 86_400_000; // 24 hours
 const responseCache = new Map<string, { expiresAt: number; data: unknown }>();
 const inflightCache = new Map<string, Promise<unknown>>();
 
@@ -150,6 +150,9 @@ function toQueryString(filters: ProjectFilters): string {
     params.set("featured", String(filters.featured));
   }
   if (filters.includeUnpublished) params.set("includeUnpublished", "true");
+  if (typeof filters.limit === "number" && Number.isFinite(filters.limit) && filters.limit > 0) {
+    params.set("limit", String(Math.floor(filters.limit)));
+  }
 
   const query = params.toString();
   return query ? `?${query}` : "";

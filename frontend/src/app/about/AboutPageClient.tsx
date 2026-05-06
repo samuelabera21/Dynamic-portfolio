@@ -232,7 +232,7 @@ export default function AboutPageClient({
       setLoading(true);
       setError(null);
       try {
-        const [home, projectData] = await Promise.all([getHome(), getProjects()]);
+        const [home, projectData] = await Promise.all([getHome(), getProjects({ limit: 24 })]);
         setProfile(home.profile);
         setProjects(projectData.filter((item) => item.published));
         setGroupedSkills(home.skills ?? {});

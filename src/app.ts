@@ -25,6 +25,7 @@ import adminRoutes from "./routes/admin.routes";
 
 
 const app = express();
+app.set("etag", "strong");
 
 const apiLimiter = rateLimit({
   windowMs: 60 * 1000,

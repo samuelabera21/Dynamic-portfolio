@@ -28,6 +28,9 @@ model Project {
   published   Boolean    @default(true)  // ✅ NEW
 
   createdAt   DateTime  @default(now())
+
+  @@index([published, createdAt])
+  @@index([featured, published, createdAt])
 }
 
 
@@ -41,6 +44,9 @@ model Message {
   isRead    Boolean  @default(false)
  read      Boolean  @default(false)
   createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([isRead, read, createdAt])
 }
 
 
@@ -52,6 +58,8 @@ model Post {
   published Boolean  @default(false)
 
   createdAt DateTime @default(now())
+
+  @@index([published, createdAt])
 }
 
 
@@ -72,6 +80,8 @@ model Profile {
   updatedAt DateTime @updatedAt
 
   socialLinks SocialLink[]
+
+  @@index([updatedAt])
 }
 
 model SocialLink {
@@ -88,6 +98,8 @@ model Skill {
   id       String @id @default(uuid())
   name     String
   category String
+
+  @@index([category, name])
 }
 
 

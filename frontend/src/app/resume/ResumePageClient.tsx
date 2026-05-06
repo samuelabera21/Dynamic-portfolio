@@ -154,7 +154,7 @@ export default function ResumePageClient({
       setError(null);
 
       try {
-        const [home, projectData] = await Promise.all([getHome(), getProjects()]);
+        const [home, projectData] = await Promise.all([getHome(), getProjects({ limit: 24 })]);
         setHomeData(home);
         setProjects(projectData.filter((project) => project.published));
       } catch (err) {

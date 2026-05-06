@@ -7,14 +7,20 @@ import { notifyNewsletterSubscribers } from "../utils/newsletter";
 import { clearCacheByPrefix, getOrSetCache } from "../lib/response-cache";
 
 const router = Router();
-const PUBLIC_CACHE_CONTROL = "public, max-age=60, s-maxage=300, stale-while-revalidate=600";
-const PUBLIC_DATA_CACHE_TTL_MS = 300_000; // 5 minutes
+const PUBLIC_CACHE_CONTROL = "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400";
+const PUBLIC_DATA_CACHE_TTL_MS = 3_600_000; // 1 hour
+const MAX_PUBLIC_PROJECTS = 50;
 console.log("🔥 PROJECT ROUTES ACTIVE");
 
 async function isPublicProjectsEnabled(): Promise<boolean> {
-  const setting = await prisma.setting.findUnique({
-    where: { key: "showProjects" },
-  });
+  const setting = await getOrSetCache(
+    "settings:showProjects",
+    PUBLIC_DATA_CACHE_TTL_MS,
+    async () =>
+      prisma.setting.findUnique({
+        where: { key: "showProjects" },
+      })
+  );
 
   if (!setting) return true;
   return setting.value === "true";
@@ -104,7 +110,12 @@ router.get("/", async (req, res) => {
     }
 
     const { tech, featured, search } = req.query;
-    const queryKey = JSON.stringify({ tech, featured, search });
+    const parsedLimit = Number(req.query.limit);
+    const limit =
+      Number.isFinite(parsedLimit) && parsedLimit > 0
+        ? Math.min(Math.floor(parsedLimit), MAX_PUBLIC_PROJECTS)
+        : MAX_PUBLIC_PROJECTS;
+    const queryKey = JSON.stringify({ tech, featured, search, limit });
 
     const includeUnpublished = req.query.includeUnpublished === "true";
 
@@ -143,6 +154,19 @@ router.get("/", async (req, res) => {
           orderBy: {
             createdAt: "desc",
           },
+          take: limit,
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            imageUrl: true,
+            githubUrl: true,
+            liveUrl: true,
+            techStack: true,
+            featured: true,
+            published: true,
+            createdAt: true,
+          },
         })
     );
 
@@ -173,6 +197,18 @@ router.get("/:id", async (req, res) => {
       PUBLIC_DATA_CACHE_TTL_MS,
       async () => prisma.project.findUnique({
         where: { id },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          imageUrl: true,
+          githubUrl: true,
+          liveUrl: true,
+          techStack: true,
+          featured: true,
+          published: true,
+          createdAt: true,
+        },
       })
     );
 

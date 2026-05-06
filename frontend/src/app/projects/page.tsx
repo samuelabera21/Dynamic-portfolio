@@ -7,7 +7,7 @@ export default async function ProjectsPage() {
   let initialError: string | null = null;
 
   try {
-    initialProjects = await getProjectsServer({});
+    initialProjects = await getProjectsServer({ limit: 24 });
   } catch (error) {
     initialError = error instanceof Error ? error.message : "Unable to load projects";
   }

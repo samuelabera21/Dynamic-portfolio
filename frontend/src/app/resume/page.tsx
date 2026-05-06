@@ -15,7 +15,7 @@ export default async function ResumePage() {
   try {
     const [home, projects] = await Promise.all([
       getHomeServer(),
-      getProjectsServer({}),
+      getProjectsServer({ limit: 24 }),
     ]);
 
     initialData = {

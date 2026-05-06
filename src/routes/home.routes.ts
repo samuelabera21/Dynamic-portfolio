@@ -3,31 +3,47 @@ import prisma from "../lib/prisma";
 import { getOrSetCache } from "../lib/response-cache";
 
 const router = Router();
-const PUBLIC_CACHE_CONTROL = "public, max-age=60, s-maxage=300, stale-while-revalidate=600";
-const PUBLIC_DATA_CACHE_TTL_MS = 300_000; // 5 minutes
+const PUBLIC_CACHE_CONTROL = "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400";
+const PUBLIC_DATA_CACHE_TTL_MS = 3_600_000; // 1 hour
+const MAX_HOME_FEATURED_PROJECTS = 6;
+const MAX_HOME_SKILLS = 100;
 
 // ✅ GET HOME DATA (PUBLIC)
 router.get("/", async (req, res) => {
   try {
     res.set("Cache-Control", PUBLIC_CACHE_CONTROL);
     const payload = await getOrSetCache("home:public", PUBLIC_DATA_CACHE_TTL_MS, async () => {
-      let profile = await prisma.profile.findFirst({
+      const profile = await prisma.profile.findFirst({
         orderBy: { updatedAt: "desc" },
-        include: { socialLinks: true },
+        select: {
+          id: true,
+          name: true,
+          role: true,
+          bio: true,
+          avatarUrl: true,
+          resumeUrl: true,
+          location: true,
+          available: true,
+          socialLinks: {
+            select: {
+              platform: true,
+              url: true,
+            },
+          },
+        },
       });
 
-      if (!profile) {
-        profile = await prisma.profile.create({
-          data: {
-            name: "Your Name",
-            role: "Software Developer",
-            bio: "Edit this from admin panel",
-            avatarUrl: "",
-            resumeUrl: "",
-          },
-          include: { socialLinks: true },
-        });
-      }
+      const safeProfile = profile ?? {
+        id: "default-profile",
+        name: "Your Name",
+        role: "Software Developer",
+        bio: "Edit this from admin panel",
+        avatarUrl: "",
+        resumeUrl: "",
+        location: null,
+        available: true,
+        socialLinks: [],
+      };
 
       const [featuredProjects, allSkills, rawSettings] = await Promise.all([
         prisma.project.findMany({
@@ -35,11 +51,31 @@ router.get("/", async (req, res) => {
             featured: true,
             published: true,
           },
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            imageUrl: true,
+            githubUrl: true,
+            liveUrl: true,
+            techStack: true,
+            featured: true,
+            published: true,
+            createdAt: true,
+          },
           orderBy: {
             createdAt: "desc",
           },
+          take: MAX_HOME_FEATURED_PROJECTS,
         }),
-        prisma.skill.findMany(),
+        prisma.skill.findMany({
+          select: {
+            name: true,
+            category: true,
+          },
+          orderBy: [{ category: "asc" }, { name: "asc" }],
+          take: MAX_HOME_SKILLS,
+        }),
         prisma.setting.findMany({
           where: {
             key: {
@@ -77,7 +113,7 @@ router.get("/", async (req, res) => {
       });
 
       return {
-        profile,
+        profile: safeProfile,
         featuredProjects: flags.showProjects ? featuredProjects : [],
         skills: groupedSkills,
         showProjects: flags.showProjects,

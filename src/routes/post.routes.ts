@@ -6,8 +6,9 @@ import { notifyNewsletterSubscribers } from "../utils/newsletter";
 import { clearCacheByPrefix, getOrSetCache } from "../lib/response-cache";
 
 const router = Router();
-const PUBLIC_CACHE_CONTROL = "public, max-age=60, s-maxage=300, stale-while-revalidate=600";
-const PUBLIC_DATA_CACHE_TTL_MS = 300_000; // 5 minutes
+const PUBLIC_CACHE_CONTROL = "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400";
+const PUBLIC_DATA_CACHE_TTL_MS = 3_600_000; // 1 hour
+const MAX_PUBLIC_POSTS = 30;
 
 console.log("🔥 POST ROUTES ACTIVE");
 
@@ -50,14 +51,27 @@ router.post("/", authMiddleware, adminMiddleware, async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     res.set("Cache-Control", PUBLIC_CACHE_CONTROL);
+    const parsedLimit = Number(req.query.limit);
+    const limit =
+      Number.isFinite(parsedLimit) && parsedLimit > 0
+        ? Math.min(Math.floor(parsedLimit), MAX_PUBLIC_POSTS)
+        : MAX_PUBLIC_POSTS;
 
-    const posts = await getOrSetCache("posts:list", PUBLIC_DATA_CACHE_TTL_MS, async () =>
+    const posts = await getOrSetCache(`posts:list:${limit}`, PUBLIC_DATA_CACHE_TTL_MS, async () =>
       prisma.post.findMany({
         where: {
           published: true,
         },
         orderBy: {
           createdAt: "desc",
+        },
+        take: limit,
+        select: {
+          id: true,
+          title: true,
+          content: true,
+          published: true,
+          createdAt: true,
         },
       })
     );
@@ -98,6 +112,13 @@ router.get("/:id", async (req, res) => {
       async () =>
         prisma.post.findUnique({
           where: { id },
+          select: {
+            id: true,
+            title: true,
+            content: true,
+            published: true,
+            createdAt: true,
+          },
         })
     );
 

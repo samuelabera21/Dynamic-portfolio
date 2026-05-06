@@ -16,6 +16,7 @@ export type ProjectFilters = {
   tech?: string;
   featured?: boolean;
   includeUnpublished?: boolean;
+  limit?: number;
 };
 
 export type ProjectPayload = {

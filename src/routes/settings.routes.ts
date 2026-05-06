@@ -11,8 +11,8 @@ import {
 import { clearCacheByPrefix, getOrSetCache } from "../lib/response-cache";
 
 const router = Router();
-const PUBLIC_CACHE_CONTROL = "public, max-age=60, s-maxage=300, stale-while-revalidate=600";
-const PUBLIC_DATA_CACHE_TTL_MS = 300_000; // 5 minutes
+const PUBLIC_CACHE_CONTROL = "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400";
+const PUBLIC_DATA_CACHE_TTL_MS = 3_600_000; // 1 hour
 
 const defaultFlags = {
   showProjects: true,

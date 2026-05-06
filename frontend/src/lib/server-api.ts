@@ -5,6 +5,7 @@ import { FeatureFlags } from "@/types/settings";
 
 const API_BASE_URL =
   process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:3000";
+const SERVER_FETCH_REVALIDATE_SECONDS = 3600;
 
 function toQueryString(filters: ProjectFilters): string {
   const params = new URLSearchParams();
@@ -13,6 +14,9 @@ function toQueryString(filters: ProjectFilters): string {
   if (filters.tech) params.set("tech", filters.tech);
   if (typeof filters.featured === "boolean") params.set("featured", String(filters.featured));
   if (filters.includeUnpublished) params.set("includeUnpublished", "true");
+  if (typeof filters.limit === "number" && Number.isFinite(filters.limit) && filters.limit > 0) {
+    params.set("limit", String(Math.floor(filters.limit)));
+  }
 
   const query = params.toString();
   return query ? `?${query}` : "";
@@ -20,7 +24,8 @@ function toQueryString(filters: ProjectFilters): string {
 
 async function fetchJson<T>(path: string): Promise<T> {
   const res = await fetch(`${API_BASE_URL}${path}`, {
-    cache: "no-store",
+    cache: "force-cache",
+    next: { revalidate: SERVER_FETCH_REVALIDATE_SECONDS },
   });
 
   if (!res.ok) {

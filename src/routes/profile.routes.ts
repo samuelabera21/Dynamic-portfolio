@@ -5,8 +5,8 @@ import { adminMiddleware } from "../middleware/admin.middleware";
 import { clearCacheByPrefix, getOrSetCache } from "../lib/response-cache";
 
 const router = Router();
-const PUBLIC_CACHE_CONTROL = "public, max-age=60, s-maxage=300, stale-while-revalidate=600";
-const PUBLIC_DATA_CACHE_TTL_MS = 300_000; // 5 minutes
+const PUBLIC_CACHE_CONTROL = "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400";
+const PUBLIC_DATA_CACHE_TTL_MS = 3_600_000; // 1 hour
 
 
 // ✅ 1. GET PROFILE (PUBLIC)
@@ -15,29 +15,28 @@ router.get("/", async (req, res) => {
     res.set("Cache-Control", PUBLIC_CACHE_CONTROL);
 
     const profile = await getOrSetCache("profile:public", PUBLIC_DATA_CACHE_TTL_MS, async () => {
-      let current = await prisma.profile.findFirst({
+      const current = await prisma.profile.findFirst({
         orderBy: { updatedAt: "desc" },
         include: {
           socialLinks: true,
         },
       });
 
-      if (!current) {
-        current = await prisma.profile.create({
-          data: {
-            name: "Your Name",
-            role: "Software Developer",
-            bio: "Edit this from admin panel",
-            avatarUrl: "",
-            resumeUrl: "",
-          },
-          include: {
-            socialLinks: true,
-          },
-        });
-      }
-
-      return current;
+      return (
+        current ?? {
+          id: "default-profile",
+          name: "Your Name",
+          role: "Software Developer",
+          bio: "Edit this from admin panel",
+          avatarUrl: "",
+          resumeUrl: "",
+          location: null,
+          available: true,
+          socialLinks: [],
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }
+      );
     });
 
     res.json(profile);
