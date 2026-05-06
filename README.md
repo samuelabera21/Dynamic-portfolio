@@ -2,6 +2,8 @@
 
 A full-stack portfolio system with a public website, admin dashboard, blog, contact form, newsletter, and feature flags.
 
+https://samuel-abera.netlify.app/
+
 ## Live Deployment
 
 - Frontend: https://dynamic-portfolio-livid.vercel.app
