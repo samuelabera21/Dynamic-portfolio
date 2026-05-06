@@ -2,11 +2,11 @@
 
 A full-stack portfolio system with a public website, admin dashboard, blog, contact form, newsletter, and feature flags.
 
-https://samuel-abera.netlify.app/
+
 
 ## Live Deployment
 
-- Frontend: https://dynamic-portfolio-livid.vercel.app
+- Frontend: https://samuel-abera.netlify.app/
 - Backend API: https://dynamic-portfolio-c7s2.onrender.com
 
 ## What This Project Does
@@ -244,5 +244,8 @@ There is no public registration route.
 - If `neonPoolerDetected` is `false`, update `DATABASE_URL` to Neon pooler connection details.
 
 ## License
-
+- Frontend: https://samuel-abera.netlify.app/
+- Backend API: https://dynamic-portfolio-c7s2.onrender.com
+ https://dynamic-portfolio-livid.vercel.app
+ 
 Private project.
